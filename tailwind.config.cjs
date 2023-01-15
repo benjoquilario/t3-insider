@@ -2,7 +2,21 @@
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: '#6a55fa',
+        background: {
+          DEFAULT: '#000000',
+          900: '#111',
+          800: '#0d0d0d',
+          700: '#100f0f',
+          600: '#1b1919',
+        },
+      },
+    },
   },
-  plugins: [],
+  plugins: [
+    require("tailwind-scrollbar-hide"),
+    require("@tailwindcss/aspect-ratio"),
+  ],
 };
