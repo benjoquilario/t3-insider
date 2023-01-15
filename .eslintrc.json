@@ -4,7 +4,7 @@
       "extends": [
         "plugin:@typescript-eslint/recommended-requiring-type-checking"
       ],
-      "files": ["*.ts", "*.tsx"],
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "parserOptions": {
         "project": "tsconfig.json"
       }
