@@ -1,155 +1,260 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { motion } from "framer-motion";
-import { formVariant, uploadPicture } from "@/utils/index";
+import { uploadPicture } from "@/utils/cloudinary";
+import { variants } from "@/utils/index";
 import { RiCloseFill } from "react-icons/ri";
-import type { PostSchema as PostValues } from "@/server/schema/post";
-import Image from "next/legacy/image";
 import Backdrop from "@/components/shared/backdrop";
 import useClickOutside from "hooks/useClickOutside";
 import usePostStore from "@/store/post";
-import { useForm, type SubmitHandler } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { trpc } from "@/utils/trpc";
 import Button from "@/components/shared/button";
-import Input from "../shared/input";
-import React, { useState, useRef } from "react";
-import { useRouter } from "next/router";
+import { ImSpinner8 } from "react-icons/im";
+import TextareaAutoSize from "react-textarea-autosize";
+import classNames from "classnames";
+import type { SelectedFileType } from "@/types/types";
+import type { SubmitHandler } from "react-hook-form";
+import usePost from "hooks/usePost";
+import PostInput from "../posts/post-input";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import React, { useState, useRef, useEffect } from "react";
 
-const PostForm = ({ refetch }) => {
+export interface PostValues {
+  message: string;
+  selectedFile: File[];
+  imageUploadProgress: number[];
+}
+
+const CreateForm = () => {
+  const utils = trpc.useContext();
   const ref = useRef(null);
   const { data: session } = useSession();
   const [errorMessage, setErrorMessage] = useState<string | undefined>("");
   const postOpen = usePostStore((store) => store.postOpen);
   const setPostOpen = usePostStore((store) => store.setPostOpen);
-  const [currentFile, setCurrentFile] = useState<File | undefined>(undefined);
-  const [previewImage, setPreviewImage] = useState("");
+  const currentPostId = usePostStore((store) => store.currentPostId);
 
-  const mutation = trpc.post.createPost.useMutation({
-    onError: (e) => setErrorMessage(e.message),
-    onSuccess: () => {
-      refetch();
-      setPostOpen(false);
-    },
-  });
+  const [isEditing, setIsEditing] = usePostStore((store) => [
+    store.isEditing,
+    store.setIsEditing,
+  ]);
 
   const {
-    register,
+    getRootProps,
+    getInputProps,
+    finalUploadProgress,
+    isImageDragged,
+    openFilePicker,
     handleSubmit,
-    formState: { errors },
-  } = useForm<PostValues>();
+    isSubmitSuccessful,
+    register,
+    watch,
+    reset,
+    control,
+    setValue,
+    getValues,
+    setFocus,
+    isUploading,
+    setIsUploading,
+  } = usePost();
+
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+    }
+  }, [isSubmitSuccessful, reset]);
+
+  const { mutateAsync: mutateCreatePost, isLoading: isCreatePostLoading } =
+    trpc.post.createPost.useMutation({
+      onError: (e) => {
+        setErrorMessage(e.message);
+      },
+      onSuccess: async () => {
+        toast("Your post was added successfully", {
+          type: "success",
+          position: toast.POSITION.BOTTOM_RIGHT,
+        });
+        await utils.post.getPosts.invalidate();
+      },
+    });
+
+  const { mutateAsync: mutateUpdatePost, isLoading: isUpdateLoading } =
+    trpc.post.updatePost.useMutation({
+      onError: (e) => {
+        setErrorMessage(e.message);
+      },
+      onSuccess: async () => {
+        toast("Your post was updated successfully", {
+          type: "success",
+          position: toast.POSITION.BOTTOM_RIGHT,
+        });
+        await utils.post.getPosts.invalidate();
+      },
+    });
+
+  const { data: currentPost, isLoading: isPostLoading } =
+    trpc.post.getPostById.useQuery(
+      {
+        id: currentPostId,
+      },
+      {
+        enabled: !!currentPostId,
+      }
+    );
+
+  useEffect(() => {
+    setFocus("message");
+  }, [setFocus]);
+
+  const handleOnReset = () => {
+    reset();
+    setPostOpen(false);
+    setIsEditing(false);
+    setIsUploading(false);
+  };
 
   const handleOnSubmit: SubmitHandler<PostValues> = async (data) => {
     setErrorMessage(undefined);
-    let uploadPhoto;
 
-    if (currentFile) {
-      uploadPhoto = await uploadPicture(currentFile);
+    const imageUrls = await Promise.all(
+      data.selectedFile.map((file: File, index) =>
+        uploadPicture(file, (progress) => {
+          const imageUploadProgress = getValues("imageUploadProgress");
+          setValue(
+            "imageUploadProgress",
+            imageUploadProgress.map((val, i) => (i === index ? progress : val))
+          );
+        })
+      )
+    );
+
+    if (isEditing && currentPostId) {
+      await mutateUpdatePost({
+        ...data,
+        name: session?.user?.name,
+        selectedFile: imageUrls.length
+          ? imageUrls.map((image) => ({
+              url: image.url,
+              fallbackUrl: image.fallbackUrl,
+              width: 200,
+              height: 50,
+              postId: currentPostId,
+            }))
+          : null,
+        id: currentPostId,
+      });
+    } else {
+      await mutateCreatePost({
+        ...data,
+        name: session?.user?.name,
+        selectedFile: imageUrls.length
+          ? imageUrls.map((image) => ({
+              url: image.url,
+              fallbackUrl: image.fallbackUrl,
+              width: 200,
+              height: 50,
+            }))
+          : null,
+      });
     }
 
-    await mutation.mutateAsync({
-      ...data,
-      name: session?.user?.name,
-      selectedFile: (uploadPhoto as string) || "",
-    });
+    return handleOnReset();
   };
 
-  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { files } = event.target;
-    const selectedFiles = files as FileList;
-    setCurrentFile(selectedFiles?.[0]);
-    setPreviewImage(URL.createObjectURL(selectedFiles?.[0] as never));
-  };
+  const message = watch("message");
 
   useClickOutside(ref, () => setPostOpen(false));
 
+  const enabledButton = !isUploading && message?.trim().length > 0;
+
+  useEffect(() => {
+    if (currentPostId && currentPost && !isPostLoading) {
+      setValue("message", currentPost.message);
+    }
+  }, [currentPostId, currentPost, setValue, isPostLoading]);
+
   return (
     <React.Fragment>
-      {postOpen && (
-        <Backdrop>
-          <div
-            ref={ref}
-            className="z-20 m-4 h-auto w-full max-w-screen-md rounded-md border border-gray-600 bg-gray-900 shadow-md md:w-2/4"
-          >
-            <div className="flex items-center justify-between p-2">
-              <h3 className="p-2 text-base text-white md:text-lg">
-                Creating Post
-              </h3>
+      <Backdrop>
+        <motion.div
+          variants={variants}
+          initial="hidden"
+          animate={postOpen ? "visible" : "hidden"}
+          ref={ref}
+          className="z-20 m-4 h-auto w-full max-w-screen-md rounded-md bg-white shadow-md md:w-2/4"
+        >
+          <div className="flex items-center justify-between border-b border-gray-200 p-2">
+            <h3 className="p-2 text-base text-black md:text-lg">
+              {isEditing ? "Updating Post" : "Creating Post"}
+            </h3>
 
-              <button
-                className="rounded-full p-2 text-white transition duration-75 ease-in hover:bg-gray-700"
-                aria-label="close modal"
-                onClick={() => setPostOpen(false)}
-              >
-                <RiCloseFill aria-hidden="true" size={25} />
-              </button>
-            </div>
-            <motion.div
-              variants={formVariant}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              className="relative"
+            <Button
+              className="rounded-full p-2 text-gray-700 transition duration-75 ease-in bg-[#edf1f5] hover:bg-[#e5e8eb]"
+              aria-label="close modal"
+              onClick={() => handleOnReset()}
             >
-              <form
-                autoComplete="off"
-                className=""
-                onSubmit={handleSubmit(handleOnSubmit)}
-              >
-                <textarea
-                  aria-label={`What's on your mind, Benjo?`}
-                  className="h-32 w-full resize-none overflow-auto rounded-t-md bg-gray-900 p-3 text-sm text-white focus:outline-none md:text-base"
-                  placeholder={`What's on your mind, Benjo?`}
-                  // value={postData?.message}
-                  cols={30}
-                  rows={30}
-                  {...register("message", { required: true })}
-                ></textarea>
-                <div className="rounded-b-md bg-gray-900 p-3">
-                  {previewImage && (
-                    <div className="relative h-56 w-full overflow-auto">
-                      <Image
-                        src={previewImage}
-                        alt="post"
-                        layout="fill"
-                        objectFit="cover"
-                      />
-                      <Button
-                        onClick={() => setPreviewImage("")}
-                        className="absolute top-2 right-0 rounded-full bg-gray-600 p-1 text-white transition duration-75 ease-in hover:bg-gray-700"
-                      >
-                        <RiCloseFill aria-hidden="true" size={22} />
-                      </Button>
-                    </div>
-                  )}
-                  <div className="flex items-center gap-2">
-                    <p className="text-xs text-white md:text-sm">
-                      Upload Photo :
-                    </p>
-                    <div className="relative overflow-hidden text-xs text-white md:text-sm">
-                      <Input
-                        {...register("selectedFile", { required: false })}
-                        type="file"
-                        name="selectedFile"
-                        onChange={handleOnChange}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-center">
-                  <Button
-                    type="submit"
-                    className="m-3 flex w-full items-center justify-center rounded-md bg-[#6a55fa] px-3 py-2 text-sm text-white disabled:bg-[#6a55fa1a] md:text-base"
-                  >
-                    Create Post
-                  </Button>
-                </div>
-              </form>
-            </motion.div>
+              <RiCloseFill aria-hidden="true" size={25} />
+            </Button>
           </div>
-        </Backdrop>
-      )}
+          <div
+            className={classNames(
+              "relative",
+              isImageDragged && "outline-dashed outline-blue-500"
+            )}
+            {...getRootProps()}
+          >
+            <form
+              autoComplete="off"
+              className=""
+              onSubmit={handleSubmit(handleOnSubmit)}
+            >
+              <TextareaAutoSize
+                aria-label={`What's on your mind, Benjo?`}
+                className="w-full rounded-t-md  bg-white p-3 text-sm text-black focus:outline-none md:text-base"
+                placeholder={`What's on your mind, Benjo?`}
+                {...register("message", { required: false })}
+              />
+
+              <PostInput
+                openFilePicker={openFilePicker}
+                control={control}
+                setValue={setValue}
+                selectedFile={currentPost?.selectedFile as SelectedFileType[]}
+              >
+                <input {...getInputProps()} />
+              </PostInput>
+
+              <div className="flex items-center justify-center">
+                {isCreatePostLoading || isUpdateLoading ? (
+                  <div className="m-3 flex w-full items-center justify-center rounded-md bg-[#6a55fa] px-3 py-2 text-lg">
+                    <ImSpinner8 className="animate-spin text-2xl text-white" />
+                  </div>
+                ) : (
+                  <Button
+                    disabled={!enabledButton}
+                    type="submit"
+                    className="my-2 mx-3 flex w-full items-center justify-center rounded-md bg-[#6a55fa] px-3 py-2 text-sm text-white disabled:bg-[#6a55fa1a] hover:bg-[#8371f8] md:text-base"
+                  >
+                    {isEditing ? "Update Post" : "Create Post"}
+                  </Button>
+                )}
+              </div>
+              {finalUploadProgress !== 0 && (
+                <div className="h-1 w-full overflow-hidden rounded-sm">
+                  <div
+                    className="h-full w-full bg-blue-500"
+                    style={{
+                      transform: `translateX(-${100 - finalUploadProgress}%)`,
+                    }}
+                  />
+                </div>
+              )}
+            </form>
+          </div>
+        </motion.div>
+      </Backdrop>
     </React.Fragment>
   );
 };
 
-export default PostForm;
+export default CreateForm;

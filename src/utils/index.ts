@@ -1,29 +1,58 @@
-import type { CloudinaryType } from "@/types/types";
+export const capitalizeName = (name: string) => {
+  if (name) {
+    const names = name.split(" ");
+    const namesUpper = [];
 
-export const uploadPicture = async (currentFile: File) => {
-  try {
-    const formData = new FormData();
-    formData.append("file", currentFile);
-    formData.append("upload_preset", "social_media_insider");
+    for (const name of names) {
+      namesUpper.push(
+        name.replace(name[0] as string, name[0]?.toUpperCase() as string)
+      );
+    }
 
-    const url = process.env.CLOUDINARY_URL as string;
-    const res = await fetch(url, {
-      method: "POST",
-      body: formData,
-    });
-
-    const cloudinaryData = (await res.json()) as CloudinaryType;
-
-    return cloudinaryData?.secure_url;
-  } catch (error) {
-    console.log(error);
+    return namesUpper.join(" ");
   }
+};
+
+export const getImageWidthRatio = (imageNumber: number, imageIndex: number) => {
+  if (imageNumber === 1) {
+    return 100;
+  }
+  if (imageNumber === 2) {
+    return 110;
+  }
+  if (imageNumber === 3) {
+    if (imageIndex === 0) {
+      return 50;
+    }
+    return 50;
+  }
+  return 100;
+};
+
+export const getImageHeightRatio = (
+  imageNumber: number,
+  imageIndex: number
+) => {
+  if (imageNumber === 1) {
+    return 80;
+  }
+  if (imageNumber === 2) {
+    return 130;
+  }
+  if (imageNumber === 3) {
+    if (imageIndex === 0) {
+      return 40;
+    }
+    return 44;
+  }
+  return 110;
 };
 
 export const intitialState = {
   message: "",
   selectedFile: "",
   name: "",
+  id: "",
 };
 
 export const backdropVariant = {
@@ -34,15 +63,29 @@ export const backdropVariant = {
   },
 };
 
-export const modalVariant = {
+export const variants = {
   hidden: {
-    y: "-10%",
-    transition: { type: "spring", ease: "easeOut", duration: 0.3 },
+    opacity: 0,
   },
   visible: {
-    y: 0,
-    transition: { type: "spring", ease: "easeOut", duration: 0.3 },
+    opacity: 1,
   },
 };
 
-export const formVariant = {};
+export const formVariant = {
+  initial: {
+    opacity: 0,
+  },
+  animate: {
+    opacity: 1,
+    transition: {
+      duration: 0.3,
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: 0.3,
+    },
+  },
+};

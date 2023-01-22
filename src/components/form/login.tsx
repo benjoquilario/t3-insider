@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { useForm, type SubmitHandler } from "react-hook-form";
 import { signIn } from "next-auth/react";
 import React from "react";
 import FormContainer from "./container";
 import Input from "@/components/shared/input";
 import Button from "@/components/shared/button";
+import { useForm, type SubmitHandler } from "react-hook-form";
 
 type FormValues = {
   email: string;
@@ -18,7 +18,7 @@ const LoginForm = () => {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+  const handleOnSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
       await signIn("credentials", {
         ...data,
@@ -31,16 +31,18 @@ const LoginForm = () => {
 
   return (
     <FormContainer title="Welcome to Insider!" type="Sign in to your account">
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(handleOnSubmit)}>
         <Input
+          labelClassName="sr-only"
+          label="Email"
           type="email"
           {...register("email", { required: true })}
-          placeholder="Email"
         />
         <Input
+          labelClassName="sr-only"
+          label="Password"
           type="password"
           {...register("password", { required: true })}
-          placeholder="Password"
         />
         <Button type="submit">Submit</Button>
       </form>

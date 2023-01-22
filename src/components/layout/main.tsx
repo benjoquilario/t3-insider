@@ -1,11 +1,11 @@
 import React from "react";
-import CreatePost from "@/components/posts/create-post";
+import CreateButton from "@/components/posts/create-button";
 import Posts from "@/components/posts";
 
 const Main = () => {
   return (
     <React.Fragment>
-      <CreatePost />
+      <CreateButton />
       <Posts type="getPosts" />
     </React.Fragment>
   );

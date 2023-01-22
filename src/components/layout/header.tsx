@@ -23,13 +23,13 @@ const LINKS = [
     linkName: "Followers",
   },
   {
-    href: "/",
+    href: "/following",
     icon: IoIosPeople,
     size: 29,
     linkName: "Following",
   },
   {
-    href: "/",
+    href: "/profile",
     icon: BsFillPersonFill,
     size: 29,
     linkName: "Profile",
@@ -37,7 +37,7 @@ const LINKS = [
 ];
 
 const Header = () => {
-  const session = useSession();
+  const { data: session } = useSession();
 
   return (
     <div className="col-span-3 hidden lg:block">
@@ -66,10 +66,10 @@ const Header = () => {
             </Link>
             <div className="ml-2 flex flex-col justify-center">
               <Link
-                href={`profile/`}
-                className="text-base font-semibold text-black"
+                href={`profile/${session?.user?.id as string}`}
+                className="text-base font-semibold capitalize text-black"
               >
-                {session.data?.user?.name}
+                {session?.user?.name}
               </Link>
               <span className="text-xs text-gray-500">21 Followers</span>
             </div>
@@ -82,7 +82,11 @@ const Header = () => {
                 <li key={link.linkName} className="flex flex-1 items-start">
                   <Link
                     aria-label={link.linkName}
-                    href={link.href}
+                    href={`${link.href}${
+                      link.href.includes("profile")
+                        ? `/${session?.user?.id as string}`
+                        : ""
+                    }`}
                     className={classNames(
                       "flex w-full items-center gap-4 rounded-full py-2 px-4 hover:bg-[#e0e4e9]"
                     )}

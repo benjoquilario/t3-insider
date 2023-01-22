@@ -20,3 +20,46 @@ export type CloudinaryType = {
   version_id: string;
   width: number;
 };
+
+export interface Post<T> {
+  id: string;
+  name: string;
+  message: string;
+  selectedFile: SelectedFileType[];
+  user: T;
+  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  isLike: boolean;
+  _count: {
+    likes: number;
+    comment: number;
+  };
+}
+
+export interface Comment<T> {
+  comment: string;
+  createdAt: Date;
+  updatedAt: Date;
+  id: string;
+  postId: string;
+  userId: string;
+  user?: T;
+}
+
+export interface User {
+  email: string;
+  id: string;
+  name: string;
+  coverPhoto?: string;
+  image?: string;
+}
+
+export interface SelectedFileType {
+  url: string;
+  width: number;
+  height: number;
+  fallbackUrl: string;
+  id: string;
+  postId: string;
+}

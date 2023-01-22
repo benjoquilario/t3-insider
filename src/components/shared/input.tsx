@@ -1,5 +1,6 @@
 import React from "react";
 import classNames from "classnames";
+import { Field } from "formik";
 
 type Icon = {
   className?: string;
@@ -32,7 +33,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           {label}
         </label>
       )}
-      <input
+      <Field
         ref={ref}
         className={classNames(
           "h-[40px] w-full rounded bg-white px-[15px] text-sm font-normal leading-[40px] text-gray-700 outline-none",

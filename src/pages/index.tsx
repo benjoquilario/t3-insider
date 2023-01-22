@@ -1,24 +1,13 @@
 import type { GetServerSideProps, NextPage } from "next";
 import { getServerAuthSession } from "@/server/auth";
-import { trpc } from "../utils/trpc";
-import Header from "@/components/layout/header";
 import Layout from "@/components/layout";
-import CreatePost from "@/components/posts/create-post";
-import { useSession } from "next-auth/react";
-import Posts from "@/components/posts";
-import PostForm from "@/components/form/post";
 import Main from "@/components/layout/main";
+import Section from "@/components/shared/section";
 
 const Home: NextPage = () => {
-  const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
-  const { data: secret } = trpc.example.getSecretMessage.useQuery();
-  const session = useSession();
-  // const newProcedures = trpc.newProcedures.useQuery();
-
   return (
     <Layout>
-      <div className="mx-auto grid h-full min-h-screen w-full max-w-screen-2xl grid-cols-12 gap-6 p-3 md:p-5">
-        <Header />
+      <Section>
         <div className="col-span-full lg:col-span-9 xl:col-span-6">
           <Main />
         </div>
@@ -27,7 +16,7 @@ const Home: NextPage = () => {
             <div className="flex items-center justify-between"></div>
           </div>
         </div>
-      </div>
+      </Section>
     </Layout>
   );
 };

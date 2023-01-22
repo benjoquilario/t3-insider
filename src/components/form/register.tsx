@@ -39,28 +39,28 @@ const RegisterForm = () => {
     <FormContainer title="Welcome to Insider!" type="Create an Account">
       <form className="w-full" onSubmit={handleSubmit(handleOnSubmit)}>
         <Input
-          type="text"
           {...register("firstName", { required: true })}
+          type="text"
           placeholder="FirstName"
         />
         <Input
-          type="text"
           {...register("lastName", { required: true })}
+          type="text"
           placeholder="LastName"
         />
         <Input
-          type="email"
           {...register("email", { required: true })}
+          type="email"
           placeholder="Email"
         />
         <Input
-          type="password"
           {...register("password", { required: true })}
+          type="password"
           placeholder="Password"
         />
         <Input
-          type="password"
           {...register("confirmPassword", { required: true })}
+          type="password"
           placeholder="Confirm Password"
         />
         <Button type="submit">Submit</Button>

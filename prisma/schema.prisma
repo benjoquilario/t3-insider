@@ -60,6 +60,8 @@ model User {
     likes         Likes[]
     post          Post[]
     comment       Comment[]
+    postLike      Postlike[]
+    reply         ReplyComment[]
     createdAt     DateTime @default(now())
     updatedAt     DateTime @updatedAt
 }
@@ -68,29 +70,53 @@ model Post {
     id            String  @id @default(cuid()) @map("_id")
     name          String
     message       String
-    selectedFile  String
+    selectedFile  SelectedFile[]
     likes         Likes[]
-    user          User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    comment       Comment[]
+    postLike      Postlike[]
+    user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId        String?
     createdAt     DateTime @default(now())
     updatedAt     DateTime @updatedAt
 }
 
 model Likes {
-    id            String  @id @default(cuid()) @map("_id")
-    user          User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    id            String   @id @default(cuid()) @map("_id")
+    user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId        String?
-    post          Post?   @relation(fields: [postId], references: [id])
+    post          Post?    @relation(fields: [postId], references: [id])
     postId        String?
 }
 
 model Comment {
-    id            String  @id @default(cuid()) @map("_id")
-    message       String
-    user          User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+    id            String   @id @default(cuid()) @map("_id")
+    comment       String
+    user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId        String?
+    post          Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+    postId        String?
     createdAt     DateTime @default(now())
     updatedAt     DateTime @updatedAt
+    reply         ReplyComment[]
+}
+
+model ReplyComment {
+    id           String @id @default(cuid()) @map("_id")
+    comment      String
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+    replyTo      Comment? @relation(fields: [replyToId], references: [id], onDelete: Cascade)
+    replyToId    String?
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId       String
+}
+
+model Postlike {
+    id           String @id @default(cuid()) @map("_id")
+    userId       String?
+    user         User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    postId       String?
+    post         Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -101,3 +127,14 @@ model VerificationToken {
 
     @@unique([identifier, token])
 }
+
+
+model SelectedFile {
+    id          String @id @default(cuid()) @map("_id")
+    url         String
+    fallbackUrl String
+    post        Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+    postId      String?
+    width       Int
+    height      Int
+} 
