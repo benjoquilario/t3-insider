@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import React from "react";
 import CreateComment from "./create-comments";
-import Comment from "./comment";
 import { trpc } from "@/utils/trpc";
 import type { CommentProps } from "./create-comments";
 import { ImSpinner8 } from "react-icons/im";
@@ -25,14 +24,10 @@ const Comments: React.FC<CommentProps> = ({ postId }) => {
     >
       {!isLoading ? (
         <div className="pb-4" id="comment">
-          <CreateComment postId={postId} />
-          <ul>
-            {data?.comments?.map((comment) => (
-              <li key={comment.id}>
-                <Comment comment={comment as CommentType<User>} />
-              </li>
-            ))}
-          </ul>
+          <CreateComment
+            comments={data?.comments as CommentType<User>[]}
+            postId={postId}
+          />
         </div>
       ) : (
         <div className="flex items-center justify-center py-4">

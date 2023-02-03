@@ -4,11 +4,48 @@ import { motion } from "framer-motion";
 import { FaEdit } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
 import Button from "../shared/button";
+import { BiBookmark } from "react-icons/bi";
+import classNames from "classnames";
 
 type ModalPostProps = {
   handleEdit: () => void;
   handleDelete: () => void;
 } & React.HTMLProps<HTMLDivElement>;
+
+type ModalButtonProps = {
+  handleClick: () => void;
+  children: React.ReactNode;
+  name: string;
+  className?: string;
+};
+
+const ModalButton: React.FC<ModalButtonProps> = ({
+  handleClick,
+  children,
+  name,
+  className,
+}) => {
+  return (
+    <li
+      className={classNames(
+        "rounded px-3 transition duration-75 hover:bg-[#e5e8eb]",
+        className
+      )}
+    >
+      <div>
+        <Button
+          onClick={handleClick}
+          type="button"
+          className="flex w-full items-center gap-2 py-1 text-gray-800 md:py-2"
+          aria-label={name}
+        >
+          {children}
+          <span className="text-sm">{name}</span>
+        </Button>
+      </div>
+    </li>
+  );
+};
 
 const ModalPost = React.forwardRef<HTMLDivElement, ModalPostProps>(
   (props, ref) => {
@@ -20,34 +57,19 @@ const ModalPost = React.forwardRef<HTMLDivElement, ModalPostProps>(
         initial="hidden"
         animate="visible"
         exit="hidden"
-        className="absolute top-14 right-3 z-30 h-auto rounded border border-solid border-gray-300 bg-zinc-100"
+        className="absolute top-14 right-3 z-30 h-auto rounded border border-solid border-gray-300 bg-[#edf1f5]"
       >
         <div className="relative">
           <ul className="w-full">
-            <li className="rounded px-3 transition duration-75 hover:bg-zinc-200">
-              <div>
-                <Button
-                  onClick={handleEdit}
-                  aria-label="Edit Post"
-                  className="flex w-full items-center gap-2 py-1 text-gray-800 md:py-2"
-                >
-                  <FaEdit />
-                  <span className="text-sm">Edit Post</span>
-                </Button>
-              </div>
-            </li>
-            <li className="rounded px-3 transition duration-75 hover:bg-zinc-200">
-              <div>
-                <Button
-                  onClick={handleDelete}
-                  className="flex w-full items-center gap-2 py-1 text-gray-800 md:py-2"
-                  aria-label="Delete Post"
-                >
-                  <AiFillDelete />
-                  <span className="text-sm">Delete Post</span>
-                </Button>
-              </div>
-            </li>
+            <ModalButton handleClick={handleEdit} name="Edit Post">
+              <FaEdit />
+            </ModalButton>
+            <ModalButton handleClick={handleDelete} name="Delete Post">
+              <AiFillDelete />
+            </ModalButton>
+            <ModalButton handleClick={handleEdit} name="Bookmark">
+              <BiBookmark />
+            </ModalButton>
           </ul>
         </div>
       </motion.div>

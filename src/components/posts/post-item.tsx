@@ -1,6 +1,11 @@
 import Button from "@/components/shared/button";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
-import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import {
+  AiFillHeart,
+  AiOutlineHeart,
+  AiFillLike,
+  AiOutlineLike,
+} from "react-icons/ai";
 import { ImSpinner8 } from "react-icons/im";
 import { BiComment } from "react-icons/bi";
 import { IoMdShareAlt } from "react-icons/io";
@@ -8,7 +13,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import classNames from "classnames";
 import { motion } from "framer-motion";
-import Image from "../shared/image";
+import Image from "@/components/shared/image";
 import {
   variants,
   capitalizeName,
@@ -16,13 +21,17 @@ import {
   getImageWidthRatio,
 } from "@/utils/index";
 import type { Post as PostType, User } from "@/types/types";
-import Comments from "../comments";
-import React, { useRef, useState } from "react";
+import Comments from "@/components/comments/";
+import React, { useMemo, useRef, useState } from "react";
 import usePostStore from "@/store/post";
-import ModalPost from "../modal/modal-post";
+import ModalPost from "@/components/modal/modal-post";
 import { trpc } from "@/utils/trpc";
 import useClickOutside from "hooks/useClickOutside";
-import { toast } from "react-toastify";
+import ReactTimeAgo from "react-time-ago";
+import en from "javascript-time-ago/locale/en.json";
+import TimeAgo from "javascript-time-ago";
+
+TimeAgo.addDefaultLocale(en);
 
 type PostItemProps = {
   post: PostType<User>;
@@ -34,21 +43,18 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
   const { data: session } = useSession();
   const [isCommentOpen, setIsCommentOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLiked, setIsLiked] = useState(post.isLike);
   const setPostOpen = usePostStore((store) => store.setPostOpen);
   const setCurrentPostId = usePostStore((store) => store.setCurrentPostId);
   const setIsEditing = usePostStore((store) => store.setIsEditing);
+  const setIsModalDeletePostOpen = usePostStore(
+    (store) => store.setIsModalDeletePostOpen
+  );
 
-  const { mutate: mutateDelete, isLoading: isDeleteLoading } =
-    trpc.post.deletePost.useMutation({
-      onError: (e) => console.log(e.message),
-      onSuccess: async () => {
-        await utils.post.getPosts.invalidate();
-        toast("Your post was added successfully", {
-          type: "success",
-          position: toast.POSITION.BOTTOM_RIGHT,
-        });
-      },
-    });
+  const likes = useMemo(
+    () => post.likes.find((like) => like.postId === post.id),
+    [post]
+  );
 
   const { mutate: mutateLike, isLoading: isLikeLoading } =
     trpc.like.likePost.useMutation({
@@ -67,18 +73,20 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
 
   const handleLikePost = (e: React.MouseEvent) => {
     e.stopPropagation();
-    mutateLike({ postId: post.id });
+    mutateLike({ postId: post.id, id: likes?.id, isLiked: !isLiked });
+    setIsLiked(!isLiked);
   };
 
   const handleDeletePost = () => {
     setIsModalOpen(false);
-    mutateDelete({ id: post.id });
+    setIsModalDeletePostOpen(true);
+    setCurrentPostId(post.id);
   };
 
   useClickOutside(ref, () => setIsModalOpen(false));
 
   return (
-    <motion.div
+    <motion.li
       initial="hidden"
       variants={variants}
       animate="visible"
@@ -86,14 +94,11 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
       className="relative z-10 mt-2 flex flex-col gap-1 overflow-hidden rounded-md border border-gray-200 bg-white"
     >
       <div className="flex gap-3 p-3">
-        <Link
-          href={`/profile/${session?.user?.id || ""}`}
-          aria-label={session?.user?.name || ""}
-        >
+        <Link href={`/profile/${post.userId}`} aria-label={post.user.name}>
           <div className="relative h-11 w-11">
             <Image
-              src="/default-image.png"
-              alt={session?.user?.image || ""}
+              src={post.user.image || "/default-image.png"}
+              alt={post.user.name}
               className="mx-0 rounded-full"
               layout="fill"
               objectFit="cover"
@@ -102,26 +107,29 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
         </Link>
         <div className="mr-auto flex flex-col self-center leading-none">
           <Link
-            href={`/profile/${session?.user?.id || ""}`}
+            href={`/profile/${post.userId}`}
             className="block text-base font-semibold capitalize text-black"
-            aria-label={session?.user?.name || ""}
+            aria-label={post.user.name}
           >
             {post.name}
           </Link>
-          <span className="text-xs text-gray-700">a second ago</span>
+          <span className="text-xs text-gray-700">
+            <ReactTimeAgo date={post.createdAt} />
+          </span>
         </div>
-
-        <div ref={ref} className="self-end">
-          <div>
-            <Button
-              onClick={() => setIsModalOpen((prev) => !prev)}
-              className="rounded-full p-1 text-gray-800 hover:bg-zinc-200"
-              aria-label="action list"
-            >
-              <BiDotsHorizontalRounded aria-hidden="true" size={26} />
-            </Button>
+        {session?.user?.id === post.userId && (
+          <div ref={ref} className="self-end">
+            <div>
+              <Button
+                onClick={() => setIsModalOpen((prev) => !prev)}
+                className="rounded-full p-1 text-gray-800 hover:bg-[#edf1f5]"
+                aria-label="action list"
+              >
+                <BiDotsHorizontalRounded aria-hidden="true" size={26} />
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <div className="px-3 font-normal md:px-5">
         <span className="break-words">{post.message}</span>
@@ -170,31 +178,22 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
           })}
         </div>
       )}
-      <div className="mt-3 flex items-center justify-between px-5">
+      <div className="mt-2 flex items-center justify-between px-5">
         <div className="flex items-center gap-1 text-sm text-black">
+          <AiFillLike aria-hidden="true" size={17} />
           {post._count.likes !== 0 && (
             <React.Fragment>
-              <AiFillHeart aria-hidden="true" size={17} />
               {isLikeLoading ? (
-                <div className="text-xs">
-                  <ImSpinner8 className="animate-spin" />
-                </div>
+                <ImSpinner8 className="h-3 w-3 animate-spin" />
               ) : (
                 <span className="font-semibold text-gray-800">
                   {post._count.likes}
-                  <span className="ml-2 text-xs">
-                    {post.isLike
-                      ? `${
-                          capitalizeName(session?.user?.name as string) || ""
-                        } ${post._count.likes > 1 ? "and others" : ""}`
-                      : ""}
-                  </span>
                 </span>
               )}
             </React.Fragment>
           )}
         </div>
-        <div className="flex gap-1 text-sm text-gray-400">
+        <div className="flex gap-1 text-sm font-semibold text-gray-400">
           <span>{post._count.comment}</span>
           <BiComment aria-hidden="true" size={20} />
         </div>
@@ -205,22 +204,22 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
           aria-label="Like Post"
           onClick={handleLikePost}
         >
-          {post.isLike ? (
+          {isLiked ? (
             <React.Fragment>
               <motion.span>
-                <AiFillHeart
+                <AiFillLike
                   aria-hidden="true"
                   size={21}
-                  className="text-red-600"
+                  className="text-primary"
                 />
               </motion.span>
-              <span className={classNames("text-sm font-bold text-red-600")}>
+              <span className={classNames("text-sm font-bold text-primary")}>
                 Like
               </span>
             </React.Fragment>
           ) : (
             <React.Fragment>
-              <AiOutlineHeart
+              <AiOutlineLike
                 aria-hidden="true"
                 size={20}
                 className="text-black"
@@ -249,11 +248,6 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
           <span className="text-sm font-semibold text-gray-600">Share</span>
         </Button>
       </div>
-      {isDeleteLoading && (
-        <div className="absolute top-14 right-5 z-30">
-          <ImSpinner8 className="h-8 w-8 animate-spin" />
-        </div>
-      )}
       {isCommentOpen && <Comments postId={post.id} />}
       {isModalOpen && (
         <ModalPost
@@ -262,7 +256,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
           handleDelete={handleDeletePost}
         />
       )}
-    </motion.div>
+    </motion.li>
   );
 };
 

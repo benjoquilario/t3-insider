@@ -23,7 +23,7 @@ export const postSchema = z.object({
 });
 
 export const postIdSchema = postSchema.extend({
-  id: z.string(),
+  id: z.string().optional(),
 });
 
 export type PostSchema = TypeOf<typeof createPostSchema>;

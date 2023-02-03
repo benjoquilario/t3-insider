@@ -35,6 +35,7 @@ export interface Post<T> {
     likes: number;
     comment: number;
   };
+  likes: Likes<T>[];
 }
 
 export interface Comment<T> {
@@ -44,13 +45,51 @@ export interface Comment<T> {
   id: string;
   postId: string;
   userId: string;
+  isLike: boolean;
+  _count: {
+    likeComment: number;
+    reply: number;
+  };
+  likeComment: LikeComment<T>[];
   user?: T;
 }
 
-export interface User {
-  email: string;
+export interface LikeComment<T> {
   id: string;
-  name: string;
+  commentId: string;
+  user: T;
+}
+
+export interface LikeReplyComment<T> {
+  id: string;
+  replyId: string;
+  user: T;
+}
+
+export interface ReplyComment<T> {
+  comment: string;
+  createdAt: Date;
+  id: string;
+  replyToId: string;
+  updatedAt: Date;
+  user: T;
+  _count: {
+    likeReplyComments: number;
+  };
+  likeReplyComments: LikeReplyComment<T>[];
+  userId: string;
+}
+
+export interface Likes<T> {
+  id: string;
+  postId: string;
+  user: T;
+}
+
+export interface User {
+  email?: string;
+  id?: string;
+  name?: string;
   coverPhoto?: string;
   image?: string;
 }

@@ -75,6 +75,10 @@ const CreateForm = () => {
           position: toast.POSITION.BOTTOM_RIGHT,
         });
         await utils.post.getPosts.invalidate();
+        await utils.post.getPostsById.invalidate({
+          id: session?.user?.id,
+          limit: 3,
+        });
       },
     });
 
@@ -128,7 +132,7 @@ const CreateForm = () => {
       )
     );
 
-    if (isEditing && currentPostId) {
+    if (isEditing && currentPostId)
       await mutateUpdatePost({
         ...data,
         name: session?.user?.name,
@@ -136,14 +140,14 @@ const CreateForm = () => {
           ? imageUrls.map((image) => ({
               url: image.url,
               fallbackUrl: image.fallbackUrl,
-              width: 200,
-              height: 50,
+              width: image.width,
+              height: image.height,
               postId: currentPostId,
             }))
           : null,
         id: currentPostId,
       });
-    } else {
+    else
       await mutateCreatePost({
         ...data,
         name: session?.user?.name,
@@ -151,12 +155,11 @@ const CreateForm = () => {
           ? imageUrls.map((image) => ({
               url: image.url,
               fallbackUrl: image.fallbackUrl,
-              width: 200,
-              height: 50,
+              width: image.width,
+              height: image.height,
             }))
           : null,
       });
-    }
 
     return handleOnReset();
   };
@@ -164,6 +167,25 @@ const CreateForm = () => {
   const message = watch("message");
 
   useClickOutside(ref, () => setPostOpen(false));
+
+  useEffect(() => {
+    postOpen && (document.body.style.overflow = "hidden");
+
+    const focusTrap = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setPostOpen(false);
+      }
+
+      if (event.key !== "Tab") return;
+    };
+
+    document.addEventListener("keydown", focusTrap);
+
+    return () => {
+      document.body.style.overflow = "unset";
+      document.removeEventListener("keydown", focusTrap);
+    };
+  }, [postOpen, setPostOpen]);
 
   const enabledButton = !isUploading && message?.trim().length > 0;
 
@@ -189,7 +211,7 @@ const CreateForm = () => {
             </h3>
 
             <Button
-              className="rounded-full p-2 text-gray-700 transition duration-75 ease-in bg-[#edf1f5] hover:bg-[#e5e8eb]"
+              className="rounded-full bg-[#edf1f5] p-2 text-gray-700 transition duration-75 ease-in hover:bg-[#e5e8eb]"
               aria-label="close modal"
               onClick={() => handleOnReset()}
             >

@@ -9,61 +9,61 @@ import { prisma } from "@/server/db";
 import Layout from "@/components/layout";
 import Section from "@/components/shared/section";
 import { BsFillPersonPlusFill } from "react-icons/bs";
-import { AiFillCamera } from "react-icons/ai";
-import Image from "@/components/shared/image";
 import { trpc } from "@/utils/trpc";
 import PostItem from "@/components/posts/post-item";
 import type { Post as PostType, User } from "@/types/types";
+import { InView } from "react-intersection-observer";
+import { ToastContainer } from "react-toastify";
+import CreateForm from "@/components/form/post";
+import usePostStore from "@/store/post";
+import CreateButton from "@/components/posts/create-button";
+import ProfilePhoto from "@/components/profile/profile-photo";
+import CoverPhoto from "@/components/profile/cover";
+import { useRouter } from "next/router";
 
 interface ProfileProps {
   user: User;
 }
 
-const Profile: NextPage<ProfileProps> = ({ user }) => {
-  const { data, isLoading, refetch } = trpc.post.getPostsById.useQuery({
-    limit: 3,
-    id: user.id,
-  });
+const Profile: NextPage<ProfileProps> = () => {
+  const router = useRouter();
+  const userId = router.query?.id as string;
 
-  console.log(user);
+  const { data: user, isLoading: isUserLoading } =
+    trpc.user.getUserById.useQuery({
+      id: userId,
+    });
+
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+    isError,
+  } = trpc.post.getPostsById.useInfiniteQuery(
+    { id: userId, limit: 3 },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextSkip,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const postOpen = usePostStore((store) => store.postOpen);
 
   return (
     <Layout>
       <Section>
         <div className="col-span-full lg:col-span-9 xl:col-span-6">
           <div className="mt-1">
-            <div className="relative h-56 w-full overflow-hidden bg-white shadow">
-              <div className="h-full w-full">
-                <div className="absolute inset-0 -z-10 bg-[#0f1624] shadow-xl"></div>
-                <Image
-                  src=""
-                  alt="profile"
-                  layout="fill"
-                  objectFit="cover"
-                  containerclassnames="h-full w-full relative"
-                />
-                <button className="absolute right-3 bottom-3 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 shadow-md">
-                  <AiFillCamera size={20} />
-                </button>
-              </div>
-            </div>
+            <CoverPhoto userId={user?.id || ""} coverPhoto={user?.coverPhoto} />
             <div className="space-y-4">
               <div className="flex flex-col justify-center bg-white shadow md:flex-row md:justify-between">
                 <div className="flex flex-col items-center justify-center gap-3 px-5 pt-2 pb-2 md:flex-row md:pb-5">
-                  <div className="relative -mt-20 flex-shrink-0">
-                    <Image
-                      className="relative rounded-full border-4 border-gray-800 bg-gray-900"
-                      src="/default-image.png"
-                      alt=""
-                      objectFit="cover"
-                      layout="fill"
-                      containerclassnames="relative h-28 w-28"
-                    />
-
-                    <button className="absolute right-0 bottom-3 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-[#6a55fa] shadow-md">
-                      <AiFillCamera size={20} />
-                    </button>
-                  </div>
+                  <ProfilePhoto
+                    userId={user?.id || ""}
+                    image={user?.image || ""}
+                  />
                   <div className="text-center sm:text-left">
                     <div>
                       <h1 className="text-lg font-semibold capitalize text-black">
@@ -97,19 +97,42 @@ const Profile: NextPage<ProfileProps> = ({ user }) => {
               </div>
             </div>
           </div>
+          <CreateButton />
 
-          <div className="mt-3">
-            <div>
-              <ul className="mt-4 flex flex-col gap-4">
-                {/* {data?.posts.map((post) => (
-                  <PostItem key={post.id} post={post as PostType<User>} />
-                ))} */}
-              </ul>
+          <div>
+            <ul className="flex flex-col">
+              <React.Fragment>
+                {isLoading ? (
+                  <div>loading...</div>
+                ) : (
+                  data?.pages.map((page) =>
+                    page.posts.map((post) => (
+                      <PostItem post={post as PostType<User>} key={post.id} />
+                    ))
+                  )
+                )}
+                {postOpen && <CreateForm />}
+                <InView
+                  fallbackInView
+                  onChange={async (InView) => {
+                    if (InView && hasNextPage && !isFetchingNextPage) {
+                      await fetchNextPage();
+                    }
+                  }}
+                >
+                  {({ ref }) => (
+                    <div ref={ref} className="mt-4 w-full">
+                      {isFetchingNextPage && <span>Loading...</span>}
+                    </div>
+                  )}
+                </InView>
+                <ToastContainer />
+              </React.Fragment>
+            </ul>
 
-              <p className="text-center text-sm text-gray-300">
-                There are no more posts to show right now
-              </p>
-            </div>
+            <p className="text-center text-sm text-gray-300">
+              There are no more posts to show right now
+            </p>
           </div>
         </div>
       </Section>
@@ -134,33 +157,11 @@ export const getServerSideProps: GetServerSideProps = async (
     };
   }
 
-  try {
-    const id = context.params?.id as string;
-
-    if (!id) throw new Error();
-
-    const user = await prisma.user.findFirstOrThrow({
-      where: { id },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        coverPhoto: true,
-        image: true,
-      },
-    });
-
-    return {
-      props: {
-        user,
-      },
-    };
-  } catch (error) {
-    return {
-      props: {},
-      notFound: true,
-    };
-  }
+  return {
+    props: {
+      session,
+    },
+  };
 };
 
 export default Profile;

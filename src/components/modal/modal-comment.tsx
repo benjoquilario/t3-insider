@@ -4,8 +4,8 @@ import { FaEdit } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
 
 type ModalCommentProps = {
-  handleEdit: () => void;
-  handleDelete: () => void;
+  handleEdit?: () => void;
+  handleDelete?: () => void;
 };
 
 const ModalComment: React.FC<ModalCommentProps> = ({

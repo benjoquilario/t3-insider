@@ -4,7 +4,7 @@ import {
   postIdSchema,
 } from "@/server/schema/post";
 import z from "zod";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const postRouter = createTRPCRouter({
   createPost: protectedProcedure
@@ -97,10 +97,13 @@ export const postRouter = createTRPCRouter({
               id: true,
               name: true,
               email: true,
+              image: true,
             },
           },
           likes: {
             select: {
+              id: true,
+              postId: true,
               user: {
                 select: {
                   name: true,
@@ -163,13 +166,51 @@ export const postRouter = createTRPCRouter({
         where: {
           userId: input.id,
         },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+            },
+          },
+          likes: {
+            select: {
+              id: true,
+              postId: true,
+              user: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+          _count: {
+            select: {
+              likes: true,
+              comment: true,
+            },
+          },
+          selectedFile: true,
+        },
         orderBy: { createdAt: "desc" },
         take: input?.limit || 3,
         skip,
       });
 
+      const isLiked = await ctx.prisma.likes.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          postId: { in: posts.map((post) => post.id) },
+        },
+      });
+
       return {
-        posts: posts.map((post) => post),
+        posts: posts.map((post) => ({
+          ...post,
+          isLike: isLiked.some((like) => post.id === like.postId),
+        })),
         hasNextPage: posts.length < (input.limit || 3) ? false : true,
         nextSkip:
           posts.length < (input.limit || 3)

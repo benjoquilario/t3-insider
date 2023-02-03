@@ -1,6 +1,6 @@
 import { useEffect, type RefObject } from "react";
 
-type Event = MouseEvent | TouchEvent;
+type Event = MouseEvent | TouchEvent | KeyboardEvent;
 
 function useClickOutside<T extends HTMLElement = HTMLElement>(
   ref: RefObject<T>,
@@ -11,8 +11,10 @@ function useClickOutside<T extends HTMLElement = HTMLElement>(
       if (!ref.current || ref.current.contains(event.target as Node) || null) {
         return;
       }
+
       handler?.(event);
     };
+
     document.addEventListener("mousedown", listener);
     document.addEventListener("touchstart", listener);
     return () => {
