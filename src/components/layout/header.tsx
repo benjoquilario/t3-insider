@@ -6,7 +6,8 @@ import { IoIosPeople } from "react-icons/io";
 import { AiFillHome } from "react-icons/ai";
 import classNames from "classnames";
 import Button from "@/components/shared/button";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
+import { trpc } from "@/utils/trpc";
 import React from "react";
 
 const LINKS = [
@@ -37,7 +38,7 @@ const LINKS = [
 ];
 
 const Header = () => {
-  const { data: session } = useSession();
+  const { data: authUser } = trpc.user.authUser.useQuery();
 
   return (
     <div className="col-span-3 hidden lg:block">
@@ -57,8 +58,8 @@ const Header = () => {
               <div className="relative h-12 w-12">
                 <Image
                   layout="fill"
-                  src="/default-image.png"
-                  alt="profile"
+                  src={authUser?.image || ""}
+                  alt={authUser?.name || ""}
                   objectFit="cover"
                   className="rounded-full"
                 />
@@ -66,10 +67,10 @@ const Header = () => {
             </Link>
             <div className="ml-2 flex flex-col justify-center">
               <Link
-                href={`profile/${session?.user?.id as string}`}
+                href={`profile/${authUser?.id || ""}`}
                 className="text-base font-semibold capitalize text-black"
               >
-                {session?.user?.name}
+                {authUser?.name}
               </Link>
               <span className="text-xs text-gray-500">21 Followers</span>
             </div>
@@ -84,7 +85,7 @@ const Header = () => {
                     aria-label={link.linkName}
                     href={`${link.href}${
                       link.href.includes("profile")
-                        ? `/${session?.user?.id as string}`
+                        ? `/${authUser?.id || ""}`
                         : ""
                     }`}
                     className={classNames(

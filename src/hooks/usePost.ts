@@ -75,8 +75,6 @@ const usePost = () => {
     },
   });
 
-  console.log(isUploading);
-
   const sumOfCurrentUploaded = useMemo(
     () => watch("imageUploadProgress")?.reduce((sum, entry) => sum + entry, 0),
     [watch]

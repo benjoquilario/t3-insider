@@ -18,7 +18,7 @@ const CreateButton = () => {
   };
 
   return (
-    <div className="relative my-3 flex h-20 items-center justify-start gap-2 overflow-hidden rounded border border-gray-200 bg-white p-2 px-1 md:px-3">
+    <div className="relative my-2 flex h-20 items-center justify-start gap-2 overflow-hidden rounded border border-gray-200 bg-white p-2 px-1 md:px-3">
       <div className="min-h-6 max-w-20 w-12">
         <Link href={`profile/${session.data?.user?.id as string}`} tabIndex={0}>
           <div className="relative h-11 w-11 overflow-hidden before:absolute before:top-0 before:left-0 before:-z-10 before:h-full before:w-full before:rounded-full before:bg-gray-900">

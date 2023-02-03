@@ -11,11 +11,6 @@ const Home: NextPage = () => {
         <div className="col-span-full lg:col-span-9 xl:col-span-6">
           <Main />
         </div>
-        <div className="hidden xl:col-span-3 xl:block">
-          <div className="sticky top-0">
-            <div className="flex items-center justify-between"></div>
-          </div>
-        </div>
       </Section>
     </Layout>
   );
