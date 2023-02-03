@@ -78,14 +78,117 @@ export const commentRouter = createTRPCRouter({
               email: true,
             },
           },
+          likeComment: {
+            select: {
+              id: true,
+              commentId: true,
+              user: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+
+          _count: {
+            select: {
+              likeComment: true,
+              reply: true,
+            },
+          },
         },
         orderBy: { createdAt: "desc" },
         take: input?.limit || 3,
         skip,
       });
 
+      const isLiked = await ctx.prisma.likeComment.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          commentId: { in: comments.map((comment) => comment.id) },
+        },
+      });
+
       return {
-        comments: comments.map((comment) => comment),
+        comments: comments.map((comment) => ({
+          ...comment,
+          isLike: isLiked.some((like) => comment.id === like.commentId),
+        })),
+        hasNextPage: comments.length < (input.limit || 3) ? false : true,
+        nextSkip:
+          comments.length < (input.limit || 3)
+            ? null
+            : skip + (input.limit as number),
+      };
+    }),
+  replyComment: protectedProcedure
+    .input(createCommentSchema)
+    .mutation(async ({ ctx, input }) => {
+      const comment = await ctx.prisma.replyComment.create({
+        data: {
+          comment: input.comment,
+          userId: ctx.session.user.id,
+          replyToId: input.commentId,
+        },
+      });
+
+      return {
+        comment,
+      };
+    }),
+  updateReplyComment: protectedProcedure
+    .input(createCommentSchema)
+    .mutation(async ({ ctx, input }) => {
+      await ctx.prisma.replyComment.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          comment: input.comment,
+        },
+      });
+    }),
+  getReplyComments: protectedProcedure
+    .input(commentSchema)
+    .query(async ({ ctx, input }) => {
+      const skip = input?.cursor || 0;
+      const comments = await ctx.prisma.replyComment.findMany({
+        where: {
+          replyToId: input.commentId,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          likeReplyComments: {
+            select: {
+              id: true,
+              replyId: true,
+              user: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+          _count: {
+            select: {
+              likeReplyComments: true,
+            },
+          },
+        },
+
+        orderBy: { createdAt: "desc" },
+        take: input?.limit || 3,
+        skip,
+      });
+
+      return {
+        replyComments: comments.map((comment) => comment),
         hasNextPage: comments.length < (input.limit || 3) ? false : true,
         nextSkip:
           comments.length < (input.limit || 3)
