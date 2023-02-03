@@ -61,7 +61,9 @@ model User {
     post          Post[]
     comment       Comment[]
     postLike      Postlike[]
+    likeComment   LikeComment[]
     reply         ReplyComment[]
+    LikeReplyCOmment LikeReplyComment[]
     createdAt     DateTime @default(now())
     updatedAt     DateTime @updatedAt
 }
@@ -88,6 +90,14 @@ model Likes {
     postId        String?
 }
 
+model LikeComment {
+    id            String   @id @default(cuid()) @map("_id")
+    user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId        String?
+    comment       Comment?    @relation(fields: [commentId], references: [id])
+    commentId      String?
+}
+
 model Comment {
     id            String   @id @default(cuid()) @map("_id")
     comment       String
@@ -98,6 +108,7 @@ model Comment {
     createdAt     DateTime @default(now())
     updatedAt     DateTime @updatedAt
     reply         ReplyComment[]
+    likeComment   LikeComment[]
 }
 
 model ReplyComment {
@@ -107,8 +118,17 @@ model ReplyComment {
     updatedAt    DateTime @updatedAt
     replyTo      Comment? @relation(fields: [replyToId], references: [id], onDelete: Cascade)
     replyToId    String?
+    likeReplyComments LikeReplyComment[]
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId       String
+}
+
+model LikeReplyComment {
+    id            String   @id @default(cuid()) @map("_id")
+    user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId        String?
+    replyComments ReplyComment?    @relation(fields: [replyId], references: [id])
+    replyId       String?
 }
 
 model Postlike {

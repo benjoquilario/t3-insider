@@ -1,5 +1,6 @@
 import React from "react";
 import Header from "../layout/header";
+import Users from "@/components/users";
 
 type SectionProps = {
   children: React.ReactNode;
@@ -13,9 +14,12 @@ const Section: React.FC<SectionProps> = ({
   showHeader = true,
 }) => {
   return (
-    <div className="mx-auto grid h-full min-h-screen w-full max-w-screen-2xl grid-cols-12 gap-6 p-3 md:p-5">
+    <div className="mx-auto grid h-full min-h-screen w-full max-w-screen-2xl grid-cols-12 gap-6 p-3 md:py-4 md:px-10">
       {showHeader && <Header />}
       {children}
+      <div className="hidden xl:col-span-3 xl:block">
+        <Users />
+      </div>
       {showFooter && <footer>Footer.</footer>}
     </div>
   );
