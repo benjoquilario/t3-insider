@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { useWatch, type Control, type UseFormSetValue } from "react-hook-form";
 import type { PostValues } from "../form/post";
 import { HiPhoto } from "react-icons/hi2";
+import { RiCloseFill } from "react-icons/ri";
 import ImageThumbnail from "../shared/image-thumbnail";
 import Image from "../shared/image";
 import classNames from "classnames";
 import type { SelectedFileType } from "@/types/types";
+import { trpc } from "@/utils/trpc";
+import Button from "../shared/button";
+import usePostStore from "@/store/post";
 
 interface PostInputProps {
   control: Control<PostValues>;
@@ -24,6 +28,11 @@ const PostInput: React.FC<PostInputProps> = ({
   disabled,
   selectedFile,
 }) => {
+  const setIsRemove = usePostStore((store) => store.setIsRemove);
+  const [currentImages, setCurrentImages] = useState<
+    SelectedFileType[] | undefined
+  >(selectedFile);
+  const setDeleteImages = usePostStore((store) => store.setDeleteImages);
   const selectedImage = useWatch({
     control,
     name: "selectedFile",
@@ -37,26 +46,44 @@ const PostInput: React.FC<PostInputProps> = ({
     );
   };
 
+  const handleRemove = (id: string) => {
+    setDeleteImages(id);
+    setIsRemove(true);
+    const removeItem = currentImages?.filter((image) => image.id !== id);
+
+    setCurrentImages(removeItem);
+  };
+
   return (
     <div className="rounded-b-md bg-white p-3">
       <div
         className={classNames(
           " relative overflow-auto",
-          selectedFile?.length || selectedImage.length ? "h-56" : ""
+          currentImages?.length || selectedImage.length ? "h-56" : ""
         )}
       >
-        {selectedFile?.length
-          ? selectedFile?.map((image, index) => (
-              <Image
-                key={index}
-                src={image.url}
-                layout="responsive"
-                width={image.width}
-                height={image.height}
-                objectFit="cover"
-                className="rounded-lg"
-                alt=""
-              />
+        {currentImages?.length
+          ? currentImages?.map((image, index) => (
+              <div className={classNames("relative")} key={index}>
+                <Button
+                  type="button"
+                  onClick={() => handleRemove(image.id)}
+                  className="absolute top-2 right-0 z-50 rounded-full bg-gray-600 p-1 text-white transition duration-75 ease-in hover:bg-gray-700"
+                >
+                  <RiCloseFill aria-hidden="true" size={22} />
+                </Button>
+                <div className={classNames("relative")}>
+                  <Image
+                    src={image.url}
+                    layout="responsive"
+                    width={image.width}
+                    height={image.height}
+                    objectFit="cover"
+                    className="rounded-lg"
+                    alt=""
+                  />
+                </div>
+              </div>
             ))
           : null}
         {selectedImage.length
@@ -72,7 +99,7 @@ const PostInput: React.FC<PostInputProps> = ({
           : null}
       </div>
 
-      <div className="flex items-center gap-4 rounded border border-gray-200 py-2 px-2">
+      <div className="flex items-center gap-4 rounded border border-zinc-200 py-2 px-2">
         <p className="text-sm text-black md:text-sm">Upload Photo :</p>
         <div className="overflow-hidden rounded-full p-1 text-xs text-white transition hover:bg-zinc-100 md:text-sm">
           <button

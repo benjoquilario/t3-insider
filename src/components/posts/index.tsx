@@ -6,31 +6,15 @@ import type { Post as PostType, User } from "@/types/types";
 import usePostStore from "@/store/post";
 import { InView } from "react-intersection-observer";
 import { ToastContainer } from "react-toastify";
-import { useSession } from "next-auth/react";
-import { toast } from "react-toastify";
-import ModalDelete from "../modal/modal-delete";
-import useCommentStore from "@/store/comment";
+import Delete from "@/components/delete";
+import PostSkeleton from "../skeleton/post-skeleton";
 
 const CreateForm = dynamic(() => import("@/components/form/post"), {
   ssr: false,
 });
 
-type PostsProps = {
-  type: "getFollowingPosts" | "getPosts" | string;
-};
-
-const Posts: React.FC<PostsProps> = ({ type }) => {
-  const utils = trpc.useContext();
-  const { data: session } = useSession();
+const Posts = () => {
   const postOpen = usePostStore((store) => store.postOpen);
-  const [isModalDeletePostOpen, setIsModalDeletePostOpen] = usePostStore(
-    (store) => [store.isModalDeletePostOpen, store.setIsModalDeletePostOpen]
-  );
-  const currentPostId = usePostStore((store) => store.currentPostId);
-  const commentId = useCommentStore((store) => store.commentId);
-  const [isCommentModalOpen, setIsCommentModalOpen] = useCommentStore(
-    (store) => [store.isCommentModalOpen, store.setIsCommentModalOpen]
-  );
 
   const {
     data,
@@ -39,6 +23,7 @@ const Posts: React.FC<PostsProps> = ({ type }) => {
     hasNextPage,
     fetchNextPage,
     isError,
+    error,
   } = trpc.post.getPosts.useInfiniteQuery(
     { limit: 3 },
     {
@@ -47,68 +32,18 @@ const Posts: React.FC<PostsProps> = ({ type }) => {
     }
   );
 
-  const { mutate: mutateDeletePost, isLoading: isDeleteLoading } =
-    trpc.post.deletePost.useMutation({
-      onError: (e) => console.log(e.message),
-      onSuccess: async () => {
-        await utils.post.getPosts.invalidate();
-        await utils.post.getPostsById.invalidate({
-          id: session?.user?.id,
-          limit: 3,
-        });
-        toast("Your post was deleted successfully", {
-          type: "success",
-          position: toast.POSITION.BOTTOM_RIGHT,
-        });
-      },
-    });
-
-  const { mutate: mutateDeleteComment } =
-    trpc.comment.deleteComment.useMutation({
-      onError: (e) => console.log(e.message),
-      onSuccess: async () => {
-        await utils.comment.getComments.invalidate();
-      },
-    });
-
-  const handleDeletePost = () => {
-    mutateDeletePost({ id: currentPostId });
-    setIsModalDeletePostOpen(false);
-  };
-
-  const handleDeleteComment = () => {
-    mutateDeleteComment({ id: commentId });
-    setIsCommentModalOpen(false);
-  };
-
   return (
     <React.Fragment>
-      <ul>
-        {isLoading ? (
-          <li>loading...</li>
-        ) : (
-          data?.pages.map((page) =>
-            page.posts.map((post) => (
-              <PostItem post={post as PostType<User>} key={post.id} />
-            ))
-          )
-        )}
-        {isModalDeletePostOpen && (
-          <ModalDelete
-            type="Post"
-            handleDelete={handleDeletePost}
-            isModalOpen={isModalDeletePostOpen}
-            setIsModalOpen={setIsModalDeletePostOpen}
-          />
-        )}
-        {isCommentModalOpen && (
-          <ModalDelete
-            type="Comment"
-            handleDelete={handleDeleteComment}
-            isModalOpen={isCommentModalOpen}
-            setIsModalOpen={setIsCommentModalOpen}
-          />
-        )}
+      {isError && <div>Error</div>}
+      <ul className="space-y-3">
+        {isLoading
+          ? Array.from(Array(2), (_, i) => <PostSkeleton key={i} />)
+          : data?.pages.map((page) =>
+              page.posts.map((post) => (
+                <PostItem post={post as PostType<User>} key={post.id} />
+              ))
+            )}
+        <Delete />
         {postOpen && <CreateForm />}
         <InView
           fallbackInView
@@ -120,7 +55,8 @@ const Posts: React.FC<PostsProps> = ({ type }) => {
         >
           {({ ref }) => (
             <div ref={ref} className="mt-4 w-full">
-              {isFetchingNextPage && <span>Loading...</span>}
+              {isFetchingNextPage &&
+                Array.from(Array(2), (_, i) => <PostSkeleton key={i} />)}
             </div>
           )}
         </InView>

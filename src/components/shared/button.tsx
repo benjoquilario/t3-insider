@@ -1,16 +1,36 @@
 import React from "react";
 
-type ButtonProps = {
+export type ButtonProps = {
   type?: "button" | "submit" | "reset";
   className?: string;
   children?: React.ReactNode;
-} & React.HTMLProps<HTMLButtonElement>;
+  onClick?: (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null
+  ) => void;
+} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onClick">;
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
-    const { type, className, children, ...buttonProps } = props;
+    const {
+      type,
+      className,
+      children,
+      onClick,
+      disabled = false,
+      ...buttonProps
+    } = props;
     return (
-      <button ref={ref} type={type} className={className} {...buttonProps}>
+      <button
+        onClick={(e) => {
+          if (disabled) return;
+
+          onClick?.(e);
+        }}
+        ref={ref}
+        type={type}
+        className={className}
+        {...buttonProps}
+      >
         {children}
       </button>
     );

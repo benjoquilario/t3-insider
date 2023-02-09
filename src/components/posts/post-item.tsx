@@ -30,6 +30,7 @@ import useClickOutside from "hooks/useClickOutside";
 import ReactTimeAgo from "react-time-ago";
 import en from "javascript-time-ago/locale/en.json";
 import TimeAgo from "javascript-time-ago";
+import { useRouter } from "next/router";
 
 TimeAgo.addDefaultLocale(en);
 
@@ -39,6 +40,7 @@ type PostItemProps = {
 
 const PostItem: React.FC<PostItemProps> = ({ post }) => {
   const utils = trpc.useContext();
+  const router = useRouter();
   const ref = useRef<HTMLDivElement | null>(null);
   const { data: session } = useSession();
   const [isCommentOpen, setIsCommentOpen] = useState(false);
@@ -91,7 +93,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
       variants={variants}
       animate="visible"
       exit="hidden"
-      className="relative z-10 mt-2 flex flex-col gap-1 overflow-hidden rounded-md border border-gray-200 bg-white"
+      className="relative z-10 flex flex-col gap-1 overflow-hidden rounded-md bg-white shadow "
     >
       <div className="flex gap-3 p-3">
         <Link href={`/profile/${post.userId}`} aria-label={post.user.name}>
@@ -108,12 +110,12 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
         <div className="mr-auto flex flex-col self-center leading-none">
           <Link
             href={`/profile/${post.userId}`}
-            className="block text-base font-semibold capitalize text-black"
+            className="block text-base font-semibold capitalize text-zinc-900"
             aria-label={post.user.name}
           >
             {post.name}
           </Link>
-          <span className="text-xs text-gray-700">
+          <span className="text-xs text-zinc-700">
             <ReactTimeAgo date={post.createdAt} />
           </span>
         </div>
@@ -122,7 +124,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
             <div>
               <Button
                 onClick={() => setIsModalOpen((prev) => !prev)}
-                className="rounded-full p-1 text-gray-800 hover:bg-[#edf1f5]"
+                className="rounded-full p-1 text-zinc-800 hover:bg-zinc-100"
                 aria-label="action list"
               >
                 <BiDotsHorizontalRounded aria-hidden="true" size={26} />
@@ -160,7 +162,12 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
                   post.selectedFile.length === 3 && index === 2 && "self-end"
                 )}
               >
-                <div className="relative h-full">
+                <div
+                  className="relative h-full cursor-pointer"
+                  tabIndex={0}
+                  role="button"
+                  onClick={() => router.push(`/post/${post.id}`)}
+                >
                   <Image
                     src={image.url}
                     layout="responsive"
@@ -180,74 +187,87 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
       )}
       <div className="mt-2 flex items-center justify-between px-5">
         <div className="flex items-center gap-1 text-sm text-black">
-          <AiFillLike aria-hidden="true" size={17} />
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+            <AiFillLike aria-hidden="true" size={13} className="text-white" />
+          </span>
           {post._count.likes !== 0 && (
             <React.Fragment>
               {isLikeLoading ? (
                 <ImSpinner8 className="h-3 w-3 animate-spin" />
               ) : (
-                <span className="font-semibold text-gray-800">
+                <span className=" font-normal text-zinc-800">
                   {post._count.likes}
                 </span>
               )}
             </React.Fragment>
           )}
         </div>
-        <div className="flex gap-1 text-sm font-semibold text-gray-400">
+        <div className="flex gap-1 text-sm font-semibold text-zinc-500">
           <span>{post._count.comment}</span>
           <BiComment aria-hidden="true" size={20} />
         </div>
       </div>
-      <div className="mt-1 flex justify-between border-t border-gray-200 font-light shadow">
-        <Button
-          className="flex flex-1 items-center justify-center gap-1 rounded-md py-2 px-6 text-gray-600	hover:bg-[#edf1f5]"
-          aria-label="Like Post"
-          onClick={handleLikePost}
-        >
-          {isLiked ? (
-            <React.Fragment>
-              <motion.span>
-                <AiFillLike
+      <ul className="rou mx-1 mt-1 flex justify-between rounded-t-md border-t border-zinc-200 font-light">
+        <li className="w-full flex-1 py-1">
+          <Button
+            className="flex w-full items-center justify-center gap-1 rounded-md py-1 px-6 text-zinc-600	hover:bg-zinc-100"
+            aria-label="Like Post"
+            onClick={handleLikePost}
+          >
+            {isLiked ? (
+              <React.Fragment>
+                <motion.span>
+                  <AiFillLike
+                    aria-hidden="true"
+                    size={21}
+                    className="text-primary"
+                  />
+                </motion.span>
+                <span className={classNames("text-sm font-bold text-primary")}>
+                  Like
+                </span>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <AiOutlineLike
                   aria-hidden="true"
-                  size={21}
-                  className="text-primary"
+                  size={20}
+                  className="text-zinc-900"
                 />
-              </motion.span>
-              <span className={classNames("text-sm font-bold text-primary")}>
-                Like
-              </span>
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              <AiOutlineLike
-                aria-hidden="true"
-                size={20}
-                className="text-black"
-              />
-              <span
-                className={classNames("text-sm font-semibold text-gray-600")}
-              >
-                Like
-              </span>
-            </React.Fragment>
-          )}
-        </Button>
-        <Button
-          onClick={() => setIsCommentOpen(true)}
-          className={`flex flex-1 items-center justify-center gap-1 border-x border-gray-200 py-2 px-6 text-gray-600 hover:bg-[#edf1f5]`}
-          aria-label="Leave a Comment"
-        >
-          <BiComment aria-hidden="true" size={20} />
-          <span className="text-sm font-semibold text-gray-600">Comment</span>
-        </Button>
-        <Button
-          aria-label="Share a post"
-          className="flex flex-1 items-center justify-center gap-1 rounded-md py-2 px-6 text-gray-600 hover:bg-[#edf1f5]"
-        >
-          <IoMdShareAlt aria-hidden="true" size={20} />
-          <span className="text-sm font-semibold text-gray-600">Share</span>
-        </Button>
-      </div>
+                <span
+                  className={classNames("text-sm font-semibold text-zinc-800")}
+                >
+                  Like
+                </span>
+              </React.Fragment>
+            )}
+          </Button>
+        </li>
+
+        <li className="w-full flex-1 py-1">
+          <Button
+            onClick={() => setIsCommentOpen(true)}
+            className={`flex w-full items-center justify-center gap-1 py-1 px-6 text-zinc-600 hover:bg-zinc-100`}
+            aria-label="Leave a Comment"
+          >
+            <BiComment aria-hidden="true" size={20} className="text-zinc-900" />
+            <span className="text-sm font-semibold text-zinc-800">Comment</span>
+          </Button>
+        </li>
+        <li className="w-full flex-1 py-1">
+          <Button
+            aria-label="Share a post"
+            className="flex w-full items-center justify-center gap-1 rounded-md py-1 px-6 text-zinc-600 hover:bg-zinc-100"
+          >
+            <IoMdShareAlt
+              aria-hidden="true"
+              size={20}
+              className="text-zinc-900"
+            />
+            <span className="text-sm font-semibold text-zinc-800">Share</span>
+          </Button>
+        </li>
+      </ul>
       {isCommentOpen && <Comments postId={post.id} />}
       {isModalOpen && (
         <ModalPost

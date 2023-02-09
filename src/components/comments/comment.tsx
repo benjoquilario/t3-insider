@@ -44,19 +44,18 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
 
   useClickOutside(ref, () => setIsModalOpen(false));
 
-  const { mutate: mutateDeleteComment, isLoading } =
-    trpc.comment.deleteComment.useMutation({
-      onError: (e) => console.log(e.message),
-      onSuccess: async () => {
-        await utils.comment.getComments.invalidate();
-      },
+  const onSuccess = async () => {
+    await utils.comment.getComments.invalidate({
+      postId: comment.postId,
+      limit: 3,
     });
+  };
 
   const { mutate: mutateLikeComent, isLoading: isLikeLoading } =
     trpc.like.likeComment.useMutation({
       onError: (e) => console.log(e.message),
       onSuccess: async () => {
-        await utils.comment.getComments.invalidate();
+        await onSuccess();
       },
     });
 
@@ -83,7 +82,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
   };
 
   return (
-    <div>
+    <li>
       <div className="relative flex pt-2 pl-6">
         <div className="relative mt-1 mr-2 block rounded-full">
           {isReplyOpen || comment._count.reply > 0 ? (
@@ -96,9 +95,9 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
             >
               <div className="relative inline-block">
                 <Image
-                  className="h-9 w-9 rounded-full object-cover"
-                  src="/default-image.png"
-                  alt="prof"
+                  className="rounded-full"
+                  src={comment.user?.image || "/default-image.png"}
+                  alt={comment.user?.name || ""}
                   objectFit="cover"
                   layout="fill"
                   containerclassnames="h-9 w-9"
@@ -117,7 +116,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
               <div className="relative inline-flex w-full align-middle">
                 <div className="base-[auto] w-full min-w-0 shrink grow">
                   <div
-                    className="relative inline-block max-w-full whitespace-normal break-words rounded-2xl bg-zinc-100 text-gray-900"
+                    className="relative inline-block max-w-full whitespace-normal break-words rounded-2xl bg-zinc-100 text-zinc-900"
                     style={{ wordBreak: "break-word" }}
                   >
                     <div className="py-2 pl-4 pr-7">
@@ -129,7 +128,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
                           >
                             <span className="inline-flex">
                               <span
-                                className="max-w-full text-[15px] font-semibold capitalize text-gray-900 underline-offset-1 hover:underline"
+                                className="max-w-full text-[15px] font-semibold capitalize text-zinc-900 underline-offset-1 hover:underline"
                                 style={{ wordBreak: "break-word" }}
                               >
                                 {comment.user?.name}
@@ -157,21 +156,21 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
                   </div>
 
                   <div className="absolute -right-2 -bottom-2 ">
-                    <div className="relative flex items-center rounded-full bg-white px-1 shadow">
+                    <div className="relative flex items-center gap-1 rounded-full bg-white px-1 shadow">
                       {isLiked || comment._count.likeComment > 0 ? (
-                        <div className="rounded-full">
-                          <AiFillLike className="h-4 w-4 text-primary" />
+                        <div className="flex h-4 w-4 items-center justify-center rounded-full bg-primary">
+                          <AiFillLike size={12} className="text-white" />
                         </div>
                       ) : null}
 
                       {isLikeLoading ? (
                         <Loader
-                          classNameContainer="bottom-[-7px] left-[-13px] absolute text-gray-800"
+                          classNameContainer="bottom-[-7px] left-[-13px] absolute text-zinc-800"
                           classNameIcon="h-3 w-3 animate-spin"
                         />
                       ) : (
                         comment._count.likeComment !== 0 && (
-                          <span className="text-sm font-bold text-gray-700">
+                          <span className="text-sm font-medium text-zinc-700">
                             {comment._count.likeComment}
                           </span>
                         )
@@ -180,14 +179,14 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
                   </div>
                 </div>
               </div>
-              <div className="ml-3 flex gap-2 text-xs font-semibold text-gray-600">
+              <div className="ml-3 flex gap-2 text-xs font-semibold text-zinc-600">
                 <Button
                   onClick={handleLikeComment}
                   className={classNames(
                     "underline-offset-1 hover:underline",
                     isLiked
                       ? "font-bold text-primary"
-                      : "font-normal text-gray-600"
+                      : "font-normal text-zinc-600"
                   )}
                 >
                   Like
@@ -198,7 +197,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
                 >
                   Reply
                 </Button>
-                <span className="text-xs text-gray-700">
+                <span className="text-xs text-zinc-700">
                   <ReactTimeAgo
                     timeStyle="twitter"
                     locale="en-US"
@@ -208,7 +207,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
               </div>
               {comment._count.reply !== 0 && !isReplyOpen ? (
                 <div className="mt-2 ml-3">
-                  <div className="absolute left-[42px] h-[13px] w-[27px] rounded-l-md border-l-2 border-b-2 border-gray-300 border-t-white"></div>
+                  <div className="absolute left-[42px] h-[13px] w-[27px] rounded-l-md border-l-2 border-b-2 border-zinc-300 border-t-white"></div>
                   <button
                     onClick={() => setIsReplyOpen(true)}
                     className="flex items-center gap-1 text-sm font-semibold underline-offset-1 hover:underline"
@@ -234,7 +233,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
           {isModalOpen && (
             <div
               ref={ref}
-              className="absolute top-12 right-3 z-30 h-auto rounded border border-solid border-gray-600 bg-gray-800 shadow-xl md:top-[21px] md:right-[60px]"
+              className="absolute top-12 right-3 z-30 h-auto rounded border border-solid border-zinc-600 bg-zinc-800 shadow-xl md:top-[21px] md:right-[60px]"
             >
               <ModalComment
                 handleEdit={handleUpdateComment}
@@ -246,7 +245,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
             <div className="absolute top-3 right-5 self-end">
               <Button
                 onClick={() => setIsModalOpen((prev) => !prev)}
-                className="rounded-full p-1 text-gray-800 transition hover:bg-zinc-200"
+                className="rounded-full p-1 text-zinc-800 transition hover:bg-zinc-200"
                 aria-label="action list"
               >
                 <BiDotsHorizontalRounded aria-hidden="true" size={22} />
@@ -255,7 +254,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
           )}
         </div>
       </div>
-    </div>
+    </li>
   );
 };
 
