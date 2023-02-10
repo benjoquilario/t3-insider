@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, useCallback } from "react";
 import Button from "../shared/button";
 import Link from "next/link";
 import Image from "../shared/image";
@@ -42,8 +42,6 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
     [comment]
   );
 
-  useClickOutside(ref, () => setIsModalOpen(false));
-
   const onSuccess = async () => {
     await utils.comment.getComments.invalidate({
       postId: comment.postId,
@@ -59,8 +57,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
       },
     });
 
-  const handleLikeComment = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleLikeComment = () => {
     mutateLikeComent({
       commentId: comment.id,
       id: likes?.id,
@@ -79,6 +76,14 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
     setCommentId(comment.id);
     setCommentMessage(comment.comment);
     setFocus("comment");
+  };
+
+  const hideModalComment = useCallback(() => setIsModalOpen(false), []);
+
+  useClickOutside(ref, () => hideModalComment());
+
+  const handleModalOpen = () => {
+    setIsModalOpen(!isModalOpen);
   };
 
   return (
@@ -229,12 +234,9 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
             )}
           </div>
         </div>
-        <div className="w-1/2] absolute top-0 right-0 h-0">
+        <div ref={ref} className="absolute top-0 right-0 h-0 w-1/2">
           {isModalOpen && (
-            <div
-              ref={ref}
-              className="absolute top-12 right-3 z-30 h-auto rounded border border-solid border-zinc-600 bg-zinc-800 shadow-xl md:top-[21px] md:right-[60px]"
-            >
+            <div className="absolute top-12 right-3 z-30 h-auto rounded border border-solid border-zinc-200 bg-zinc-100 shadow-xl md:top-[21px] md:right-[60px]">
               <ModalComment
                 handleEdit={handleUpdateComment}
                 handleDelete={handleDeleteComment}
@@ -244,7 +246,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
           {session?.user?.id === comment.userId && (
             <div className="absolute top-3 right-5 self-end">
               <Button
-                onClick={() => setIsModalOpen((prev) => !prev)}
+                onClick={handleModalOpen}
                 className="rounded-full p-1 text-zinc-800 transition hover:bg-zinc-200"
                 aria-label="action list"
               >
