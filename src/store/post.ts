@@ -5,6 +5,11 @@ interface InitialState {
   currentPostId: string;
   isEditing: boolean;
   isModalDeletePostOpen: boolean;
+  deleteImages: string[];
+  isRemove: boolean;
+  setIsRemove: (action: boolean) => void;
+  setDeleteImages: (id: string) => void;
+  clearDeletedImages: () => void;
   setIsModalDeletePostOpen: (action: boolean) => void;
   setIsEditing: (action: boolean) => void;
   setPostOpen: (action: boolean) => void;
@@ -16,6 +21,15 @@ const usePostStore = create<InitialState>((set) => ({
   currentPostId: "",
   isEditing: false,
   isModalDeletePostOpen: false,
+  deleteImages: [],
+  isRemove: false,
+  setIsRemove: (action: boolean) => set({ isRemove: action }),
+  setDeleteImages: (id) => {
+    set((state) => ({
+      deleteImages: [id, ...state.deleteImages],
+    }));
+  },
+  clearDeletedImages: () => set({ deleteImages: [] }),
   setIsModalDeletePostOpen: (action: boolean) =>
     set({ isModalDeletePostOpen: action }),
   setIsEditing: (action: boolean) => set({ isEditing: action }),

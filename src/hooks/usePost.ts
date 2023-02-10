@@ -41,7 +41,7 @@ const usePost = () => {
     [getValues, setValue]
   );
 
-  const selectedImages = useMemo(() => watch("selectedFile"), [watch]);
+  const selectedImages = watch("selectedFile");
 
   const {
     getRootProps,
@@ -63,9 +63,7 @@ const usePost = () => {
     },
     disabled: isUploading,
     validator: (file: File) => {
-      if (
-        getValues("selectedFile")?.some((image) => image.name === file.name)
-      ) {
+      if (getValues("selectedFile").some((image) => image.name === file.name)) {
         return {
           code: "file-exists",
           message: `File with name ${file.name} was added already`,
@@ -75,9 +73,9 @@ const usePost = () => {
     },
   });
 
-  const sumOfCurrentUploaded = useMemo(
-    () => watch("imageUploadProgress")?.reduce((sum, entry) => sum + entry, 0),
-    [watch]
+  const sumOfCurrentUploaded = watch("imageUploadProgress")?.reduce(
+    (sum, entry) => sum + entry,
+    0
   );
 
   const finalUploadProgress =

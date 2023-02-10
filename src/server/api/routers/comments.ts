@@ -76,6 +76,7 @@ export const commentRouter = createTRPCRouter({
               id: true,
               name: true,
               email: true,
+              image: true,
             },
           },
           likeComment: {
@@ -162,6 +163,7 @@ export const commentRouter = createTRPCRouter({
               id: true,
               name: true,
               email: true,
+              image: true,
             },
           },
           likeReplyComments: {

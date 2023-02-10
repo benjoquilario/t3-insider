@@ -1,6 +1,8 @@
 import React from "react";
 import Header from "../layout/header";
 import Users from "@/components/users";
+import { trpc } from "@/utils/trpc";
+import { useSession } from "next-auth/react";
 
 type SectionProps = {
   children: React.ReactNode;
