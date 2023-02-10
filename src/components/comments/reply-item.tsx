@@ -11,7 +11,8 @@ import classNames from "classnames";
 import { trpc } from "@/utils/trpc";
 import { AiFillLike } from "react-icons/ai";
 import Loader from "../shared/loader";
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, useCallback } from "react";
+import useClickOutside from "hooks/useClickOutside";
 
 type ReplyItemProps = {
   comment: ReplyComment<User>;
@@ -55,14 +56,21 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
       },
     });
 
-  const handleLikeReply = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleLikeReply = () => {
     mutateLikeReplyComent({
       replyId: comment.id,
       id: replyLike?.id,
       isLiked: !isLiked,
     });
     setIsLiked(!isLiked);
+  };
+
+  const hideModalReply = useCallback(() => setIsModalOpen(false), []);
+
+  useClickOutside(ref, () => hideModalReply());
+
+  const handleModalOpen = () => {
+    setIsModalOpen(!isModalOpen);
   };
 
   return (
@@ -183,12 +191,9 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
             </div>
           </div>
         </div>
-        <div className="w-1/2] absolute top-0 right-0 h-0">
+        <div ref={ref} className="w-1/2] absolute top-0 right-0 h-0">
           {isModalOpen && (
-            <div
-              ref={ref}
-              className="absolute top-12 right-3 z-30 h-auto rounded border border-solid border-zinc-600 bg-gray-800  shadow-xl  md:top-[21px] md:right-[60px]"
-            >
+            <div className="absolute top-12 right-3 z-30 h-auto rounded border border-solid border-zinc-200 bg-zinc-100  shadow-xl  md:top-[21px] md:right-[60px]">
               <ModalComment
                 handleEdit={handleUpdateReplyComment}
                 // handleDelete={handleDeleteComment}
@@ -197,7 +202,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
           )}
           <div className="absolute top-3 right-5 self-end">
             <Button
-              onClick={() => setIsModalOpen((prev) => !prev)}
+              onClick={handleModalOpen}
               className="rounded-full p-1 text-zinc-800 opacity-0 transition group-hover:opacity-100 hover:bg-zinc-200"
               aria-label="action list"
             >

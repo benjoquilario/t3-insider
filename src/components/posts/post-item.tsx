@@ -22,7 +22,6 @@ import {
 } from "@/utils/index";
 import type { Post as PostType, User } from "@/types/types";
 import Comments from "@/components/comments/";
-import React, { useMemo, useRef, useState } from "react";
 import usePostStore from "@/store/post";
 import ModalPost from "@/components/modal/modal-post";
 import { trpc } from "@/utils/trpc";
@@ -31,6 +30,7 @@ import ReactTimeAgo from "react-time-ago";
 import en from "javascript-time-ago/locale/en.json";
 import TimeAgo from "javascript-time-ago";
 import { useRouter } from "next/router";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 
 TimeAgo.addDefaultLocale(en);
 
@@ -73,8 +73,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
     setIsModalOpen(false);
   };
 
-  const handleLikePost = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleLikePost = () => {
     mutateLike({ postId: post.id, id: likes?.id, isLiked: !isLiked });
     setIsLiked(!isLiked);
   };
@@ -85,7 +84,13 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
     setCurrentPostId(post.id);
   };
 
-  useClickOutside(ref, () => setIsModalOpen(false));
+  const hideModalPost = useCallback(() => setIsModalOpen(false), []);
+
+  useClickOutside(ref, () => hideModalPost());
+
+  const handleOpenModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
 
   return (
     <motion.li
@@ -123,13 +128,20 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
           <div ref={ref} className="self-end">
             <div>
               <Button
-                onClick={() => setIsModalOpen((prev) => !prev)}
+                type="button"
+                onClick={handleOpenModal}
                 className="rounded-full p-1 text-zinc-800 hover:bg-zinc-100"
                 aria-label="action list"
               >
                 <BiDotsHorizontalRounded aria-hidden="true" size={26} />
               </Button>
             </div>
+            {isModalOpen && (
+              <ModalPost
+                handleEdit={handleUpdatePost}
+                handleDelete={handleDeletePost}
+              />
+            )}
           </div>
         )}
       </div>
@@ -210,6 +222,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
       <ul className="rou mx-1 mt-1 flex justify-between rounded-t-md border-t border-zinc-200 font-light">
         <li className="w-full flex-1 py-1">
           <Button
+            type="button"
             className="flex w-full items-center justify-center gap-1 rounded-md py-1 px-6 text-zinc-600	hover:bg-zinc-100"
             aria-label="Like Post"
             onClick={handleLikePost}
@@ -246,6 +259,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
 
         <li className="w-full flex-1 py-1">
           <Button
+            type="button"
             onClick={() => setIsCommentOpen(true)}
             className={`flex w-full items-center justify-center gap-1 py-1 px-6 text-zinc-600 hover:bg-zinc-100`}
             aria-label="Leave a Comment"
@@ -256,6 +270,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
         </li>
         <li className="w-full flex-1 py-1">
           <Button
+            type="button"
             aria-label="Share a post"
             className="flex w-full items-center justify-center gap-1 rounded-md py-1 px-6 text-zinc-600 hover:bg-zinc-100"
           >
@@ -269,13 +284,6 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
         </li>
       </ul>
       {isCommentOpen && <Comments postId={post.id} />}
-      {isModalOpen && (
-        <ModalPost
-          ref={ref}
-          handleEdit={handleUpdatePost}
-          handleDelete={handleDeletePost}
-        />
-      )}
     </motion.li>
   );
 };

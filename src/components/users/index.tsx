@@ -11,6 +11,7 @@ import useClickOutside from "hooks/useClickOutside";
 import ButtonTooltip from "../shared/button-tooltip";
 import Button from "../shared/button";
 import { useRouter } from "next/router";
+import classNames from "classnames";
 
 const Users = () => {
   const router = useRouter();
@@ -37,11 +38,15 @@ const Users = () => {
     }
   );
 
-  useClickOutside(ref, (e) => {
-    if (e.target !== buttonRef.current) {
-      setIsOpen(false);
-    }
-  });
+  const hideDropdown = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+  useClickOutside(ref, () => hideDropdown());
+
+  const toggleDropDown = () => {
+    setIsOpen(!isOpen);
+  };
 
   return (
     <div className="sticky top-0">
@@ -71,28 +76,34 @@ const Users = () => {
             </ButtonTooltip>
           </li>
         </ul>
-        <div ref={buttonRef} className="flex items-center justify-end">
+        <div ref={ref} className="flex items-center justify-end">
           <div className="flex items-center justify-center gap-1">
             {isAuthLoading ? (
               <div className="h-12 w-12 animate-pulse rounded-full border border-zinc-200 bg-zinc-100" />
             ) : (
               <Button
-                onClick={() => setIsOpen(!isOpen)}
-                className="flex h-14 w-16 items-center justify-center rounded-full "
-                aria-label="list box"
+                onClick={toggleDropDown}
+                className="w-18 flex h-14 items-center justify-center rounded-full hover:opacity-90"
+                aria-label="dropdown profile"
               >
-                <IoMdArrowDropdown size={20} />
-
+                <div
+                  className={classNames(
+                    "transition-transform duration-200",
+                    isOpen && "rotate-180"
+                  )}
+                >
+                  <IoMdArrowDropdown aria-hidden="true" size={20} />
+                </div>
                 <Image
                   className="rounded-full"
                   src={authUser?.image || "/default-image.png"}
                   alt={authUser?.name || ""}
                   layout="fill"
-                  containerclassnames="relative h-12 w-14 rounded-fulf"
+                  containerclassnames="relative h-[48px] w-[48px]"
                 />
               </Button>
             )}
-            {isOpen && <Dropdown ref={ref} />}
+            {isOpen && <Dropdown />}
           </div>
         </div>
       </div>
