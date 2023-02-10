@@ -47,7 +47,7 @@ const ModalDelete: React.FC<ModalDeleteProps> = ({
           <h3 className="pt-2 pb-4 text-center text-base font-semibold text-black md:text-lg">
             Delete {type}?
           </h3>
-          <div className="flex w-full flex-col gap-2 border-t border-zinc-300 pt-2">
+          <div className="flex w-full flex-col gap-2 border-t border-gray-300 pt-2">
             <p>Are you sure you want to delete this {type}?</p>
             <div className="flex gap-2 self-end">
               <Button
@@ -68,7 +68,7 @@ const ModalDelete: React.FC<ModalDeleteProps> = ({
           </div>
           <Button
             onClick={() => setIsModalOpen(false)}
-            className="absolute top-2 right-4 rounded-full bg-[#edf1f5] p-2 text-zinc-700 transition duration-75 ease-in hover:bg-[#e5e8eb]"
+            className="absolute top-2 right-4 rounded-full bg-[#edf1f5] p-2 text-gray-700 transition duration-75 ease-in hover:bg-[#e5e8eb]"
           >
             <RiCloseFill aria-hidden="true" size={25} />
           </Button>

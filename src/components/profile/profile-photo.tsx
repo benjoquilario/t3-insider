@@ -96,7 +96,7 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ image, userId }) => {
               </h3>
 
               <Button
-                className="rounded-full bg-[#edf1f5] p-2 text-zinc-700 transition duration-75 ease-in hover:bg-[#e5e8eb]"
+                className="rounded-full bg-[#edf1f5] p-2 text-gray-700 transition duration-75 ease-in hover:bg-[#e5e8eb]"
                 aria-label="close modal"
                 // onClick={() => handleOnReset()}
               >
@@ -112,7 +112,7 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ image, userId }) => {
             >
               <form onSubmit={handleSubmit(handleOnSubmit)}>
                 <div className="flex flex-col items-center">
-                  <div className="overflow-hidden rounded-md border border-zinc-200 p-2">
+                  <div className="overflow-hidden rounded-md border border-gray-200 p-2">
                     <Image
                       src={draftImage || "/"}
                       alt=""
@@ -123,7 +123,7 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ image, userId }) => {
                     <div className="mt-3 flex justify-end gap-2">
                       {isLoading ? (
                         <Loader
-                          classNameContainer="text-zinc-900"
+                          classNameContainer="text-gray-900"
                           classNameIcon="h-8 w-8 animate-spin"
                         />
                       ) : (
@@ -163,7 +163,7 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ image, userId }) => {
       <div className="relative -mt-20 flex-shrink-0" {...getRootImageProps}>
         <form onSubmit={handleSubmit(handleOnSubmit)}>
           <Image
-            className="relative rounded-full border-4 border-zinc-800 bg-gray-900"
+            className="relative rounded-full border-4 border-gray-800 bg-gray-900"
             src={image || "/default-image.png"}
             alt=""
             objectFit="cover"

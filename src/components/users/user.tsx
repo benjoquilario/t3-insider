@@ -14,12 +14,10 @@ const User = ({ user }) => {
           layout="fill"
           objectFit="cover"
           objectPosition="center"
-          className=""
-          containerclassnames="h-full w-full relative"
+          containerclassnames="h-full w-full relative opacity-30"
         />
-        <span className=""></span>
 
-        <div className="absolute inset-0 flex items-center overflow-hidden rounded-md border border-zinc-200">
+        <div className="absolute inset-0 flex items-center overflow-hidden rounded-md border border-gray-200">
           <div className="ml-3">
             <Image
               className="rounded-full"

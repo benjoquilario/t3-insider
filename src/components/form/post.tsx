@@ -31,16 +31,8 @@ const CreateForm = () => {
   const { data: session } = useSession();
   const [errorMessage, setErrorMessage] = useState<string | undefined>("");
   const postOpen = usePostStore((store) => store.postOpen);
-  const [isRemove, setIsRemove] = usePostStore((store) => [
-    store.isRemove,
-    store.setIsRemove,
-  ]);
   const setPostOpen = usePostStore((store) => store.setPostOpen);
   const currentPostId = usePostStore((store) => store.currentPostId);
-  const [deleteImages, clearDeletedImages] = usePostStore((store) => [
-    store.deleteImages,
-    store.clearDeletedImages,
-  ]);
 
   const [isEditing, setIsEditing] = usePostStore((store) => [
     store.isEditing,
@@ -72,25 +64,21 @@ const CreateForm = () => {
     }
   }, [isSubmitSuccessful, reset]);
 
-  const onSuccess = async () => {
-    toast("Your post was added successfully", {
-      type: "success",
-      position: toast.POSITION.BOTTOM_RIGHT,
-    });
-    await utils.post.getPosts.invalidate();
-    await utils.post.getPostsById.invalidate({
-      id: session?.user?.id,
-      limit: 3,
-    });
-  };
-
   const { mutateAsync: mutateCreatePost, isLoading: isCreatePostLoading } =
     trpc.post.createPost.useMutation({
       onError: (e) => {
         setErrorMessage(e.message);
       },
       onSuccess: async () => {
-        await onSuccess();
+        toast("Your post was added successfully", {
+          type: "success",
+          position: toast.POSITION.BOTTOM_RIGHT,
+        });
+        await utils.post.getPosts.invalidate();
+        await utils.post.getPostsById.invalidate({
+          id: session?.user?.id,
+          limit: 3,
+        });
       },
     });
 
@@ -107,12 +95,6 @@ const CreateForm = () => {
         await utils.post.getPosts.invalidate();
       },
     });
-
-  const { mutate: mutateDeleteImage } = trpc.post.deleteImage.useMutation({
-    onSuccess: async () => {
-      await onSuccess();
-    },
-  });
 
   const { data: currentPost, isLoading: isPostLoading } =
     trpc.post.getPostById.useQuery(
@@ -133,13 +115,10 @@ const CreateForm = () => {
     setPostOpen(false);
     setIsEditing(false);
     setIsUploading(false);
-    setIsRemove(false);
-    clearDeletedImages();
   };
 
   const handleOnSubmit: SubmitHandler<PostValues> = async (data) => {
     setErrorMessage(undefined);
-    setIsUploading(true);
 
     const imageUrls = await Promise.all(
       data.selectedFile.map((file: File, index) =>
@@ -181,10 +160,6 @@ const CreateForm = () => {
             }))
           : null,
       });
-
-    if (isRemove) {
-      deleteImages.map((id) => mutateDeleteImage({ id }));
-    }
 
     return handleOnReset();
   };
@@ -230,13 +205,13 @@ const CreateForm = () => {
           ref={ref}
           className="z-20 m-4 h-auto w-full max-w-screen-md rounded-md bg-white shadow-md md:w-2/4"
         >
-          <div className="flex items-center justify-between border-b border-zinc-200 p-2">
-            <h3 className="p-2 text-base text-zinc-900 md:text-lg">
+          <div className="flex items-center justify-between border-b border-gray-200 p-2">
+            <h3 className="p-2 text-base text-black md:text-lg">
               {isEditing ? "Updating Post" : "Creating Post"}
             </h3>
 
             <Button
-              className="rounded-full bg-[#edf1f5] p-2 text-zinc-700 transition duration-75 ease-in hover:bg-[#e5e8eb]"
+              className="rounded-full bg-[#edf1f5] p-2 text-gray-700 transition duration-75 ease-in hover:bg-[#e5e8eb]"
               aria-label="close modal"
               onClick={() => handleOnReset()}
             >
@@ -261,6 +236,7 @@ const CreateForm = () => {
                 placeholder={`What's on your mind, Benjo?`}
                 {...register("message", { required: false })}
               />
+
               <PostInput
                 openFilePicker={openFilePicker}
                 control={control}
@@ -269,8 +245,9 @@ const CreateForm = () => {
               >
                 <input {...getInputProps()} />
               </PostInput>
+
               <div className="flex items-center justify-center">
-                {isCreatePostLoading || isUpdateLoading || isUploading ? (
+                {isCreatePostLoading || isUpdateLoading ? (
                   <div className="m-3 flex w-full items-center justify-center rounded-md bg-[#6a55fa] px-3 py-2 text-lg">
                     <ImSpinner8 className="animate-spin text-2xl text-white" />
                   </div>
@@ -284,6 +261,16 @@ const CreateForm = () => {
                   </Button>
                 )}
               </div>
+              {finalUploadProgress !== 0 && (
+                <div className="h-1 w-full overflow-hidden rounded-sm">
+                  <div
+                    className="h-full w-full bg-blue-500"
+                    style={{
+                      transform: `translateX(-${100 - finalUploadProgress}%)`,
+                    }}
+                  />
+                </div>
+              )}
             </form>
           </div>
         </motion.div>

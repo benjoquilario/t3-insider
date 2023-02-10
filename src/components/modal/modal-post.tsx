@@ -28,7 +28,7 @@ const ModalButton: React.FC<ModalButtonProps> = ({
   return (
     <li
       className={classNames(
-        "rounded px-3 transition duration-75 hover:bg-zinc-200",
+        "rounded px-3 transition duration-75 hover:bg-[#e5e8eb]",
         className
       )}
     >
@@ -36,7 +36,7 @@ const ModalButton: React.FC<ModalButtonProps> = ({
         <Button
           onClick={handleClick}
           type="button"
-          className="flex w-full items-center gap-2 py-1 text-zinc-800 md:py-2"
+          className="flex w-full items-center gap-2 py-1 text-gray-800 md:py-2"
           aria-label={name}
         >
           {children}
@@ -57,7 +57,7 @@ const ModalPost = React.forwardRef<HTMLDivElement, ModalPostProps>(
         initial="hidden"
         animate="visible"
         exit="hidden"
-        className="absolute top-14 right-3 z-30 h-auto rounded border border-solid border-zinc-300 bg-zinc-100"
+        className="absolute top-14 right-3 z-30 h-auto rounded border border-solid border-gray-300 bg-[#edf1f5]"
       >
         <div className="relative">
           <ul className="w-full">

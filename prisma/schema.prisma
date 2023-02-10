@@ -63,7 +63,6 @@ model User {
     postLike      Postlike[]
     likeComment   LikeComment[]
     reply         ReplyComment[]
-    bookmark      Bookmark[]
     LikeReplyCOmment LikeReplyComment[]
     createdAt     DateTime @default(now())
     updatedAt     DateTime @updatedAt
@@ -77,7 +76,6 @@ model Post {
     likes         Likes[]
     comment       Comment[]
     postLike      Postlike[]
-    bookmark       Bookmark[]
     user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId        String?
     createdAt     DateTime @default(now())
@@ -134,14 +132,6 @@ model LikeReplyComment {
 }
 
 model Postlike {
-    id           String @id @default(cuid()) @map("_id")
-    userId       String?
-    user         User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    postId       String?
-    post         Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
-}
-
-model Bookmark {
     id           String @id @default(cuid()) @map("_id")
     userId       String?
     user         User?     @relation(fields: [userId], references: [id], onDelete: Cascade)

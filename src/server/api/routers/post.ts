@@ -86,15 +86,6 @@ export const postRouter = createTRPCRouter({
         message: "Successfully Deleted!!",
       };
     }),
-  deleteImage: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      await ctx.prisma.selectedFile.deleteMany({
-        where: {
-          id: input.id,
-        },
-      });
-    }),
   getPosts: protectedProcedure
     .input(postSchema)
     .query(async ({ ctx, input }) => {
@@ -162,38 +153,10 @@ export const postRouter = createTRPCRouter({
         },
         include: {
           selectedFile: true,
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              image: true,
-            },
-          },
-          likes: {
-            select: {
-              id: true,
-              postId: true,
-              user: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-          _count: {
-            select: {
-              likes: true,
-              comment: true,
-            },
-          },
         },
       });
 
-      return {
-        ...post,
-        isLike: true,
-      };
+      return post;
     }),
   getPostsById: protectedProcedure
     .input(postIdSchema)

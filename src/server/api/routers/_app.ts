@@ -5,7 +5,6 @@ import { postRouter } from "./post";
 import { commentRouter } from "./comments";
 import { likeRouter } from "./like";
 import { userRouter } from "./user";
-import { bookmarkRouter } from "./bookmark";
 
 export const appRouter = createTRPCRouter({
   example: exampleRouter,
@@ -14,7 +13,6 @@ export const appRouter = createTRPCRouter({
   like: likeRouter,
   comment: commentRouter,
   user: userRouter,
-  bookmark: bookmarkRouter,
   newProcedures: publicProcedure.query(() => "Yay!!"),
 });
 

@@ -6,7 +6,7 @@ const Main = () => {
   return (
     <React.Fragment>
       <CreateButton />
-      <Posts />
+      <Posts type="getPosts" />
     </React.Fragment>
   );
 };

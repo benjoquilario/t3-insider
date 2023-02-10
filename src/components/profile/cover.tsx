@@ -85,6 +85,7 @@ const CoverPhoto: React.FC<CoverPhotoProps> = ({ coverPhoto, userId }) => {
     >
       <form onSubmit={handleSubmit(handleOnSubmit)}>
         <div className="h-full w-full">
+          <div className="absolute inset-0 -z-10 bg-[#0f1624] shadow-xl"></div>
           <Image
             src={draftCover || coverPhoto || "/cover.svg"}
             alt="profile"

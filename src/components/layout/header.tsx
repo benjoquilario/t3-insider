@@ -6,11 +6,9 @@ import { IoIosPeople } from "react-icons/io";
 import { AiFillHome } from "react-icons/ai";
 import classNames from "classnames";
 import Button from "@/components/shared/button";
-
+import { signOut } from "next-auth/react";
 import { trpc } from "@/utils/trpc";
 import React from "react";
-import UserSkeleton from "../skeleton/user-skeleton";
-import usePostStore from "@/store/post";
 
 const LINKS = [
   {
@@ -40,8 +38,7 @@ const LINKS = [
 ];
 
 const Header = () => {
-  const { data: authUser, isLoading } = trpc.user.authUser.useQuery();
-  const setPostOpen = usePostStore((store) => store.setPostOpen);
+  const { data: authUser } = trpc.user.authUser.useQuery();
 
   return (
     <div className="col-span-3 hidden lg:block">
@@ -55,34 +52,30 @@ const Header = () => {
           </div>
         </Link>
 
-        {isLoading ? (
-          <UserSkeleton />
-        ) : (
-          <div className="rounded px-4 py-5">
-            <div className="flex justify-start">
-              <Link href={`profile`} aria-label="profile link">
-                <div className="relative h-12 w-12">
-                  <Image
-                    layout="fill"
-                    src={authUser?.image || "/default-image.png"}
-                    alt={authUser?.name || ""}
-                    objectFit="cover"
-                    className="rounded-full"
-                  />
-                </div>
-              </Link>
-              <div className="ml-2 flex flex-col justify-center">
-                <Link
-                  href={`profile/${authUser?.id || ""}`}
-                  className="text-base font-semibold capitalize text-zinc-900"
-                >
-                  {authUser?.name}
-                </Link>
-                <span className="text-xs text-zinc-500">21 Followers</span>
+        <div className="rounded px-4 py-5">
+          <div className="flex justify-start">
+            <Link href={`profile`} aria-label="profile link">
+              <div className="relative h-12 w-12">
+                <Image
+                  layout="fill"
+                  src={authUser?.image || ""}
+                  alt={authUser?.name || ""}
+                  objectFit="cover"
+                  className="rounded-full"
+                />
               </div>
+            </Link>
+            <div className="ml-2 flex flex-col justify-center">
+              <Link
+                href={`profile/${authUser?.id || ""}`}
+                className="text-base font-semibold capitalize text-black"
+              >
+                {authUser?.name}
+              </Link>
+              <span className="text-xs text-gray-500">21 Followers</span>
             </div>
           </div>
-        )}
+        </div>
         <div className="mt-0">
           <nav className="w-full">
             <ul className="flex flex-col items-start space-y-2">
@@ -96,7 +89,7 @@ const Header = () => {
                         : ""
                     }`}
                     className={classNames(
-                      "flex w-full items-center gap-4 rounded-full py-2 px-4 hover:bg-zinc-200"
+                      "flex w-full items-center gap-4 rounded-full py-2 px-4 hover:bg-[#e0e4e9]"
                     )}
                   >
                     <link.icon
@@ -104,7 +97,7 @@ const Header = () => {
                       size={link.size}
                       className="text-[#6a55fa]"
                     />
-                    <span className="text-left text-lg text-zinc-900">
+                    <span className="text-left text-lg text-black">
                       {link.linkName}
                     </span>
                   </Link>
@@ -113,7 +106,7 @@ const Header = () => {
               <li className="mt-3 w-full flex-1">
                 <div className="flex w-full items-center justify-center">
                   <Button
-                    onClick={() => setPostOpen(true)}
+                    onClick={() => signOut()}
                     type="button"
                     aria-label="Create post"
                     className="flex h-12 w-full items-center justify-center rounded-full bg-[#6a55fa] text-base text-white transition duration-75 hover:bg-[#8371f8]"

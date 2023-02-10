@@ -67,7 +67,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
 
   return (
     <li>
-      <div className="absolute left-[42px] h-[30px] w-[53px] rounded-l-md border-l-2 border-b-2 border-zinc-300 border-t-white"></div>
+      <div className="absolute left-[42px] h-[30px] w-[53px] rounded-l-md border-l-2 border-b-2 border-gray-300 border-t-white"></div>
       <div className="group relative flex pt-2 pl-6">
         <div className="relative mt-1 mr-2 block rounded-full">
           <span className="inline">
@@ -78,8 +78,8 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
               <div className="relative inline-block">
                 <Image
                   className="h-9 w-9 rounded-full object-cover"
-                  src={comment.user.image || "/default-image.png"}
-                  alt={comment.user.name}
+                  src="/default-image.png"
+                  alt="prof"
                   objectFit="cover"
                   layout="fill"
                   containerclassnames="h-9 w-9"
@@ -138,20 +138,20 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
                     </div>
                   </div>
                   <div className="absolute -right-2 -bottom-2 ">
-                    <div className="flex items-center gap-1 rounded-full bg-white px-1 shadow">
+                    <div className="flex items-center rounded-full bg-white px-1 shadow">
                       {isLiked || comment._count.likeReplyComments > 0 ? (
-                        <div className="flex h-4 w-4 items-center justify-center rounded-full bg-primary">
-                          <AiFillLike size={12} className="text-white" />
+                        <div className="rounded-full">
+                          <AiFillLike className="h-4 w-4 text-primary" />
                         </div>
                       ) : null}
                       {isLikeLoading ? (
                         <Loader
-                          classNameContainer="bottom-[-7px] left-[-13px] absolute text-zinc-800"
+                          classNameContainer="bottom-[-7px] left-[-13px] absolute text-gray-800"
                           classNameIcon="h-3 w-3 animate-spin"
                         />
                       ) : (
                         comment._count.likeReplyComments !== 0 && (
-                          <span className="text-sm font-medium text-zinc-700">
+                          <span className="text-sm font-bold text-gray-700">
                             {comment._count.likeReplyComments}
                           </span>
                         )
@@ -160,19 +160,19 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
                   </div>
                 </div>
               </div>
-              <div className="ml-3 flex gap-2 text-xs font-semibold text-zinc-600">
+              <div className="ml-3 flex gap-2 text-xs font-semibold text-gray-600">
                 <Button
                   onClick={handleLikeReply}
                   className={classNames(
                     "underline-offset-1 hover:underline",
                     isLiked
                       ? "font-bold text-primary"
-                      : "font-normal text-zinc-600"
+                      : "font-normal text-gray-600"
                   )}
                 >
                   Like
                 </Button>
-                <span className="text-xs text-zinc-700">
+                <span className="text-xs text-gray-700">
                   <ReactTimeAgo
                     timeStyle="twitter"
                     locale="en-US"
@@ -187,7 +187,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
           {isModalOpen && (
             <div
               ref={ref}
-              className="absolute top-12 right-3 z-30 h-auto rounded border border-solid border-zinc-600 bg-gray-800  shadow-xl  md:top-[21px] md:right-[60px]"
+              className="absolute top-12 right-3 z-30 h-auto rounded border border-solid border-gray-600 bg-gray-800  shadow-xl  md:top-[21px] md:right-[60px]"
             >
               <ModalComment
                 handleEdit={handleUpdateReplyComment}
@@ -198,7 +198,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
           <div className="absolute top-3 right-5 self-end">
             <Button
               onClick={() => setIsModalOpen((prev) => !prev)}
-              className="rounded-full p-1 text-zinc-800 opacity-0 transition group-hover:opacity-100 hover:bg-zinc-200"
+              className="rounded-full p-1 text-gray-800 opacity-0 transition group-hover:opacity-100 hover:bg-zinc-200"
               aria-label="action list"
             >
               <BiDotsHorizontalRounded aria-hidden="true" size={22} />

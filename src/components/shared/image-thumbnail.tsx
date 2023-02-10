@@ -18,7 +18,7 @@ const ImageThumbnail: React.FC<ImageThumbnailProps> = ({
     <div className="relative">
       <Button
         onClick={() => removeImage(image.name)}
-        className="absolute top-2 right-0 z-50 rounded-full bg-gray-600 p-1 text-white transition duration-75 ease-in hover:bg-gray-700"
+        className="absolute top-2 right-0 rounded-full bg-gray-600 p-1 text-white transition duration-75 ease-in hover:bg-gray-700"
       >
         <RiCloseFill aria-hidden="true" size={22} />
       </Button>

@@ -35,8 +35,6 @@ const ReplyComment: React.FC<ReplyCommentProps> = ({
     store.setReplyComment,
   ]);
 
-  const { data: authUser } = trpc.user.authUser.useQuery();
-
   const {
     data,
     isLoading,
@@ -145,7 +143,7 @@ const ReplyComment: React.FC<ReplyCommentProps> = ({
     <React.Fragment>
       {isLoading ? (
         <Loader
-          classNameContainer="text-zinc-800"
+          classNameContainer="text-gray-800"
           classNameIcon="h-4 w-4 animate-spin"
         />
       ) : (
@@ -154,13 +152,13 @@ const ReplyComment: React.FC<ReplyCommentProps> = ({
             <li>
               {isFetchingNextPage ? (
                 <Loader
-                  classNameContainer="ml-8 mt-2 text-zinc-800"
+                  classNameContainer="ml-8 mt-2 text-gray-800"
                   classNameIcon="h-4 w-4 animate-spin"
                 />
               ) : (
                 <Button
                   onClick={() => fetchNextPage()}
-                  className="ml-2 text-sm font-semibold text-zinc-800 hover:text-zinc-900"
+                  className="ml-2 text-sm font-semibold text-gray-800 hover:text-gray-900"
                 >
                   View more replies
                 </Button>
@@ -185,12 +183,12 @@ const ReplyComment: React.FC<ReplyCommentProps> = ({
         </ul>
       )}
       <div className="pt-2 pl-5">
-        <div className="absolute left-[42px] h-[20px] w-[45px] border-l-2 border-b-2 border-zinc-300 border-t-white"></div>
+        <div className="absolute left-[42px] h-[20px] w-[45px] border-l-2 border-b-2 border-gray-300 border-t-white"></div>
         <div className="flex flex-row space-x-2">
           <div>
             <Image
-              src={authUser?.image || "/default-image.png"}
-              alt={authUser?.name || ""}
+              src="/default-image.png"
+              alt="profile pic"
               objectFit="cover"
               layout="fill"
               className="rounded-full"
@@ -210,7 +208,7 @@ const ReplyComment: React.FC<ReplyCommentProps> = ({
                         <TextareaAutoSize
                           placeholder={`Reply to ${commentName || ""}`}
                           {...register("replyComment", { required: true })}
-                          className="relative w-full rounded-full border-zinc-500 bg-zinc-100 py-2 pl-3 pr-9 text-sm shadow transition focus:border"
+                          className="relative w-full rounded-full border-gray-500 bg-zinc-100 py-2 pl-3 pr-9 text-sm shadow transition focus:border"
                           onKeyDown={handleKeyPress}
                         />
                         {replyId && (
