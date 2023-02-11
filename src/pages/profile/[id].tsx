@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
   NextPage,
 } from "next";
 import dynamic from "next/dynamic";
+import { useSession } from "next-auth/react";
 import { getServerAuthSession } from "@/server/auth";
 import Layout from "@/components/layout";
 import Section from "@/components/shared/section";
 import { BsFillPersonPlusFill } from "react-icons/bs";
+import { AiFillCheckCircle } from "react-icons/ai";
 import { trpc } from "@/utils/trpc";
 import PostItem from "@/components/posts/post-item";
 import type { Post as PostType, User } from "@/types/types";
@@ -22,6 +24,7 @@ import { useRouter } from "next/router";
 import ProfileSkeleton from "@/components/skeleton/profile-skeleton";
 import PostSkeleton from "@/components/skeleton/post-skeleton";
 import Delete from "@/components/delete";
+import { useInfinitePostsByIdQuery, useUserByIdQuery } from "hooks/useQuery";
 
 const CreateForm = dynamic(() => import("@/components/form/post"), {
   ssr: false,
@@ -29,12 +32,10 @@ const CreateForm = dynamic(() => import("@/components/form/post"), {
 
 const Profile: NextPage = () => {
   const router = useRouter();
+  const utils = trpc.useContext();
+  const { data: session } = useSession();
   const userId = router.query?.id as string;
-
-  const { data: user, isLoading: isUserLoading } =
-    trpc.user.getUserById.useQuery({
-      id: userId,
-    });
+  const { data: user, isLoading: isUserLoading } = useUserByIdQuery(userId);
 
   const {
     data,
@@ -43,13 +44,20 @@ const Profile: NextPage = () => {
     hasNextPage,
     fetchNextPage,
     isError,
-  } = trpc.post.getPostsById.useInfiniteQuery(
-    { id: userId, limit: 3 },
-    {
-      getNextPageParam: (lastPage) => lastPage.nextSkip,
-      refetchOnWindowFocus: false,
-    }
-  );
+  } = useInfinitePostsByIdQuery(userId);
+
+  const { mutate: mutateFollowUser, isLoading: isFollowLoading } =
+    trpc.follow.followUser.useMutation({
+      onSuccess: async () => {
+        await utils.user.getUserById.invalidate({ id: userId });
+      },
+    });
+
+  const handleFollowUser = () => {
+    mutateFollowUser({
+      followingId: userId,
+    });
+  };
 
   const postOpen = usePostStore((store) => store.postOpen);
 
@@ -88,25 +96,39 @@ const Profile: NextPage = () => {
                   </div>
 
                   <div className="flex items-start justify-center p-3">
-                    <button className="flex items-center justify-center gap-2  rounded-full bg-[#6a55fa] px-6 py-1 text-sm font-light text-white transition duration-100 ease-out hover:bg-opacity-100 active:bg-opacity-80">
-                      <div className="flex-shrink-0">
-                        <BsFillPersonPlusFill aria-hidden="true" size={15} />
-                      </div>
-                      <span>Unfollow</span>
-                    </button>
-
-                    <button className="flex items-center justify-center gap-2  rounded-full bg-[#6a55fa] px-6 py-1 text-sm font-light text-white transition duration-100 ease-out hover:bg-opacity-100 active:bg-opacity-80">
-                      <div className="flex-shrink-0">
-                        <BsFillPersonPlusFill aria-hidden="true" size={15} />
-                      </div>
-                      <span>Follow</span>
+                    <button
+                      onClick={handleFollowUser}
+                      className="flex items-center justify-center gap-2  rounded-full bg-[#6a55fa] px-6 py-1 text-sm font-light text-white transition duration-100 ease-out hover:bg-opacity-100 active:bg-opacity-80"
+                    >
+                      {!isFollowLoading ? (
+                        user?.followedByMe ? (
+                          <React.Fragment>
+                            <div className="flex-shrink-0">
+                              <AiFillCheckCircle aria-hidden="true" size={15} />
+                            </div>
+                            <span>Following</span>
+                          </React.Fragment>
+                        ) : (
+                          <React.Fragment>
+                            <div className="flex-shrink-0">
+                              <BsFillPersonPlusFill
+                                aria-hidden="true"
+                                size={15}
+                              />
+                            </div>
+                            <span>Follow</span>
+                          </React.Fragment>
+                        )
+                      ) : (
+                        <div>loading</div>
+                      )}
                     </button>
                   </div>
                 </div>
               </div>
             </div>
           )}
-          <CreateButton />
+          {userId === session?.user?.id && <CreateButton />}
 
           <ul className="space-y-2">
             <React.Fragment>

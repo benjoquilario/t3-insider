@@ -12,6 +12,8 @@ import ButtonTooltip from "../shared/button-tooltip";
 import Button from "../shared/button";
 import { useRouter } from "next/router";
 import classNames from "classnames";
+import type { User as UserType } from "@/types/types";
+import { useInfiniteUsersQuery } from "hooks/useQuery";
 
 const Users = () => {
   const router = useRouter();
@@ -30,13 +32,7 @@ const Users = () => {
     fetchNextPage,
     isError,
     error,
-  } = trpc.user.getUsers.useInfiniteQuery(
-    { limit: 3 },
-    {
-      getNextPageParam: (lastPage) => lastPage.nextSkip,
-      refetchOnWindowFocus: false,
-    }
-  );
+  } = useInfiniteUsersQuery();
 
   const hideDropdown = useCallback(() => {
     setIsOpen(false);
@@ -131,7 +127,9 @@ const Users = () => {
               {isLoading
                 ? Array.from(Array(4), (_, i) => <UsersSkeleton key={i} />)
                 : data?.pages.map((page) =>
-                    page.users.map((user) => <User user={user} key={user.id} />)
+                    page.users.map((user) => (
+                      <User user={user as UserType} key={user.id} />
+                    ))
                   )}
               {hasNextPage && !isFetchingNextPage && (
                 <li className="flex items-center justify-center">
