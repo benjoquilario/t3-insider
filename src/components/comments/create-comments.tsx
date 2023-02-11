@@ -8,6 +8,7 @@ import { IoMdSend } from "react-icons/io";
 import type { Comment as CommentType, User } from "@/types/types";
 import Comment from "./comment";
 import { ImSpinner8 } from "react-icons/im";
+import classNames from "classnames";
 
 type CommentValues = {
   comment: string;
@@ -138,7 +139,7 @@ const CreateComment: React.FC<CommentProps> = ({ postId }) => {
       {!isLoading ? (
         <div className="pb-4" id="comment">
           <div className="pt-4 pl-5 pr-5">
-            <div className="flex flex-row space-x-2">
+            <div className="flex flex-row items-center space-x-2">
               <div>
                 <Image
                   src={authUser?.image || "/default-image.png"}
@@ -158,11 +159,16 @@ const CreateComment: React.FC<CommentProps> = ({ postId }) => {
                     <div className="relative w-full">
                       <div className="flex flex-wrap justify-end">
                         <div className="shrink grow basis-[auto] overflow-hidden">
-                          <div className="relative">
+                          <div className="relative p-1">
                             <TextareaAutoSize
                               placeholder="Write a comment..."
                               {...register("comment", { required: true })}
-                              className="relative w-full rounded-full border-zinc-500 bg-zinc-100 py-2 pl-3 pr-9 text-sm shadow transition focus:border"
+                              className={classNames(
+                                "relative w-full rounded-full bg-zinc-100 py-2 pl-3 pr-9 text-sm text-zinc-400 shadow ring-zinc-200 transition",
+                                "hover:text-zinc-500 hover:ring-zinc-300 ",
+                                "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-zinc-600 active:text-zinc-300",
+                                "focus:outline-none focus:outline-offset-1 focus:outline-primary focus-visible:outline-offset-2 focus-visible:outline-primary"
+                              )}
                               onKeyDown={handleKeyPress}
                             />
                           </div>
@@ -178,7 +184,7 @@ const CreateComment: React.FC<CommentProps> = ({ postId }) => {
                         disabled={comment?.trim().length === 0}
                         ref={buttonRef}
                         type="submit"
-                        className="absolute bottom-3 right-2 text-xl text-primary"
+                        className="absolute bottom-5 right-4 text-xl text-primary"
                       >
                         <IoMdSend />
                       </button>

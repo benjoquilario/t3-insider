@@ -55,6 +55,8 @@ model User {
     emailVerified DateTime?
     coverPhoto    String?
     image         String?
+    followers     Follow[]  @relation("followings")
+    followings    Follow[]  @relation("followers")
     accounts      Account[]
     sessions      Session[]
     likes         Likes[]
@@ -147,6 +149,14 @@ model Bookmark {
     user         User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
     postId       String?
     post         Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Follow {
+    id           String @id @default(cuid()) @map("_id")
+    followerId   String
+    followingId  String
+    follower     User      @relation("followers", fields: [followerId], references: [id])
+    following    User      @relation("followings", fields: [followingId], references: [id])
 }
 
 model VerificationToken {

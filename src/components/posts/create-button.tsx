@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import Button from "../shared/button";
 import usePostStore from "@/store/post";
 import { trpc } from "@/utils/trpc";
+import classNames from "classnames";
 
 const CreateButton = () => {
   const session = useSession();
@@ -12,12 +13,15 @@ const CreateButton = () => {
   const setPostOpen = usePostStore((store) => store.setPostOpen);
   const setIsEditing = usePostStore((store) => store.setIsEditing);
   const setCurrentPostId = usePostStore((store) => store.setCurrentPostId);
+  const postOpen = usePostStore((store) => store.postOpen);
 
   const handlePostOpen = () => {
     setPostOpen(true);
     setIsEditing(false);
     setCurrentPostId("");
   };
+
+  console.log(postOpen);
 
   return (
     <React.Fragment>
@@ -29,7 +33,10 @@ const CreateButton = () => {
       ) : (
         <div className="relative my-2 flex h-20 items-center justify-start gap-2 overflow-hidden rounded bg-white p-2 shadow ">
           <div className="min-h-6 max-w-20 w-12">
-            <Link href={`profile/${session.data?.user?.id as string}`}>
+            <Link
+              href={`profile/${session.data?.user?.id as string}`}
+              className="rounded-full ring-primary ring-offset-1 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary active:ring"
+            >
               <div className="relative h-11 w-11 overflow-hidden before:absolute before:top-0 before:left-0 before:-z-10 before:h-full before:w-full before:rounded-full before:bg-gray-900">
                 <Image
                   className="m-auto rounded-full"
@@ -42,7 +49,12 @@ const CreateButton = () => {
             </Link>
           </div>
           <Button
-            className="mr-1 flex h-11 w-full items-center justify-start rounded-full border border-zinc-200 bg-zinc-100 p-3 text-zinc-400 hover:bg-zinc-200"
+            className={classNames(
+              "mr-1 flex h-11 w-full items-center justify-start rounded-full",
+              " bg-zinc-100 p-3 text-zinc-400 ring-zinc-500 focus:outline-none",
+              "hover:bg-zinc-200 hover:text-zinc-500 hover:ring-zinc-600 active:bg-zinc-300",
+              "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary active:text-zinc-600"
+            )}
             aria-label="create a post"
             onClick={handlePostOpen}
           >

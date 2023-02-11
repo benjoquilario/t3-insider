@@ -13,6 +13,7 @@ module.exports = {
       },
       colors: {
         primary: "#6a55fa",
+        secondary: "#8877fb",
         background: {
           DEFAULT: "#000000",
           900: "#111",

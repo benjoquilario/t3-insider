@@ -9,6 +9,7 @@ import Button from "@/components/shared/button";
 import Loader from "@/components/shared/loader";
 import type { ReplyComment as ReplyCommentType, User } from "@/types/types";
 import React, { useState, useEffect, useRef } from "react";
+import classNames from "classnames";
 
 type ReplyValues = {
   replyComment: string;
@@ -184,9 +185,9 @@ const ReplyComment: React.FC<ReplyCommentProps> = ({
             .reverse()}
         </ul>
       )}
-      <div className="pt-2 pl-5">
-        <div className="absolute left-[42px] h-[20px] w-[45px] border-l-2 border-b-2 border-zinc-300 border-t-white"></div>
-        <div className="flex flex-row space-x-2">
+      <div className="pt-1 pl-5">
+        <div className="absolute left-[42px] h-[27px] w-[45px] border-l-2 border-b-2 border-zinc-300 border-t-white"></div>
+        <div className="flex flex-row items-center space-x-2">
           <div>
             <Image
               src={authUser?.image || "/default-image.png"}
@@ -205,17 +206,24 @@ const ReplyComment: React.FC<ReplyCommentProps> = ({
               >
                 <div className="relative w-full">
                   <div className="flex flex-wrap justify-end">
-                    <div className="shrink grow basis-[auto] overflow-hidden">
+                    <div className="shrink grow basis-[auto] overflow-hidden p-1">
                       <div className="relative">
                         <TextareaAutoSize
                           placeholder={`Reply to ${commentName || ""}`}
                           {...register("replyComment", { required: true })}
-                          className="relative w-full rounded-full border-zinc-500 bg-zinc-100 py-2 pl-3 pr-9 text-sm shadow transition focus:border"
+                          className={classNames(
+                            "relative w-full rounded-full bg-zinc-100 py-2 pl-3 pr-9 text-sm text-zinc-400 shadow ring-zinc-200 transition",
+                            "hover:text-zinc-500 hover:ring-zinc-300 ",
+                            "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary active:text-zinc-300",
+                            "focus:outline-none focus:outline-offset-1 focus:outline-zinc-600 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                          )}
                           onKeyDown={handleKeyPress}
                         />
                         {replyId && (
                           <div className="flex gap-1 text-xs text-primary">
-                            <Button onClick={cancelUpdate}>Cancel</Button>
+                            <Button type="button" onClick={cancelUpdate}>
+                              Cancel
+                            </Button>
                             <span>Esc</span>
                           </div>
                         )}

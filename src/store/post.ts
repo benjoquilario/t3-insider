@@ -1,4 +1,11 @@
 import { create } from "zustand";
+import type { SelectedFileType } from "@/types/types";
+
+interface SelectedPost {
+  id: string;
+  message: string;
+  selectedFile: SelectedFileType[];
+}
 
 interface InitialState {
   postOpen: boolean;
@@ -7,6 +14,8 @@ interface InitialState {
   isModalDeletePostOpen: boolean;
   deleteImages: string[];
   isRemove: boolean;
+  selectedPost: SelectedPost;
+  setSelectedPost: (post: SelectedPost) => void;
   setIsRemove: (action: boolean) => void;
   setDeleteImages: (id: string) => void;
   clearDeletedImages: () => void;
@@ -23,6 +32,12 @@ const usePostStore = create<InitialState>((set) => ({
   isModalDeletePostOpen: false,
   deleteImages: [],
   isRemove: false,
+  selectedPost: {
+    id: "",
+    message: "",
+    selectedFile: [],
+  },
+  setSelectedPost: (post: SelectedPost) => set({ selectedPost: post }),
   setIsRemove: (action: boolean) => set({ isRemove: action }),
   setDeleteImages: (id) => {
     set((state) => ({
