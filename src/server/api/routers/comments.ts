@@ -47,6 +47,12 @@ export const commentRouter = createTRPCRouter({
         });
       }
 
+      await ctx.prisma.replyComment.deleteMany({
+        where: {
+          replyToId: comment?.id,
+        },
+      });
+
       return {
         message: "Successfully Deleted!!",
       };

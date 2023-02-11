@@ -1,0 +1,87 @@
+import React, { useRef } from "react";
+import TextareaAutoSize from "react-textarea-autosize";
+import classNames from "classnames";
+import type { UseFormRegister, UseFormReset } from "react-hook-form";
+import { IoMdSend } from "react-icons/io";
+
+type CommentFormProps = {
+  register: UseFormRegister<{ comment: string }>;
+  commentId: string;
+  commentText: string;
+  handleCancel: () => void;
+  reset: UseFormReset<{ comment: string }>;
+} & React.HTMLProps<HTMLFormElement>;
+
+const CommentForm = React.forwardRef<HTMLFormElement, CommentFormProps>(
+  (props, ref) => {
+    const {
+      register,
+      commentId,
+      commentText,
+      reset,
+      handleCancel,
+      ...formProps
+    } = props;
+    const buttonRef = useRef<HTMLButtonElement | null>(null);
+
+    const handleKeyPress = (
+      event: React.KeyboardEvent<HTMLTextAreaElement>
+    ) => {
+      if (event.key === "Enter" && event.shiftKey === false) {
+        event.preventDefault();
+        buttonRef?.current?.click();
+        reset();
+      }
+    };
+
+    return (
+      <div className="grow overflow-hidden">
+        <div>
+          <form
+            {...formProps}
+            ref={ref}
+            className="relative flex w-full flex-wrap justify-end"
+          >
+            <div className="relative w-full">
+              <div className="flex flex-wrap justify-end">
+                <div className="shrink grow basis-[auto] overflow-hidden">
+                  <div className="relative p-1">
+                    <TextareaAutoSize
+                      placeholder="Write a comment..."
+                      {...register("comment", { required: true })}
+                      className={classNames(
+                        "relative w-full rounded-full bg-zinc-100 py-2 pl-3 pr-9 text-sm text-zinc-400 shadow ring-zinc-200 transition",
+                        "hover:text-zinc-500 hover:ring-zinc-300 ",
+                        "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-zinc-600 active:text-zinc-300",
+                        "focus:outline-none focus:outline-offset-1 focus:outline-primary focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      )}
+                      onKeyDown={handleKeyPress}
+                    />
+                  </div>
+                  {commentId && (
+                    <div className="-mt-1 ml-2 flex gap-1 text-xs text-primary">
+                      <button onClick={handleCancel}>Cancel</button>
+                      <span>Esc</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <button
+                disabled={commentText?.trim().length === 0}
+                ref={buttonRef}
+                type="submit"
+                className="absolute bottom-5 right-4 text-xl text-primary"
+              >
+                <IoMdSend />
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  }
+);
+
+CommentForm.displayName = "CommentForm";
+
+export default CommentForm;

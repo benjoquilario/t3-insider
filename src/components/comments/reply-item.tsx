@@ -32,12 +32,6 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
   const [isLiked, setIsLiked] = useState(false);
   const setReplyComment = useCommentStore((store) => store.setReplyComment);
 
-  const replyLike = useMemo(
-    () =>
-      comment.likeReplyComments.find((reply) => reply.replyId === comment.id),
-    [comment]
-  );
-
   const handleUpdateReplyComment = () => {
     setReplyId(comment.id);
     setIsModalOpen(false);
@@ -59,7 +53,6 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
   const handleLikeReply = () => {
     mutateLikeReplyComent({
       replyId: comment.id,
-      id: replyLike?.id,
       isLiked: !isLiked,
     });
     setIsLiked(!isLiked);

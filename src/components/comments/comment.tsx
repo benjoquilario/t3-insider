@@ -37,11 +37,6 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
     (store) => store.setIsCommentModalOpen
   );
 
-  const likes = useMemo(
-    () => comment.likeComment.find((like) => like.commentId === comment.id),
-    [comment]
-  );
-
   const onSuccess = async () => {
     await utils.comment.getComments.invalidate({
       postId: comment.postId,
@@ -60,7 +55,6 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
   const handleLikeComment = () => {
     mutateLikeComent({
       commentId: comment.id,
-      id: likes?.id,
       isLiked: !isLiked,
     });
     setIsLiked(!isLiked);
@@ -95,8 +89,9 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
           ) : null}
           <span className="inline">
             <Link
-              href="/"
+              href={`/profile/${comment.userId}`}
               className="relative inline-block w-full shrink basis-[auto] items-stretch"
+              aria-label={comment.user?.name}
             >
               <div className="relative inline-block">
                 <Image
@@ -129,7 +124,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
                         <span className="inline">
                           <Link
                             className="inline bg-zinc-100"
-                            href={`/profile/`}
+                            href={`/profile/${comment.userId}`}
                           >
                             <span className="inline-flex">
                               <span

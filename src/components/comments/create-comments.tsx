@@ -1,14 +1,14 @@
-import React, { useRef, useState, useEffect, useMemo } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Image from "../shared/image";
-import TextareaAutoSize from "react-textarea-autosize";
 import { trpc } from "@/utils/trpc";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import useCommentStore from "@/store/comment";
-import { IoMdSend } from "react-icons/io";
 import type { Comment as CommentType, User } from "@/types/types";
 import Comment from "./comment";
 import { ImSpinner8 } from "react-icons/im";
 import classNames from "classnames";
+import CommentForm from "../shared/comment-form";
+import { useAuthQuery, useInfiniteCommentsQuery } from "hooks/useQuery";
 
 type CommentValues = {
   comment: string;
@@ -20,8 +20,8 @@ export type CommentProps = {
 
 const CreateComment: React.FC<CommentProps> = ({ postId }) => {
   const utils = trpc.useContext();
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
-  const { data: authUser } = trpc.user.authUser.useQuery();
+
+  const { data: authUser } = useAuthQuery();
   const [errorMessage, setErrorMessage] = useState<string | undefined>("");
   const [commentId, setCommentId] = useCommentStore((store) => [
     store.commentId,
@@ -40,13 +40,7 @@ const CreateComment: React.FC<CommentProps> = ({ postId }) => {
     fetchNextPage,
     isError,
     error,
-  } = trpc.comment.getComments.useInfiniteQuery(
-    { postId, limit: 3 },
-    {
-      getNextPageParam: (lastPage) => lastPage.nextSkip,
-      refetchOnWindowFocus: false,
-    }
-  );
+  } = useInfiniteCommentsQuery(postId);
 
   const {
     register,
@@ -120,14 +114,6 @@ const CreateComment: React.FC<CommentProps> = ({ postId }) => {
     }
   }, [setValue, commentMessage, commentId]);
 
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === "Enter" && event.shiftKey === false) {
-      event.preventDefault();
-      buttonRef?.current?.click();
-      reset();
-    }
-  };
-
   const cancelUpdate = () => {
     reset();
     setCommentId("");
@@ -150,48 +136,14 @@ const CreateComment: React.FC<CommentProps> = ({ postId }) => {
                   containerclassnames="relative h-11 w-11"
                 />
               </div>
-              <div className="grow overflow-hidden">
-                <div>
-                  <form
-                    onSubmit={handleSubmit(handleOnSubmit)}
-                    className="relative flex w-full flex-wrap justify-end"
-                  >
-                    <div className="relative w-full">
-                      <div className="flex flex-wrap justify-end">
-                        <div className="shrink grow basis-[auto] overflow-hidden">
-                          <div className="relative p-1">
-                            <TextareaAutoSize
-                              placeholder="Write a comment..."
-                              {...register("comment", { required: true })}
-                              className={classNames(
-                                "relative w-full rounded-full bg-zinc-100 py-2 pl-3 pr-9 text-sm text-zinc-400 shadow ring-zinc-200 transition",
-                                "hover:text-zinc-500 hover:ring-zinc-300 ",
-                                "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-zinc-600 active:text-zinc-300",
-                                "focus:outline-none focus:outline-offset-1 focus:outline-primary focus-visible:outline-offset-2 focus-visible:outline-primary"
-                              )}
-                              onKeyDown={handleKeyPress}
-                            />
-                          </div>
-                          {commentId && (
-                            <div className="-mt-1 ml-2 flex gap-1 text-xs text-primary">
-                              <button onClick={cancelUpdate}>Cancel</button>
-                              <span>Esc</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      <button
-                        disabled={comment?.trim().length === 0}
-                        ref={buttonRef}
-                        type="submit"
-                        className="absolute bottom-5 right-4 text-xl text-primary"
-                      >
-                        <IoMdSend />
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
+              <CommentForm
+                commentId={commentId}
+                commentText={comment}
+                reset={reset}
+                register={register}
+                handleCancel={cancelUpdate}
+                onSubmit={handleSubmit(handleOnSubmit)}
+              />
             </div>
           </div>
           <ul>
