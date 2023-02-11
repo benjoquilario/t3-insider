@@ -54,11 +54,6 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
     (store) => store.setIsModalDeletePostOpen
   );
 
-  const likes = useMemo(
-    () => post.likes.find((like) => like.postId === post.id),
-    [post]
-  );
-
   const { mutate: mutateLike, isLoading: isLikeLoading } =
     trpc.like.likePost.useMutation({
       onError: (e) => console.log(e.message),
@@ -80,7 +75,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
   };
 
   const handleLikePost = () => {
-    mutateLike({ postId: post.id, id: likes?.id, isLiked: !isLiked });
+    mutateLike({ postId: post.id, isLiked: !isLiked });
     setIsLiked(!isLiked);
   };
 

@@ -47,12 +47,28 @@ export const userRouter = createTRPCRouter({
           email: true,
           coverPhoto: true,
           image: true,
+          _count: {
+            select: {
+              followers: true,
+              followings: true,
+            },
+          },
         },
       });
 
       if (!user) throw new Error(`no user with ${input.id}`);
 
-      return user;
+      const followByMe = await ctx.prisma.follow.findFirst({
+        where: {
+          followerId: ctx.session.user.id,
+          followingId: user.id,
+        },
+      });
+
+      return {
+        ...user,
+        followedByMe: Boolean(followByMe),
+      };
     }),
   authUser: protectedProcedure
     .input(userIdSchema.optional())

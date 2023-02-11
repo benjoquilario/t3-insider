@@ -69,9 +69,27 @@ export const postRouter = createTRPCRouter({
       });
 
       if (post) {
+        const comment = await ctx.prisma.comment.findFirst({
+          where: {
+            postId: post?.id,
+          },
+        });
+
         await ctx.prisma.post.delete({
           where: {
             id: post.id,
+          },
+        });
+
+        await ctx.prisma.comment.deleteMany({
+          where: {
+            postId: post?.id,
+          },
+        });
+
+        await ctx.prisma.replyComment.deleteMany({
+          where: {
+            replyToId: comment?.id,
           },
         });
       }
@@ -190,9 +208,17 @@ export const postRouter = createTRPCRouter({
         },
       });
 
+      const isLiked = await ctx.prisma.likes.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          postId: post?.id,
+        },
+      });
+
       return {
         ...post,
         isLike: true,
+        isLiked: isLiked,
       };
     }),
   getPostsById: protectedProcedure

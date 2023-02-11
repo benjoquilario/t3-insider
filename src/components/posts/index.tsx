@@ -1,4 +1,3 @@
-import { trpc } from "@/utils/trpc";
 import PostItem from "./post-item";
 import dynamic from "next/dynamic";
 import React from "react";
@@ -8,6 +7,7 @@ import { InView } from "react-intersection-observer";
 import { ToastContainer } from "react-toastify";
 import Delete from "@/components/delete";
 import PostSkeleton from "../skeleton/post-skeleton";
+import { useInfinitePostsQuery } from "hooks/useQuery";
 
 const CreateForm = dynamic(() => import("@/components/form/post"), {
   ssr: false,
@@ -24,17 +24,13 @@ const Posts = () => {
     fetchNextPage,
     isError,
     error,
-  } = trpc.post.getPosts.useInfiniteQuery(
-    { limit: 3 },
-    {
-      getNextPageParam: (lastPage) => lastPage.nextSkip,
-      refetchOnWindowFocus: false,
-    }
-  );
+  } = useInfinitePostsQuery();
 
   return (
     <React.Fragment>
       {isError && <div>Error</div>}
+      <Delete />
+      {postOpen && <CreateForm />}
       <ul className="space-y-3">
         {isLoading
           ? Array.from(Array(2), (_, i) => <PostSkeleton key={i} />)
@@ -43,8 +39,7 @@ const Posts = () => {
                 <PostItem post={post as PostType<User>} key={post.id} />
               ))
             )}
-        <Delete />
-        {postOpen && <CreateForm />}
+
         <InView
           fallbackInView
           onChange={async (InView) => {
@@ -54,10 +49,10 @@ const Posts = () => {
           }}
         >
           {({ ref }) => (
-            <div ref={ref} className="mt-4 w-full">
+            <li ref={ref} className="mt-4 w-full">
               {isFetchingNextPage &&
                 Array.from(Array(2), (_, i) => <PostSkeleton key={i} />)}
-            </div>
+            </li>
           )}
         </InView>
       </ul>

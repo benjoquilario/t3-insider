@@ -4,24 +4,21 @@ import Image from "next/legacy/image";
 import { useSession } from "next-auth/react";
 import Button from "../shared/button";
 import usePostStore from "@/store/post";
-import { trpc } from "@/utils/trpc";
 import classNames from "classnames";
+import { useAuthQuery } from "hooks/useQuery";
 
 const CreateButton = () => {
   const session = useSession();
-  const { data: authUser, isLoading } = trpc.user.authUser.useQuery();
+  const { data: authUser, isLoading } = useAuthQuery();
   const setPostOpen = usePostStore((store) => store.setPostOpen);
   const setIsEditing = usePostStore((store) => store.setIsEditing);
   const setCurrentPostId = usePostStore((store) => store.setCurrentPostId);
-  const postOpen = usePostStore((store) => store.postOpen);
 
   const handlePostOpen = () => {
     setPostOpen(true);
     setIsEditing(false);
     setCurrentPostId("");
   };
-
-  console.log(postOpen);
 
   return (
     <React.Fragment>
