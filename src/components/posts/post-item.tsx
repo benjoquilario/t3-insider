@@ -49,6 +49,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
   const setPostOpen = usePostStore((store) => store.setPostOpen);
   const setCurrentPostId = usePostStore((store) => store.setCurrentPostId);
   const setIsEditing = usePostStore((store) => store.setIsEditing);
+  const setSelectedPost = usePostStore((store) => store.setSelectedPost);
   const setIsModalDeletePostOpen = usePostStore(
     (store) => store.setIsModalDeletePostOpen
   );
@@ -69,6 +70,11 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
   const handleUpdatePost = () => {
     setPostOpen(true);
     setCurrentPostId(post.id);
+    setSelectedPost({
+      id: post.id,
+      message: post.message,
+      selectedFile: post.selectedFile,
+    });
     setIsEditing(true);
     setIsModalOpen(false);
   };
@@ -101,7 +107,13 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
       className="relative z-10 flex flex-col gap-1 overflow-hidden rounded-md bg-white shadow "
     >
       <div className="flex gap-3 p-3">
-        <Link href={`/profile/${post.userId}`} aria-label={post.user.name}>
+        <Link
+          href={`/profile/${post.userId}`}
+          aria-label={post.user.name}
+          className={classNames(
+            "rounded-full ring-primary ring-offset-1 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary active:ring"
+          )}
+        >
           <div className="relative h-11 w-11">
             <Image
               src={post.user.image || "/default-image.png"}
@@ -115,7 +127,10 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
         <div className="mr-auto flex flex-col self-center leading-none">
           <Link
             href={`/profile/${post.userId}`}
-            className="block text-base font-semibold capitalize text-zinc-900"
+            className={classNames(
+              "block rounded-full text-base font-semibold capitalize text-zinc-900",
+              "ring-primary ring-offset-1 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary active:ring"
+            )}
             aria-label={post.user.name}
           >
             {post.name}
@@ -130,8 +145,11 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
               <Button
                 type="button"
                 onClick={handleOpenModal}
-                className="rounded-full p-1 text-zinc-800 hover:bg-zinc-100"
-                aria-label="action list"
+                className={classNames(
+                  "rounded-full p-1 text-zinc-800 hover:bg-zinc-100 hover:text-zinc-900 active:scale-110 active:bg-zinc-300",
+                  "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
+                )}
+                aria-label="open modal post"
               >
                 <BiDotsHorizontalRounded aria-hidden="true" size={26} />
               </Button>
@@ -175,9 +193,10 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
                 )}
               >
                 <div
-                  className="relative h-full cursor-pointer"
+                  className="relative h-full cursor-pointer active:opacity-80"
                   tabIndex={0}
                   role="button"
+                  aria-label={image.id}
                   onClick={() => router.push(`/post/${post.id}`)}
                 >
                   <Image
@@ -200,12 +219,12 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
       <div className="mt-2 flex items-center justify-between px-5">
         <div className="flex items-center gap-1 text-sm text-black">
           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary">
-            <AiFillLike aria-hidden="true" size={13} className="text-white" />
+            <AiFillLike aria-hidden size={13} className="text-white" />
           </span>
           {post._count.likes !== 0 && (
             <React.Fragment>
               {isLikeLoading ? (
-                <ImSpinner8 className="h-3 w-3 animate-spin" />
+                <ImSpinner8 aria-hidden className="h-3 w-3 animate-spin" />
               ) : (
                 <span className=" font-normal text-zinc-800">
                   {post._count.likes}
@@ -216,14 +235,17 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
         </div>
         <div className="flex gap-1 text-sm font-semibold text-zinc-500">
           <span>{post._count.comment}</span>
-          <BiComment aria-hidden="true" size={20} />
+          <BiComment aria-hidden size={20} />
         </div>
       </div>
       <ul className="rou mx-1 mt-1 flex justify-between rounded-t-md border-t border-zinc-200 font-light">
         <li className="w-full flex-1 py-1">
           <Button
             type="button"
-            className="flex w-full items-center justify-center gap-1 rounded-md py-1 px-6 text-zinc-600	hover:bg-zinc-100"
+            className={classNames(
+              "flex w-full items-center justify-center gap-1 rounded-md py-2 px-6 text-zinc-600	hover:bg-zinc-100",
+              "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
+            )}
             aria-label="Like Post"
             onClick={handleLikePost}
           >
@@ -261,7 +283,10 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
           <Button
             type="button"
             onClick={() => setIsCommentOpen(true)}
-            className={`flex w-full items-center justify-center gap-1 py-1 px-6 text-zinc-600 hover:bg-zinc-100`}
+            className={classNames(
+              "flex w-full items-center justify-center gap-1 py-2 px-6 text-zinc-600 hover:bg-zinc-100",
+              "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
+            )}
             aria-label="Leave a Comment"
           >
             <BiComment aria-hidden="true" size={20} className="text-zinc-900" />
@@ -272,7 +297,10 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
           <Button
             type="button"
             aria-label="Share a post"
-            className="flex w-full items-center justify-center gap-1 rounded-md py-1 px-6 text-zinc-600 hover:bg-zinc-100"
+            className={classNames(
+              "flex w-full items-center justify-center gap-1 rounded-md py-2 px-6 text-zinc-600 hover:bg-zinc-100 active:scale-110",
+              "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
+            )}
           >
             <IoMdShareAlt
               aria-hidden="true"

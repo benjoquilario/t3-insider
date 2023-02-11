@@ -46,7 +46,11 @@ const Header = () => {
   return (
     <div className="col-span-3 hidden lg:block">
       <div className="sticky top-0">
-        <Link href="/" aria-label="home - insider">
+        <Link
+          href="/"
+          aria-label="home - insider"
+          className="focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
+        >
           <div className="flex h-14 w-full items-center justify-center gap-3 text-2xl font-light text-white">
             <div className="relative h-11 w-11">
               <Image layout="fill" src="/icons.svg" alt="Insider - Home" />
@@ -60,7 +64,11 @@ const Header = () => {
         ) : (
           <div className="rounded px-4 py-5">
             <div className="flex justify-start">
-              <Link href={`profile`} aria-label="profile link">
+              <Link
+                href={`profile`}
+                aria-label="profile link"
+                className="rounded-full ring-primary ring-offset-1 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary active:ring"
+              >
                 <div className="relative h-12 w-12">
                   <Image
                     layout="fill"
@@ -74,7 +82,7 @@ const Header = () => {
               <div className="ml-2 flex flex-col justify-center">
                 <Link
                   href={`profile/${authUser?.id || ""}`}
-                  className="text-base font-semibold capitalize text-zinc-900"
+                  className="text-base font-semibold capitalize text-zinc-900 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
                 >
                   {authUser?.name}
                 </Link>
@@ -96,13 +104,15 @@ const Header = () => {
                         : ""
                     }`}
                     className={classNames(
-                      "flex w-full items-center gap-4 rounded-full py-2 px-4 hover:bg-zinc-200"
+                      "flex w-full items-center gap-4 rounded-full py-2 px-4 text-zinc-900 focus:outline-none hover:bg-zinc-200",
+                      "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-zinc-300 active:text-zinc-800",
+                      "transition duration-75"
                     )}
                   >
                     <link.icon
                       aria-hidden="true"
                       size={link.size}
-                      className="text-[#6a55fa]"
+                      className="text-primary"
                     />
                     <span className="text-left text-lg text-zinc-900">
                       {link.linkName}
@@ -116,7 +126,10 @@ const Header = () => {
                     onClick={() => setPostOpen(true)}
                     type="button"
                     aria-label="Create post"
-                    className="flex h-12 w-full items-center justify-center rounded-full bg-[#6a55fa] text-base text-white transition duration-75 hover:bg-[#8371f8]"
+                    className={classNames(
+                      "flex h-12 w-full items-center justify-center rounded-full bg-primary text-base text-white ",
+                      "outline-offset-2 transition duration-75 focus:outline-none focus:ring focus:ring-offset-2 hover:bg-secondary active:bg-[#5544c8]"
+                    )}
                   >
                     Create Post
                   </Button>

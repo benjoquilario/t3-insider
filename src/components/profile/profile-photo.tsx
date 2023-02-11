@@ -173,7 +173,11 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ image, userId }) => {
           <Button
             type="button"
             onClick={openImage}
-            className="absolute right-0 bottom-3 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-[#6a55fa] shadow-md"
+            className={classNames(
+              "absolute right-0 bottom-3 flex h-8 w-8 items-center justify-center rounded-full bg-white text-primary shadow-md",
+              " hover:bg-zinc-50 hover:text-secondary active:scale-110",
+              "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-zinc-200 active:text-secondary"
+            )}
           >
             <AiFillCamera size={20} />
           </Button>

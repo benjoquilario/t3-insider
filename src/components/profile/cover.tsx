@@ -115,7 +115,9 @@ const CoverPhoto: React.FC<CoverPhotoProps> = ({ coverPhoto, userId }) => {
               onClick={openCover}
               type="button"
               className={classNames(
-                "absolute right-3 bottom-3 flex h-8 w-8 items-center justify-center gap-1 rounded-full bg-zinc-100 px-1 shadow-md md:w-32 md:rounded-md"
+                "absolute right-3 bottom-3 flex h-8 w-8 items-center justify-center gap-1 rounded-full bg-white px-1 shadow-md md:w-32 md:rounded-md",
+                " hover:bg-zinc-100 active:scale-110",
+                "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-zinc-200 active:text-secondary"
               )}
             >
               <AiFillCamera size={20} />

@@ -1,10 +1,11 @@
 import React from "react";
-import Image from "../shared/image";
+import Image from "@/components/shared/image";
 import Link from "next/link";
 import { BsFillPersonPlusFill, BsFillCheckCircleFill } from "react-icons/bs";
 import classNames from "classnames";
+import type { User as UserProps } from "@/types/types";
 
-const User = ({ user }) => {
+const User: React.FC<UserProps> = ({ user }) => {
   return (
     <li className="relative h-16 overflow-hidden rounded-md">
       <Link href={`/profile/`} aria-label="">

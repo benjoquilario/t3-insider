@@ -57,7 +57,7 @@ const ModalPost = React.forwardRef<HTMLDivElement, ModalPostProps>(
         initial="hidden"
         animate="visible"
         exit="hidden"
-        className="absolute top-14 right-3 z-30 h-auto rounded border border-solid border-zinc-300 bg-zinc-100"
+        className="absolute top-14 right-3 z-30 h-auto rounded-md border-zinc-300 bg-zinc-100 shadow"
       >
         <div className="relative">
           <ul className="w-full">

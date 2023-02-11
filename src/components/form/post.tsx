@@ -11,13 +11,12 @@ import Button from "@/components/shared/button";
 import { ImSpinner8 } from "react-icons/im";
 import TextareaAutoSize from "react-textarea-autosize";
 import classNames from "classnames";
-import type { SelectedFileType } from "@/types/types";
 import type { SubmitHandler } from "react-hook-form";
 import usePost from "hooks/usePost";
 import PostInput from "../posts/post-input";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 
 export interface PostValues {
   message: string;
@@ -37,6 +36,7 @@ const CreateForm = () => {
   ]);
   const setPostOpen = usePostStore((store) => store.setPostOpen);
   const currentPostId = usePostStore((store) => store.currentPostId);
+  const selectedPost = usePostStore((store) => store.selectedPost);
   const [deleteImages, clearDeletedImages] = usePostStore((store) => [
     store.deleteImages,
     store.clearDeletedImages,
@@ -75,7 +75,7 @@ const CreateForm = () => {
   const onSuccess = async () => {
     toast("Your post was added successfully", {
       type: "success",
-      position: toast.POSITION.BOTTOM_RIGHT,
+      position: toast.POSITION.BOTTOM_LEFT,
     });
     await utils.post.getPosts.invalidate();
     await utils.post.getPostsById.invalidate({
@@ -102,7 +102,7 @@ const CreateForm = () => {
       onSuccess: async () => {
         toast("Your post was updated successfully", {
           type: "success",
-          position: toast.POSITION.BOTTOM_RIGHT,
+          position: toast.POSITION.BOTTOM_LEFT,
         });
         await utils.post.getPosts.invalidate();
       },
@@ -113,16 +113,6 @@ const CreateForm = () => {
       await onSuccess();
     },
   });
-
-  const { data: currentPost, isLoading: isPostLoading } =
-    trpc.post.getPostById.useQuery(
-      {
-        id: currentPostId,
-      },
-      {
-        enabled: !!currentPostId,
-      }
-    );
 
   useEffect(() => {
     setFocus("message");
@@ -191,8 +181,6 @@ const CreateForm = () => {
 
   const message = watch("message");
 
-  useClickOutside(ref, () => setPostOpen(false));
-
   useEffect(() => {
     postOpen && (document.body.style.overflow = "hidden");
 
@@ -215,10 +203,14 @@ const CreateForm = () => {
   const enabledButton = !isUploading && message?.trim().length > 0;
 
   useEffect(() => {
-    if (currentPostId && currentPost && !isPostLoading) {
-      setValue("message", currentPost.message);
+    if (currentPostId && selectedPost) {
+      setValue("message", selectedPost.message);
     }
-  }, [currentPostId, currentPost, setValue, isPostLoading]);
+  }, [currentPostId, setValue, selectedPost]);
+
+  const hidePostOpen = useCallback(() => setPostOpen(false), [setPostOpen]);
+
+  useClickOutside(ref, () => hidePostOpen());
 
   return (
     <React.Fragment>
@@ -230,6 +222,7 @@ const CreateForm = () => {
           ref={ref}
           className="z-20 m-4 h-auto w-full max-w-screen-md rounded-md bg-white shadow-md md:w-2/4"
         >
+          {errorMessage && <div>{errorMessage}</div>}
           <div className="flex items-center justify-between border-b border-zinc-200 p-2">
             <h3 className="p-2 text-base text-zinc-900 md:text-lg">
               {isEditing ? "Updating Post" : "Creating Post"}
@@ -238,7 +231,7 @@ const CreateForm = () => {
             <Button
               className="rounded-full bg-[#edf1f5] p-2 text-zinc-700 transition duration-75 ease-in hover:bg-[#e5e8eb]"
               aria-label="close modal"
-              onClick={() => handleOnReset()}
+              onClick={handleOnReset}
             >
               <RiCloseFill aria-hidden="true" size={25} />
             </Button>
@@ -265,7 +258,7 @@ const CreateForm = () => {
                 openFilePicker={openFilePicker}
                 control={control}
                 setValue={setValue}
-                selectedFile={currentPost?.selectedFile as SelectedFileType[]}
+                selectedFile={selectedPost.selectedFile}
               >
                 <input {...getInputProps()} />
               </PostInput>
