@@ -3,7 +3,11 @@ import Image from "@/components/shared/image";
 import Link from "next/link";
 import { BsFillPersonPlusFill, BsFillCheckCircleFill } from "react-icons/bs";
 import classNames from "classnames";
-import type { User as UserProps } from "@/types/types";
+import type { User as UserType } from "@/types/types";
+
+type UserProps = {
+  user: UserType;
+};
 
 const User: React.FC<UserProps> = ({ user }) => {
   return (
