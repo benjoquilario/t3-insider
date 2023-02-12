@@ -1,16 +1,16 @@
-import React, { useMemo, useEffect } from "react";
 import { AiFillCamera } from "react-icons/ai";
 import { RiCloseFill } from "react-icons/ri";
-import Image from "@/components/shared/image";
-import useProfileDropZone from "hooks/useProfileZone";
+import useProfileDropZone from "@/lib/hooks/useProfileZone";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import Button from "@/components/shared/button";
-import { uploadPicture } from "@/utils/cloudinary";
-import { trpc } from "@/utils/trpc";
+import { uploadPicture } from "@/lib/utils/cloudinary";
+import { trpc } from "@/lib/utils/trpc";
 import { toast } from "react-toastify";
-import Backdrop from "../shared/backdrop";
 import classNames from "classnames";
-import Loader from "../shared/loader";
+import Image from "@/components/shared/image";
+import Button from "@/components/shared/button";
+import Backdrop from "@/components/shared/backdrop";
+import Loader from "@/components/shared/loader";
+import React, { useMemo, useEffect } from "react";
 
 type ProfilePhotoProps = {
   image?: string;
@@ -63,8 +63,6 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ image, userId }) => {
       await utils.user.getUserById.invalidate({ id: userId });
     },
   });
-
-  console.log(draftImageFile);
 
   const handleOnSubmit: SubmitHandler<ProfileValues> = async (data) => {
     const imageUrl = await uploadPicture(data.images[0] as File);
@@ -162,14 +160,17 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ image, userId }) => {
       ) : null}
       <div className="relative -mt-20 flex-shrink-0" {...getRootImageProps}>
         <form onSubmit={handleSubmit(handleOnSubmit)}>
-          <Image
-            className="relative rounded-full border-4 border-zinc-800 bg-gray-900"
-            src={image || "/default-image.png"}
-            alt=""
-            objectFit="cover"
-            layout="fill"
-            containerclassnames="relative h-28 w-28"
-          />
+          <div className="h-[114px] w-[114px] rounded-full">
+            <Image
+              className="relative rounded-full border-4 border-zinc-800 bg-gray-900"
+              src={image || "/default-image.png"}
+              alt=""
+              objectFit="cover"
+              layout="fill"
+              containerclassnames="relative h-28 w-28"
+            />
+          </div>
+
           <Button
             type="button"
             onClick={openImage}

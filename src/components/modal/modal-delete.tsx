@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 import Button from "../shared/button";
 import { RiCloseFill } from "react-icons/ri";
 import Backdrop from "../shared/backdrop";
-import useClickOutside from "hooks/useClickOutside";
+import useClickOutside from "@/lib/hooks/useClickOutside";
 
 type ModalDeleteProps = {
   handleDelete: () => void;

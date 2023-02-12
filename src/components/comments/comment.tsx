@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useCallback } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import Button from "../shared/button";
 import Link from "next/link";
 import Image from "../shared/image";
@@ -6,16 +6,16 @@ import { BiDotsHorizontalRounded } from "react-icons/bi";
 import { BsArrow90DegDown } from "react-icons/bs";
 import { AiFillLike } from "react-icons/ai";
 import ModalComment from "../modal/modal-comment";
-import useClickOutside from "hooks/useClickOutside";
-import { trpc } from "@/utils/trpc";
+import useClickOutside from "@/lib/hooks/useClickOutside";
 import useCommentStore from "@/store/comment";
 import type { Comment as CommentType, User } from "@/types/types";
 import classNames from "classnames";
 import ReplyComment from "./reply-comment";
 import type { UseFormSetFocus } from "react-hook-form";
-import ReactTimeAgo from "react-time-ago";
 import Loader from "../shared/loader";
 import { useSession } from "next-auth/react";
+import dayjs from "@/lib/utils/time";
+import { useMutateLikeComment } from "@/lib/hooks/useLikeMutation";
 
 type CommentProps = {
   comment: CommentType<User>;
@@ -23,7 +23,6 @@ type CommentProps = {
 };
 
 const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
-  const utils = trpc.useContext();
   const { data: session } = useSession();
   const ref = useRef<HTMLDivElement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,23 +36,12 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
     (store) => store.setIsCommentModalOpen
   );
 
-  const onSuccess = async () => {
-    await utils.comment.getComments.invalidate({
-      postId: comment.postId,
-      limit: 3,
-    });
-  };
-
-  const { mutate: mutateLikeComent, isLoading: isLikeLoading } =
-    trpc.like.likeComment.useMutation({
-      onError: (e) => console.log(e.message),
-      onSuccess: async () => {
-        await onSuccess();
-      },
-    });
+  const { mutateLikeComment, isLikeLoading } = useMutateLikeComment(
+    comment.postId
+  );
 
   const handleLikeComment = () => {
-    mutateLikeComent({
+    mutateLikeComment({
       commentId: comment.id,
       isLiked: !isLiked,
     });
@@ -82,10 +70,10 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
 
   return (
     <li>
-      <div className="relative flex pt-2 pl-6">
+      <div className="relative flex pt-1 pl-6">
         <div className="relative mt-1 mr-2 block rounded-full">
           {isReplyOpen || comment._count.reply > 0 ? (
-            <div className="absolute left-[18px] top-[30px] h-[calc(100%_-_53px)] w-[2px] bg-gray-300"></div>
+            <div className="absolute left-[18px] top-[30px] h-[calc(100%_-_61px)] w-[2px] bg-gray-300"></div>
           ) : null}
           <span className="inline">
             <Link
@@ -181,6 +169,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
               </div>
               <div className="ml-3 flex gap-2 text-xs font-semibold text-zinc-600">
                 <Button
+                  type="button"
                   onClick={handleLikeComment}
                   className={classNames(
                     "underline-offset-1 hover:underline",
@@ -192,23 +181,22 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
                   Like
                 </Button>
                 <Button
+                  type="button"
                   onClick={() => setIsReplyOpen(true)}
                   className="underline-offset-1 hover:underline"
                 >
                   Reply
                 </Button>
                 <span className="text-xs text-zinc-700">
-                  <ReactTimeAgo
-                    timeStyle="twitter"
-                    locale="en-US"
-                    date={comment.createdAt}
-                  />
+                  {dayjs(comment.createdAt).fromNow(true)}
                 </span>
               </div>
               {comment._count.reply !== 0 && !isReplyOpen ? (
                 <div className="mt-2 ml-3">
-                  <div className="absolute left-[42px] h-[13px] w-[27px] rounded-l-md border-l-2 border-b-2 border-zinc-300 border-t-white"></div>
-                  <button
+                  <div className="absolute left-[42px] bottom-[12px] h-[21px] w-[27px] rounded-l border-l-2 border-b-2 border-zinc-300 border-t-white"></div>
+                  <Button
+                    type="button"
+                    aria-label="show replies"
                     onClick={() => setIsReplyOpen(true)}
                     className="flex items-center gap-1 text-sm font-semibold underline-offset-1 hover:underline"
                   >
@@ -216,7 +204,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
                       <BsArrow90DegDown className="-rotate-90" />
                     </span>
                     <span>{`${comment._count.reply} replies`}</span>
-                  </button>
+                  </Button>
                 </div>
               ) : null}
             </div>
@@ -241,9 +229,10 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
           {session?.user?.id === comment.userId && (
             <div className="absolute top-3 right-5 self-end">
               <Button
+                type="button"
                 onClick={handleModalOpen}
                 className="rounded-full p-1 text-zinc-800 transition hover:bg-zinc-200"
-                aria-label="action list"
+                aria-label="show post modal"
               >
                 <BiDotsHorizontalRounded aria-hidden="true" size={22} />
               </Button>

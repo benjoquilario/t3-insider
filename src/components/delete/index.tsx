@@ -1,7 +1,7 @@
 import React from "react";
-import { trpc } from "@/utils/trpc";
+import { trpc } from "@/lib/utils/trpc";
 import { toast } from "react-toastify";
-import ModalDelete from "../modal/modal-delete";
+import ModalDelete from "@/components/modal/modal-delete";
 import { useSession } from "next-auth/react";
 import usePostStore from "@/store/post";
 import useCommentStore from "@/store/comment";

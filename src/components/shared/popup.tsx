@@ -1,5 +1,5 @@
 import Portal from "@/components/shared/portal";
-import useDevice from "hooks/useDevice";
+import useDevice from "@/lib/hooks/useDevice";
 import { Modifier, type Options, type Placement } from "@popperjs/core";
 import classNames from "classnames";
 import { AnimatePresence, motion, type Variants } from "framer-motion";

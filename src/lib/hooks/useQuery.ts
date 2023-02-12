@@ -1,4 +1,4 @@
-import { trpc } from "@/utils/trpc";
+import { trpc } from "@/lib/utils/trpc";
 
 export const useAuthQuery = () => trpc.user.authUser.useQuery();
 
@@ -45,5 +45,17 @@ export const useUserByIdQuery = (userId: string) =>
     },
     {
       enabled: !!userId,
+    }
+  );
+
+export const useInfiniteReplyQuery = (commentId: string) =>
+  trpc.comment.getReplyComments.useInfiniteQuery(
+    {
+      limit: 3,
+      commentId,
+    },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextSkip,
+      refetchOnWindowFocus: false,
     }
   );

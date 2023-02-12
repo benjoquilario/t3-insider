@@ -3,35 +3,34 @@ import { IoMdArrowDropdown } from "react-icons/io";
 import { BiWorld, BiBookmark } from "react-icons/bi";
 import { BsFillBellFill } from "react-icons/bs";
 import User from "./user";
-import { trpc } from "@/utils/trpc";
 import Image from "../shared/image";
 import UsersSkeleton from "../skeleton/users-skeleton";
 import Dropdown from "./dropdown";
-import useClickOutside from "hooks/useClickOutside";
+import useClickOutside from "@/lib/hooks/useClickOutside";
 import ButtonTooltip from "../shared/button-tooltip";
 import Button from "../shared/button";
 import { useRouter } from "next/router";
 import classNames from "classnames";
 import type { User as UserType } from "@/types/types";
-import { useInfiniteUsersQuery } from "hooks/useQuery";
+import { useInfiniteUsersQuery } from "@/lib/hooks/useQuery";
 
-const Users = () => {
+type UsersProps = {
+  auth: UserType;
+  isLoading: boolean;
+};
+
+const Users: React.FC<UsersProps> = ({ auth, isLoading }) => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
-  const buttonRef = useRef<HTMLDivElement | null>(null);
-  const { data: authUser, isLoading: isAuthLoading } =
-    trpc.user.authUser.useQuery();
 
   const {
     data,
-    isLoading,
+    isLoading: isUsersLoading,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-    isError,
-    error,
   } = useInfiniteUsersQuery();
 
   const hideDropdown = useCallback(() => {
@@ -74,7 +73,7 @@ const Users = () => {
         </ul>
         <div ref={ref} className="flex items-center justify-end">
           <div className="flex items-center justify-center gap-1">
-            {isAuthLoading ? (
+            {isLoading ? (
               <div className="h-12 w-12 animate-pulse rounded-full border border-zinc-200 bg-zinc-100" />
             ) : (
               <Button
@@ -92,8 +91,8 @@ const Users = () => {
                 </div>
                 <Image
                   className="rounded-full"
-                  src={authUser?.image || "/default-image.png"}
-                  alt={authUser?.name || ""}
+                  src={auth?.image || "/default-image.png"}
+                  alt={auth?.name || ""}
                   layout="fill"
                   containerclassnames="relative h-[48px] w-[48px]"
                 />
@@ -124,7 +123,7 @@ const Users = () => {
             </p>
 
             <ul className="mt-3 max-h-96 w-full space-y-1 overflow-y-auto">
-              {isLoading
+              {isUsersLoading
                 ? Array.from(Array(4), (_, i) => <UsersSkeleton key={i} />)
                 : data?.pages.map((page) =>
                     page.users.map((user) => (

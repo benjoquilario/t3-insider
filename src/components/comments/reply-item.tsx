@@ -6,17 +6,17 @@ import { BiDotsHorizontalRounded } from "react-icons/bi";
 import useCommentStore from "@/store/comment";
 import type { ReplyComment, User } from "@/types/types";
 import type { UseFormSetFocus } from "react-hook-form";
-import ReactTimeAgo from "react-time-ago";
 import classNames from "classnames";
-import { trpc } from "@/utils/trpc";
 import { AiFillLike } from "react-icons/ai";
 import Loader from "../shared/loader";
-import React, { useState, useRef, useMemo, useCallback } from "react";
-import useClickOutside from "hooks/useClickOutside";
+import useClickOutside from "@/lib/hooks/useClickOutside";
+import { useMutationLikeReply } from "@/lib/hooks/useLikeMutation";
+import dayjs from "@/lib/utils/time";
+import React, { useState, useRef, useCallback } from "react";
 
 type ReplyItemProps = {
   comment: ReplyComment<User>;
-  setFocus: UseFormSetFocus<{ replyComment: string }>;
+  setFocus: UseFormSetFocus<{ comment: string }>;
   commentId: string;
 };
 
@@ -25,7 +25,6 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
   setFocus,
   commentId,
 }) => {
-  const utils = trpc.useContext();
   const ref = useRef<HTMLDivElement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const setReplyId = useCommentStore((store) => store.setReplyId);
@@ -36,19 +35,11 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
     setReplyId(comment.id);
     setIsModalOpen(false);
     setReplyComment(comment.comment);
-    setFocus("replyComment");
+    setFocus("comment");
   };
 
-  const { mutate: mutateLikeReplyComent, isLoading: isLikeLoading } =
-    trpc.like.likeReplyComment.useMutation({
-      onError: (e) => console.log(e.message),
-      onSuccess: async () => {
-        await utils.comment.getReplyComments.invalidate({
-          limit: 3,
-          commentId: commentId,
-        });
-      },
-    });
+  const { mutateLikeReplyComent, isLikeLoading } =
+    useMutationLikeReply(commentId);
 
   const handleLikeReply = () => {
     mutateLikeReplyComent({
@@ -174,11 +165,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
                   Like
                 </Button>
                 <span className="text-xs text-zinc-700">
-                  <ReactTimeAgo
-                    timeStyle="twitter"
-                    locale="en-US"
-                    date={comment.createdAt}
-                  />
+                  {dayjs(comment.createdAt).fromNow(true)}
                 </span>
               </div>
             </div>

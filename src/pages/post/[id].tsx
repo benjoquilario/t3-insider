@@ -7,7 +7,7 @@ import type {
 import dynamic from "next/dynamic";
 import { getServerAuthSession } from "@/server/auth";
 import { useRouter } from "next/router";
-import { trpc } from "@/utils/trpc";
+import { trpc } from "@/lib/utils/trpc";
 import type { Post as PostType, User } from "@/types/types";
 import PostItem from "@/components/posts/post-item";
 import Layout from "@/components/layout";
