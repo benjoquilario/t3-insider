@@ -1,9 +1,9 @@
 import React from "react";
-import { variants } from "@/utils/index";
+import { variants } from "@/lib/utils/index";
 import { motion } from "framer-motion";
 import { FaEdit } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
-import Button from "../shared/button";
+import Button from "@/components/shared/button";
 import { BiBookmark } from "react-icons/bi";
 import classNames from "classnames";
 

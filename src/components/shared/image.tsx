@@ -3,7 +3,7 @@ import NextImage, {
   type ImageProps as NextImageProps,
 } from "next/legacy/image";
 import { motion } from "framer-motion";
-import { variants } from "@/utils/index";
+import { variants } from "@/lib/utils/index";
 
 interface ImageProps extends NextImageProps {
   containerclassnames?: string;

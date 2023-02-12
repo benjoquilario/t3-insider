@@ -3,12 +3,11 @@ import { useWatch, type Control, type UseFormSetValue } from "react-hook-form";
 import type { PostValues } from "../form/post";
 import { HiPhoto } from "react-icons/hi2";
 import { RiCloseFill } from "react-icons/ri";
-import ImageThumbnail from "../shared/image-thumbnail";
-import Image from "../shared/image";
+import ImageThumbnail from "@/components/shared/image-thumbnail";
+import Image from "@/components/shared/image";
 import classNames from "classnames";
 import type { SelectedFileType } from "@/types/types";
-import { trpc } from "@/utils/trpc";
-import Button from "../shared/button";
+import Button from "@/components/shared/button";
 import usePostStore from "@/store/post";
 
 interface PostInputProps {

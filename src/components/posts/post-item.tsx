@@ -1,11 +1,6 @@
 import Button from "@/components/shared/button";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
-import {
-  AiFillHeart,
-  AiOutlineHeart,
-  AiFillLike,
-  AiOutlineLike,
-} from "react-icons/ai";
+import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { ImSpinner8 } from "react-icons/im";
 import { BiComment } from "react-icons/bi";
 import { IoMdShareAlt } from "react-icons/io";
@@ -19,20 +14,16 @@ import {
   capitalizeName,
   getImageHeightRatio,
   getImageWidthRatio,
-} from "@/utils/index";
+} from "@/lib/utils/index";
 import type { Post as PostType, User } from "@/types/types";
 import Comments from "@/components/comments/";
 import usePostStore from "@/store/post";
 import ModalPost from "@/components/modal/modal-post";
-import { trpc } from "@/utils/trpc";
-import useClickOutside from "hooks/useClickOutside";
-import ReactTimeAgo from "react-time-ago";
-import en from "javascript-time-ago/locale/en.json";
-import TimeAgo from "javascript-time-ago";
+import { trpc } from "@/lib/utils/trpc";
+import useClickOutside from "@/lib/hooks/useClickOutside";
 import { useRouter } from "next/router";
-import React, { useCallback, useMemo, useRef, useState } from "react";
-
-TimeAgo.addDefaultLocale(en);
+import dayjs from "@/lib/utils/time";
+import React, { useCallback, useRef, useState } from "react";
 
 type PostItemProps = {
   post: PostType<User>;
@@ -131,7 +122,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
             {post.name}
           </Link>
           <span className="text-xs text-zinc-700">
-            <ReactTimeAgo date={post.createdAt} />
+            {dayjs(post.createdAt).fromNow()}
           </span>
         </div>
         {session?.user?.id === post.userId && (
@@ -238,7 +229,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
           <Button
             type="button"
             className={classNames(
-              "flex w-full items-center justify-center gap-1 rounded-md py-2 px-6 text-zinc-600	hover:bg-zinc-100",
+              "flex h-[35px] w-full items-center justify-center gap-1 rounded-md text-zinc-600	hover:bg-zinc-100",
               "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
             )}
             aria-label="Like Post"
@@ -279,7 +270,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
             type="button"
             onClick={() => setIsCommentOpen(true)}
             className={classNames(
-              "flex w-full items-center justify-center gap-1 py-2 px-6 text-zinc-600 hover:bg-zinc-100",
+              "flex h-[35px] w-full items-center justify-center gap-1 text-zinc-600 hover:bg-zinc-100",
               "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
             )}
             aria-label="Leave a Comment"
@@ -293,7 +284,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
             type="button"
             aria-label="Share a post"
             className={classNames(
-              "flex w-full items-center justify-center gap-1 rounded-md py-2 px-6 text-zinc-600 hover:bg-zinc-100 active:scale-110",
+              "flex h-[35px] w-full items-center justify-center gap-1 rounded-md text-zinc-600 hover:bg-zinc-100 active:scale-110",
               "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
             )}
           >

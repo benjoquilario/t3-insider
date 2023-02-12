@@ -1,6 +1,5 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Image from "../shared/image";
-import { trpc } from "@/utils/trpc";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import useCommentStore from "@/store/comment";
 import type { Comment as CommentType, User } from "@/types/types";
@@ -8,7 +7,12 @@ import Comment from "./comment";
 import { ImSpinner8 } from "react-icons/im";
 import classNames from "classnames";
 import CommentForm from "../shared/comment-form";
-import { useAuthQuery, useInfiniteCommentsQuery } from "hooks/useQuery";
+import { useAuthQuery, useInfiniteCommentsQuery } from "@/lib/hooks/useQuery";
+import {
+  useMutateCreateComment,
+  useMutateUpdateComment,
+} from "@/lib/hooks/useCommentMutation";
+import Button from "../shared/button";
 
 type CommentValues = {
   comment: string;
@@ -19,10 +23,6 @@ export type CommentProps = {
 };
 
 const CreateComment: React.FC<CommentProps> = ({ postId }) => {
-  const utils = trpc.useContext();
-
-  const { data: authUser } = useAuthQuery();
-  const [errorMessage, setErrorMessage] = useState<string | undefined>("");
   const [commentId, setCommentId] = useCommentStore((store) => [
     store.commentId,
     store.setCommentId,
@@ -32,15 +32,8 @@ const CreateComment: React.FC<CommentProps> = ({ postId }) => {
     store.setCommentMessage,
   ]);
 
-  const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-    isError,
-    error,
-  } = useInfiniteCommentsQuery(postId);
+  const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useInfiniteCommentsQuery(postId);
 
   const {
     register,
@@ -56,11 +49,6 @@ const CreateComment: React.FC<CommentProps> = ({ postId }) => {
     },
   });
 
-  const onSuccess = async () => {
-    await utils.comment.getComments.invalidate();
-    await utils.post.getPosts.invalidate();
-  };
-
   useEffect(() => {
     setFocus("comment");
   }, [setFocus]);
@@ -71,25 +59,11 @@ const CreateComment: React.FC<CommentProps> = ({ postId }) => {
     }
   }, [isSubmitSuccessful, reset]);
 
-  const { mutateAsync: mutateAsyncCreate } =
-    trpc.comment.createComment.useMutation({
-      onError: (e) => setErrorMessage(e.message),
-      onSuccess: async () => {
-        await onSuccess();
-      },
-    });
-
-  const { mutateAsync: mutateAsyncUpdate } =
-    trpc.comment.updateComment.useMutation({
-      onError: (e) => setErrorMessage(e.message),
-      onSuccess: async () => {
-        await onSuccess();
-      },
-    });
+  // mutation
+  const mutateAsyncCreate = useMutateCreateComment();
+  const mutateAsyncUpdate = useMutateUpdateComment();
 
   const handleOnSubmit: SubmitHandler<CommentValues> = async (data) => {
-    setErrorMessage(undefined);
-
     if (!data.comment) return;
 
     if (commentId && commentMessage) {
@@ -125,26 +99,14 @@ const CreateComment: React.FC<CommentProps> = ({ postId }) => {
       {!isLoading ? (
         <div className="pb-4" id="comment">
           <div className="pt-4 pl-5 pr-5">
-            <div className="flex flex-row items-center space-x-2">
-              <div>
-                <Image
-                  src={authUser?.image || "/default-image.png"}
-                  alt="profile pic"
-                  objectFit="cover"
-                  layout="fill"
-                  className="rounded-full"
-                  containerclassnames="relative h-11 w-11"
-                />
-              </div>
-              <CommentForm
-                commentId={commentId}
-                commentText={comment}
-                reset={reset}
-                register={register}
-                handleCancel={cancelUpdate}
-                onSubmit={handleSubmit(handleOnSubmit)}
-              />
-            </div>
+            <CommentForm
+              commentId={commentId}
+              commentText={comment}
+              reset={reset}
+              register={register}
+              handleCancel={cancelUpdate}
+              onSubmit={handleSubmit(handleOnSubmit)}
+            />
           </div>
           <ul>
             {data?.pages.map((page) =>
@@ -163,12 +125,13 @@ const CreateComment: React.FC<CommentProps> = ({ postId }) => {
             )}
             {!isFetchingNextPage && hasNextPage && (
               <li className="ml-4">
-                <button
+                <Button
+                  type="button"
                   onClick={() => fetchNextPage()}
                   className="underline-offset-1 hover:underline"
                 >
                   View more comments
-                </button>
+                </Button>
               </li>
             )}
           </ul>

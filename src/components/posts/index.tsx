@@ -7,7 +7,7 @@ import { InView } from "react-intersection-observer";
 import { ToastContainer } from "react-toastify";
 import Delete from "@/components/delete";
 import PostSkeleton from "../skeleton/post-skeleton";
-import { useInfinitePostsQuery } from "hooks/useQuery";
+import { useInfinitePostsQuery } from "@/lib/hooks/useQuery";
 
 const CreateForm = dynamic(() => import("@/components/form/post"), {
   ssr: false,

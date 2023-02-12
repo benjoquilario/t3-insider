@@ -7,12 +7,13 @@ import { AiFillHome } from "react-icons/ai";
 import classNames from "classnames";
 import Button from "@/components/shared/button";
 
-import { trpc } from "@/utils/trpc";
+import { trpc } from "@/lib/utils/trpc";
 import React from "react";
 import UserSkeleton from "../skeleton/user-skeleton";
 import usePostStore from "@/store/post";
+import { User } from "@/types/types";
 
-const LINKS = [
+export const LINKS = [
   {
     href: "/",
     icon: AiFillHome,
@@ -39,8 +40,12 @@ const LINKS = [
   },
 ];
 
-const Header = () => {
-  const { data: authUser, isLoading } = trpc.user.authUser.useQuery();
+type HeaderProps = {
+  auth: User;
+  isLoading: boolean;
+};
+
+const Header: React.FC<HeaderProps> = ({ auth, isLoading }) => {
   const setPostOpen = usePostStore((store) => store.setPostOpen);
 
   return (
@@ -72,8 +77,8 @@ const Header = () => {
                 <div className="relative h-12 w-12">
                   <Image
                     layout="fill"
-                    src={authUser?.image || "/default-image.png"}
-                    alt={authUser?.name || ""}
+                    src={auth?.image || "/default-image.png"}
+                    alt={auth?.name || ""}
                     objectFit="cover"
                     className="rounded-full"
                   />
@@ -81,10 +86,10 @@ const Header = () => {
               </Link>
               <div className="ml-2 flex flex-col justify-center">
                 <Link
-                  href={`profile/${authUser?.id || ""}`}
+                  href={`profile/${auth?.id || ""}`}
                   className="text-base font-semibold capitalize text-zinc-900 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
                 >
-                  {authUser?.name}
+                  {auth?.name}
                 </Link>
                 <span className="text-xs text-zinc-500">21 Followers</span>
               </div>
@@ -99,9 +104,7 @@ const Header = () => {
                   <Link
                     aria-label={link.linkName}
                     href={`${link.href}${
-                      link.href.includes("profile")
-                        ? `/${authUser?.id || ""}`
-                        : ""
+                      link.href.includes("profile") ? `/${auth?.id || ""}` : ""
                     }`}
                     className={classNames(
                       "flex w-full items-center gap-4 rounded-full py-2 px-4 text-zinc-900 focus:outline-none hover:bg-zinc-200",

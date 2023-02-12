@@ -1,22 +1,26 @@
 import { motion } from "framer-motion";
-import { uploadPicture } from "@/utils/cloudinary";
-import { variants } from "@/utils/index";
+import { uploadPicture } from "@/lib/utils/cloudinary";
+import { variants } from "@/lib/utils/index";
 import { RiCloseFill } from "react-icons/ri";
 import Backdrop from "@/components/shared/backdrop";
-import useClickOutside from "hooks/useClickOutside";
+import useClickOutside from "@/lib/hooks/useClickOutside";
 import usePostStore from "@/store/post";
 import { useSession } from "next-auth/react";
-import { trpc } from "@/utils/trpc";
 import Button from "@/components/shared/button";
 import { ImSpinner8 } from "react-icons/im";
 import TextareaAutoSize from "react-textarea-autosize";
 import classNames from "classnames";
 import type { SubmitHandler } from "react-hook-form";
-import usePost from "hooks/usePost";
+import usePost from "@/lib/hooks/usePost";
 import PostInput from "../posts/post-input";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import {
+  useMutateCreatePost,
+  useMutateDeleteImages,
+  useMutateUpdatePost,
+} from "@/lib/hooks/usePostMutation";
 
 export interface PostValues {
   message: string;
@@ -25,7 +29,6 @@ export interface PostValues {
 }
 
 const CreateForm = () => {
-  const utils = trpc.useContext();
   const ref = useRef(null);
   const { data: session } = useSession();
   const [errorMessage, setErrorMessage] = useState<string | undefined>("");
@@ -72,47 +75,28 @@ const CreateForm = () => {
     }
   }, [isSubmitSuccessful, reset]);
 
-  const onSuccess = async () => {
+  const onSuccessCreate = () => {
     toast("Your post was added successfully", {
       type: "success",
       position: toast.POSITION.BOTTOM_LEFT,
     });
-    await utils.post.getPosts.invalidate();
-    await utils.post.getPostsById.invalidate({
-      id: session?.user?.id,
-      limit: 3,
+  };
+
+  const onSuccessUpdate = () => {
+    toast("Your post was updated successfully", {
+      type: "success",
+      position: toast.POSITION.BOTTOM_LEFT,
     });
   };
 
-  const { mutateAsync: mutateCreatePost, isLoading: isCreatePostLoading } =
-    trpc.post.createPost.useMutation({
-      onError: (e) => {
-        setErrorMessage(e.message);
-      },
-      onSuccess: async () => {
-        await onSuccess();
-      },
-    });
+  const { mutateCreatePost, isCreatePostLoading } = useMutateCreatePost(
+    onSuccessCreate,
+    session?.user?.id
+  );
+  const { mutateUpdatePost, isUpdateLoading } =
+    useMutateUpdatePost(onSuccessUpdate);
 
-  const { mutateAsync: mutateUpdatePost, isLoading: isUpdateLoading } =
-    trpc.post.updatePost.useMutation({
-      onError: (e) => {
-        setErrorMessage(e.message);
-      },
-      onSuccess: async () => {
-        toast("Your post was updated successfully", {
-          type: "success",
-          position: toast.POSITION.BOTTOM_LEFT,
-        });
-        await utils.post.getPosts.invalidate();
-      },
-    });
-
-  const { mutate: mutateDeleteImage } = trpc.post.deleteImage.useMutation({
-    onSuccess: async () => {
-      await onSuccess();
-    },
-  });
+  const mutateDeleteImage = useMutateDeleteImages(session?.user?.id);
 
   useEffect(() => {
     setFocus("message");

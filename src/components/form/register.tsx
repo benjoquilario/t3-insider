@@ -4,7 +4,7 @@ import FormContainer from "./container";
 import Input from "@/components/shared/input";
 import Button from "@/components/shared/button";
 import { useRouter } from "next/router";
-import { trpc } from "@/utils/trpc";
+import { trpc } from "@/lib/utils/trpc";
 import { useForm, type SubmitHandler } from "react-hook-form";
 
 type FormValues = {

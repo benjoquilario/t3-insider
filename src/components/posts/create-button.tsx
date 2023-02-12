@@ -2,10 +2,10 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/legacy/image";
 import { useSession } from "next-auth/react";
-import Button from "../shared/button";
+import Button from "@/components/shared/button";
 import usePostStore from "@/store/post";
 import classNames from "classnames";
-import { useAuthQuery } from "hooks/useQuery";
+import { useAuthQuery } from "@/lib/hooks/useQuery";
 
 const CreateButton = () => {
   const session = useSession();

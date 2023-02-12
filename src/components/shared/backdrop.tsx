@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { backdropVariant } from "@/utils/index";
+import { backdropVariant } from "@/lib/utils/index";
 import React from "react";
 
 type BackdropProps = {

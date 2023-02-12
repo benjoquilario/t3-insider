@@ -1,11 +1,11 @@
 import React, { useMemo, useEffect } from "react";
 import Image from "@/components/shared/image";
 import { AiFillCamera } from "react-icons/ai";
-import Button from "../shared/button";
-import useProfileDropZone from "hooks/useProfileZone";
-import { trpc } from "@/utils/trpc";
+import Button from "@/components/shared/button";
+import useProfileDropZone from "@/lib/hooks/useProfileZone";
+import { trpc } from "@/lib/utils/trpc";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { uploadPicture } from "@/utils/cloudinary";
+import { uploadPicture } from "@/lib/utils/cloudinary";
 import { toast } from "react-toastify";
 import classNames from "classnames";
 

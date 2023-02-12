@@ -1,5 +1,4 @@
 import Image from "@/components/shared/image";
-import { trpc } from "@/utils/trpc";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import useCommentStore from "@/store/comment";
 import ReplyItem from "./reply-item";
@@ -9,7 +8,11 @@ import type { ReplyComment as ReplyCommentType, User } from "@/types/types";
 import React, { useState, useEffect } from "react";
 import classNames from "classnames";
 import CommentForm from "../shared/comment-form";
-import { useAuthQuery } from "hooks/useQuery";
+import { useAuthQuery, useInfiniteReplyQuery } from "@/lib/hooks/useQuery";
+import {
+  useMutateCreateReply,
+  useMutateUpdateReply,
+} from "@/lib/hooks/useCommentMutation";
 
 type ReplyValues = {
   comment: string;
@@ -24,8 +27,6 @@ const ReplyComment: React.FC<ReplyCommentProps> = ({
   commentId,
   commentName,
 }) => {
-  const utils = trpc.useContext();
-
   const [errorMessage, setErrorMessage] = useState<string | undefined>("");
   const [replyId, setReplyId] = useCommentStore((store) => [
     store.replyId,
@@ -36,19 +37,8 @@ const ReplyComment: React.FC<ReplyCommentProps> = ({
     store.setReplyComment,
   ]);
 
-  const { data: authUser } = useAuthQuery();
-
   const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
-    trpc.comment.getReplyComments.useInfiniteQuery(
-      {
-        limit: 3,
-        commentId: commentId,
-      },
-      {
-        getNextPageParam: (lastPage) => lastPage.nextSkip,
-        refetchOnWindowFocus: false,
-      }
-    );
+    useInfiniteReplyQuery(commentId);
 
   const {
     register,
@@ -64,13 +54,6 @@ const ReplyComment: React.FC<ReplyCommentProps> = ({
     },
   });
 
-  const onSuccess = async () => {
-    await utils.comment.getReplyComments.invalidate({
-      limit: 3,
-      commentId,
-    });
-  };
-
   useEffect(() => {
     setFocus("comment");
   }, [setFocus]);
@@ -81,37 +64,23 @@ const ReplyComment: React.FC<ReplyCommentProps> = ({
     }
   }, [isSubmitSuccessful, reset]);
 
-  const { mutateAsync: mutateAsyncCreate } =
-    trpc.comment.replyComment.useMutation({
-      onError: (e) => setErrorMessage(e.message),
-      onSuccess: async () => {
-        await onSuccess();
-      },
-    });
+  const mutateAsyncCreate = useMutateCreateReply(commentId);
+  const mutateAsyncUpdate = useMutateUpdateReply(commentId);
 
-  const { mutateAsync: mutateAsyncUpdate } =
-    trpc.comment.updateReplyComment.useMutation({
-      onError: (e) => setErrorMessage(e.message),
-      onSuccess: async () => {
-        await onSuccess();
-      },
-    });
-
-  const handleOnSubmit: SubmitHandler<ReplyValues> = async (data) => {
+  const handleOnSubmit: SubmitHandler<ReplyValues> = async ({ comment }) => {
     setErrorMessage(undefined);
 
-    if (replyId) {
+    if (replyId)
       await mutateAsyncUpdate({
-        comment: data.comment,
+        comment,
         commentId,
         id: replyId,
       });
-    } else {
+    else
       await mutateAsyncCreate({
-        comment: data.comment,
+        comment,
         commentId,
       });
-    }
   };
 
   const watchReplyComment = watch("comment");
@@ -146,6 +115,7 @@ const ReplyComment: React.FC<ReplyCommentProps> = ({
                 />
               ) : (
                 <Button
+                  type="button"
                   onClick={() => fetchNextPage()}
                   className="ml-2 text-sm font-semibold text-zinc-800 hover:text-zinc-900"
                 >
@@ -173,26 +143,14 @@ const ReplyComment: React.FC<ReplyCommentProps> = ({
       )}
       <div className="pt-1 pl-5">
         <div className="absolute left-[42px] h-[27px] w-[45px] border-l-2 border-b-2 border-zinc-300 border-t-white"></div>
-        <div className="flex flex-row items-center space-x-2">
-          <div>
-            <Image
-              src={authUser?.image || "/default-image.png"}
-              alt={authUser?.name || ""}
-              objectFit="cover"
-              layout="fill"
-              className="rounded-full"
-              containerclassnames="relative h-9 w-9"
-            />
-          </div>
-          <CommentForm
-            onSubmit={handleSubmit(handleOnSubmit)}
-            register={register}
-            reset={reset}
-            commentId={commentId}
-            commentText={watchReplyComment}
-            handleCancel={cancelUpdate}
-          />
-        </div>
+        <CommentForm
+          onSubmit={handleSubmit(handleOnSubmit)}
+          register={register}
+          reset={reset}
+          commentId={replyId}
+          commentText={watchReplyComment}
+          handleCancel={cancelUpdate}
+        />
       </div>
     </React.Fragment>
   );

@@ -12,17 +12,12 @@ type UserProps = {
 const User: React.FC<UserProps> = ({ user }) => {
   return (
     <li className="relative h-16 overflow-hidden rounded-md">
-      <Link href={`/profile/`} aria-label="">
-        <Image
-          src={user?.coverPhoto || "/cover.svg"}
-          alt={user?.name}
-          layout="fill"
-          objectFit="cover"
-          objectPosition="center"
-          className=""
-          containerclassnames="h-full w-full relative"
-        />
-        <span className=""></span>
+      <Link
+        href={`/profile/${user?.id || ""}`}
+        aria-label={user?.name}
+        className="outline-offset-2 transition duration-75 focus:outline-none focus:ring focus:ring-offset-2 hover:bg-secondary active:bg-[#5544c8]"
+      >
+        <span className="absolute inset-0 bg-gradient-to-r from-zinc-600 to-zinc-700"></span>
 
         <div className="absolute inset-0 flex items-center overflow-hidden rounded-md border border-zinc-200">
           <div className="ml-3">

@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import React from "react";
 import CreateComment from "./create-comments";
-import { trpc } from "@/utils/trpc";
 import type { CommentProps } from "./create-comments";
-
 import { motion } from "framer-motion";
-import { variants } from "@/utils/index";
+import { variants } from "@/lib/utils/index";
 
 const Comments: React.FC<CommentProps> = ({ postId }) => (
   <motion.div
