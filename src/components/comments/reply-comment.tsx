@@ -4,7 +4,7 @@ import ReplyItem from "./reply-item";
 import Button from "@/components/shared/button";
 import Loader from "@/components/shared/loader";
 import type { ReplyComment as ReplyCommentType, User } from "@/types/types";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import CommentForm from "../shared/comment-form";
 import { useInfiniteReplyQuery } from "@/lib/hooks/useQuery";
 import {
@@ -25,7 +25,6 @@ const ReplyComment: React.FC<ReplyCommentProps> = ({
   commentId,
   commentName,
 }) => {
-  const [errorMessage, setErrorMessage] = useState<string | undefined>("");
   const [replyId, setReplyId] = useCommentStore((store) => [
     store.replyId,
     store.setReplyId,
@@ -37,6 +36,8 @@ const ReplyComment: React.FC<ReplyCommentProps> = ({
 
   const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useInfiniteReplyQuery(commentId);
+
+  console.log(commentName);
 
   const {
     register,
@@ -66,8 +67,6 @@ const ReplyComment: React.FC<ReplyCommentProps> = ({
   const mutateAsyncUpdate = useMutateUpdateReply(commentId);
 
   const handleOnSubmit: SubmitHandler<ReplyValues> = async ({ comment }) => {
-    setErrorMessage(undefined);
-
     if (replyId)
       await mutateAsyncUpdate({
         comment,

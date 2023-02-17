@@ -39,7 +39,10 @@ const CreateForm = () => {
   ]);
   const setPostOpen = usePostStore((store) => store.setPostOpen);
   const currentPostId = usePostStore((store) => store.currentPostId);
-  const [selectedPost, clearSelectedPost] = usePostStore((store) => [store.selectedPost, store.clearSelectedPost]);
+  const [selectedPost, clearSelectedPost] = usePostStore((store) => [
+    store.selectedPost,
+    store.clearSelectedPost,
+  ]);
   const [deleteImages, clearDeletedImages] = usePostStore((store) => [
     store.deleteImages,
     store.clearDeletedImages,
@@ -53,7 +56,6 @@ const CreateForm = () => {
   const {
     getRootProps,
     getInputProps,
-    finalUploadProgress,
     isImageDragged,
     openFilePicker,
     handleSubmit,

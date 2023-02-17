@@ -29,7 +29,7 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ image, userId }) => {
     setValue,
     watch,
     reset,
-    formState: { errors, isSubmitSuccessful },
+    formState: { isSubmitSuccessful },
   } = useForm<ProfileValues>({
     defaultValues: {
       images: [],

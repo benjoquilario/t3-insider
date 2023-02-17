@@ -12,7 +12,7 @@ const CircleButton = React.forwardRef<HTMLButtonElement, CircleButtonProps>(
 
     return (
       <Button
-        className={classNames("rounded-full p-2", className)}
+        className={classNames(secondary && 'bg-primary', "rounded-full p-2", className)}
         type="button"
         ref={ref}
         {...rest}

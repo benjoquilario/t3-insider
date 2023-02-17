@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "@/components/shared/image";
 import Link from "next/link";
-import { BsFillPersonPlusFill, BsFillCheckCircleFill } from "react-icons/bs";
+import { BsFillPersonPlusFill } from "react-icons/bs";
 import classNames from "classnames";
 import type { User as UserType } from "@/types/types";
 

@@ -6,12 +6,10 @@ import { IoIosPeople } from "react-icons/io";
 import { AiFillHome } from "react-icons/ai";
 import classNames from "classnames";
 import Button from "@/components/shared/button";
-
-import { trpc } from "@/lib/utils/trpc";
 import React from "react";
 import UserSkeleton from "../skeleton/user-skeleton";
 import usePostStore from "@/store/post";
-import { User } from "@/types/types";
+import type { User as UserType } from "@/types/types";
 
 export const LINKS = [
   {
@@ -41,7 +39,7 @@ export const LINKS = [
 ];
 
 type HeaderProps = {
-  auth: User;
+  auth: UserType;
   isLoading: boolean;
 };
 

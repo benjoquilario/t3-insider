@@ -1,14 +1,15 @@
 import React from "react";
-import { trpc } from "@/lib/utils/trpc";
 import { toast } from "react-toastify";
 import ModalDelete from "@/components/modal/modal-delete";
 import { useSession } from "next-auth/react";
 import usePostStore from "@/store/post";
 import useCommentStore from "@/store/comment";
-import { useMutateDeleteComment, useMutateDeletePost } from "@/lib/hooks/useDeleteMutation";
+import {
+  useMutateDeleteComment,
+  useMutateDeletePost,
+} from "@/lib/hooks/useDeleteMutation";
 
 const Delete = () => {
-  const utils = trpc.useContext();
   const { data: session } = useSession();
   const [isModalDeletePostOpen, setIsModalDeletePostOpen] = usePostStore(
     (store) => [store.isModalDeletePostOpen, store.setIsModalDeletePostOpen]
@@ -26,12 +27,11 @@ const Delete = () => {
     });
   };
 
-  const { mutateDeletePost, isDeleteLoading } = useMutateDeletePost(
+  const mutateDeletePost = useMutateDeletePost(
     onSuccessPostDelete,
     session?.user?.id
   );
-
-  const mutateDeleteComment= useMutateDeleteComment();
+  const mutateDeleteComment = useMutateDeleteComment();
 
   const handleDeletePost = () => {
     mutateDeletePost({ id: currentPostId });

@@ -1,6 +1,5 @@
 import React from "react";
 import { LINKS } from "./header";
-import Link from "next/link";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import type { User as UserType } from "@/types/types";
