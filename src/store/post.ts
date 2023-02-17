@@ -16,6 +16,7 @@ interface InitialState {
   isRemove: boolean;
   selectedPost: SelectedPost;
   setSelectedPost: (post: SelectedPost) => void;
+  clearSelectedPost: () => void;
   setIsRemove: (action: boolean) => void;
   setDeleteImages: (id: string) => void;
   clearDeletedImages: () => void;
@@ -38,6 +39,14 @@ const usePostStore = create<InitialState>((set) => ({
     selectedFile: [],
   },
   setSelectedPost: (post: SelectedPost) => set({ selectedPost: post }),
+  clearSelectedPost: () =>
+    set({
+      selectedPost: {
+        id: "",
+        message: "",
+        selectedFile: [],
+      },
+    }),
   setIsRemove: (action: boolean) => set({ isRemove: action }),
   setDeleteImages: (id) => {
     set((state) => ({

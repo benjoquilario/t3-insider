@@ -5,6 +5,7 @@ import ModalDelete from "@/components/modal/modal-delete";
 import { useSession } from "next-auth/react";
 import usePostStore from "@/store/post";
 import useCommentStore from "@/store/comment";
+import { useMutateDeleteComment, useMutateDeletePost } from "@/lib/hooks/useDeleteMutation";
 
 const Delete = () => {
   const utils = trpc.useContext();
@@ -18,29 +19,19 @@ const Delete = () => {
     (store) => [store.isCommentModalOpen, store.setIsCommentModalOpen]
   );
 
-  const { mutate: mutateDeletePost, isLoading: isDeleteLoading } =
-    trpc.post.deletePost.useMutation({
-      onError: (e) => console.log(e.message),
-      onSuccess: async () => {
-        await utils.post.getPosts.invalidate();
-        await utils.post.getPostsById.invalidate({
-          id: session?.user?.id,
-          limit: 3,
-        });
-        toast("Your post was deleted successfully", {
-          type: "success",
-          position: toast.POSITION.BOTTOM_RIGHT,
-        });
-      },
+  const onSuccessPostDelete = () => {
+    toast("Your post was deleted successfully", {
+      type: "success",
+      position: toast.POSITION.BOTTOM_RIGHT,
     });
+  };
 
-  const { mutate: mutateDeleteComment } =
-    trpc.comment.deleteComment.useMutation({
-      onError: (e) => console.log(e.message),
-      onSuccess: async () => {
-        await utils.comment.getComments.invalidate();
-      },
-    });
+  const { mutateDeletePost, isDeleteLoading } = useMutateDeletePost(
+    onSuccessPostDelete,
+    session?.user?.id
+  );
+
+  const mutateDeleteComment= useMutateDeleteComment();
 
   const handleDeletePost = () => {
     mutateDeletePost({ id: currentPostId });

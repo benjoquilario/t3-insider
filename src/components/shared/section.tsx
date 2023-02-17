@@ -18,7 +18,7 @@ const Section: React.FC<SectionProps> = ({
   const { data: authUser, isLoading } = useAuthQuery();
 
   return (
-    <div className="mx-auto grid h-full min-h-screen w-full max-w-screen-2xl grid-cols-12 gap-6 p-1 pb-[52px] md:py-4 md:px-10">
+    <div className="mx-auto grid h-full min-h-screen w-full max-w-screen-2xl grid-cols-12 gap-6 pb-[52px] md:py-4 md:px-10">
       {showHeader && (
         <Header auth={authUser as UserType} isLoading={isLoading} />
       )}
