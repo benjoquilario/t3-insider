@@ -30,7 +30,7 @@ import {
 } from "@/lib/hooks/useQuery";
 import { DEFAULT_SEO_PROPS } from "@/lib/seo";
 import { NextSeo, type NextSeoProps } from "next-seo";
-import React, { useMemo, useState } from "react";
+import React from "react";
 import { capitalizeName } from "@/lib/utils";
 import classNames from "classnames";
 
@@ -45,14 +45,8 @@ const Profile: NextPage = () => {
   const userId = router.query?.id as string;
   const { data: user, isLoading: isUserLoading } = useUserByIdQuery(userId);
 
-  const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-    isError,
-  } = useInfinitePostsByIdQuery(userId);
+  const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useInfinitePostsByIdQuery(userId);
 
   const { mutate: mutateFollowUser, isLoading: isFollowLoading } =
     trpc.follow.followUser.useMutation({
