@@ -39,7 +39,7 @@ const CreateForm = () => {
   ]);
   const setPostOpen = usePostStore((store) => store.setPostOpen);
   const currentPostId = usePostStore((store) => store.currentPostId);
-  const selectedPost = usePostStore((store) => store.selectedPost);
+  const [selectedPost, clearSelectedPost] = usePostStore((store) => [store.selectedPost, store.clearSelectedPost]);
   const [deleteImages, clearDeletedImages] = usePostStore((store) => [
     store.deleteImages,
     store.clearDeletedImages,
@@ -109,6 +109,7 @@ const CreateForm = () => {
     setIsUploading(false);
     setIsRemove(false);
     clearDeletedImages();
+    clearSelectedPost();
   };
 
   const handleOnSubmit: SubmitHandler<PostValues> = async (data) => {

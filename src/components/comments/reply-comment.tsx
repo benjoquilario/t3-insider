@@ -1,4 +1,3 @@
-import Image from "@/components/shared/image";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import useCommentStore from "@/store/comment";
 import ReplyItem from "./reply-item";
@@ -6,9 +5,8 @@ import Button from "@/components/shared/button";
 import Loader from "@/components/shared/loader";
 import type { ReplyComment as ReplyCommentType, User } from "@/types/types";
 import React, { useState, useEffect } from "react";
-import classNames from "classnames";
 import CommentForm from "../shared/comment-form";
-import { useAuthQuery, useInfiniteReplyQuery } from "@/lib/hooks/useQuery";
+import { useInfiniteReplyQuery } from "@/lib/hooks/useQuery";
 import {
   useMutateCreateReply,
   useMutateUpdateReply,
