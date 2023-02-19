@@ -10,6 +10,7 @@ import Image from "../shared/image";
 import { isMobile } from "react-device-detect";
 import { RiCloseFill } from "react-icons/ri";
 import useNavStore from "@/store/nav";
+import { useAuthQuery } from "@/lib/hooks/useQuery";
 
 const LISTS = [
   {
@@ -40,7 +41,7 @@ type DropdownProps = {
 
 const Dropdown = React.forwardRef<HTMLElement, DropdownProps>((props, ref) => {
   const { className, ...navProps } = props;
-
+  const { data: auth } = useAuthQuery();
   const setIsNavOpen = useNavStore((store) => store.setIsNavOpen);
 
   return (
@@ -63,22 +64,28 @@ const Dropdown = React.forwardRef<HTMLElement, DropdownProps>((props, ref) => {
           <div className="mt-10 mb-5 flex flex-col">
             <Image
               className="rounded-full"
-              src={"/default-image.png"}
-              alt={""}
+              src={auth?.image || " /default-image.png"}
+              alt={auth?.name || ""}
               layout="fill"
               containerclassnames="relative h-[40px] w-[40px] mb-2"
             />
             <div>
               <h3 className="text-lg font-semibold text-zinc-900">
-                Benjo Quilario
+                {auth?.name}
               </h3>
-              <p className="text-sm text-zinc-600">benjoquilario@gmail.com</p>
+              <p className="text-sm text-zinc-600">{auth?.email}</p>
               <div className="mt-2 flex gap-4 text-sm text-zinc-600">
                 <p>
-                  <span className="font-semibold">61</span> Following
+                  <span className="mr-1 font-semibold">
+                    {auth?._count?.followings}
+                  </span>
+                  Following
                 </p>
                 <p>
-                  <span className="font-semibold">61</span> Followers
+                  <span className="mr-1 font-semibold">
+                    {auth?._count?.followers}
+                  </span>
+                  Followers
                 </p>
               </div>
             </div>

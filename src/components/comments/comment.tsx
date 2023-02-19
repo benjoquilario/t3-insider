@@ -70,7 +70,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
 
   return (
     <li>
-      <div className="relative flex pt-1 pl-6">
+      <div className="relative flex pt-1 pl-4 md:pl-6">
         <div className="relative mt-1 mr-2 block rounded-full">
           {isReplyOpen || comment._count.reply > 0 ? (
             <div className="absolute left-[18px] top-[30px] h-[calc(100%_-_61px)] w-[2px] bg-gray-300"></div>
@@ -95,7 +95,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
             </Link>
           </span>
         </div>
-        <div className="mr-10 grow basis-0 overflow-hidden pr-4">
+        <div className="mr-6 grow basis-0 overflow-hidden pr-2 md:mr-10 md:pr-4">
           <div>
             <div
               className="max-w-[calc(100%_-_26px] inline-block break-words"

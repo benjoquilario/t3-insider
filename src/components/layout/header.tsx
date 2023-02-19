@@ -10,14 +10,9 @@ import React from "react";
 import UserSkeleton from "../skeleton/user-skeleton";
 import usePostStore from "@/store/post";
 import type { User as UserType } from "@/types/types";
+import { useRouter } from "next/router";
 
 export const LINKS = [
-  {
-    href: "/",
-    icon: AiFillHome,
-    size: 29,
-    linkName: "Home",
-  },
   {
     href: "/followers",
     icon: BsPeopleFill,
@@ -45,6 +40,7 @@ type HeaderProps = {
 
 const Header: React.FC<HeaderProps> = ({ auth, isLoading }) => {
   const setPostOpen = usePostStore((store) => store.setPostOpen);
+  const router = useRouter();
 
   return (
     <div className="col-span-3 hidden lg:block">
@@ -97,6 +93,32 @@ const Header: React.FC<HeaderProps> = ({ auth, isLoading }) => {
         <div className="mt-0">
           <nav className="w-full">
             <ul className="flex flex-col items-start space-y-2">
+              <li className="flex flex-1 items-start">
+                <Link
+                  aria-label="Home"
+                  href="/"
+                  className={classNames(
+                    "flex w-full items-center gap-4 rounded-full py-2 px-4 text-zinc-900 focus:outline-none hover:bg-zinc-200",
+                    "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-zinc-300 active:text-zinc-800",
+                    "transition duration-75",
+                    router.asPath === "/" ? "bg-[#cec9ef]" : ""
+                  )}
+                >
+                  <AiFillHome
+                    aria-hidden="true"
+                    size={29}
+                    className="text-primary"
+                  />
+                  <span
+                    className={classNames(
+                      router.asPath === "/" ? "font-medium" : "font-normal",
+                      "text-left text-lg text-zinc-900"
+                    )}
+                  >
+                    Home
+                  </span>
+                </Link>
+              </li>
               {LINKS.map((link) => (
                 <li key={link.linkName} className="flex flex-1 items-start">
                   <Link
@@ -107,7 +129,8 @@ const Header: React.FC<HeaderProps> = ({ auth, isLoading }) => {
                     className={classNames(
                       "flex w-full items-center gap-4 rounded-full py-2 px-4 text-zinc-900 focus:outline-none hover:bg-zinc-200",
                       "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-zinc-300 active:text-zinc-800",
-                      "transition duration-75"
+                      "transition duration-75",
+                      router.pathname.includes(link.href) ? "bg-[#cec9ef]" : ""
                     )}
                   >
                     <link.icon
@@ -115,7 +138,14 @@ const Header: React.FC<HeaderProps> = ({ auth, isLoading }) => {
                       size={link.size}
                       className="text-primary"
                     />
-                    <span className="text-left text-lg text-zinc-900">
+                    <span
+                      className={classNames(
+                        router.pathname.includes(link.href)
+                          ? "font-medium"
+                          : "font-normal",
+                        "text-left text-lg text-zinc-900"
+                      )}
+                    >
                       {link.linkName}
                     </span>
                   </Link>

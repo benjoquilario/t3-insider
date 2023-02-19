@@ -8,6 +8,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { uploadPicture } from "@/lib/utils/cloudinary";
 import { toast } from "react-toastify";
 import classNames from "classnames";
+import { useSession } from "next-auth/react";
 
 type CoverPhotoProps = {
   coverPhoto?: string | null;
@@ -20,6 +21,7 @@ interface CoverValues {
 
 const CoverPhoto: React.FC<CoverPhotoProps> = ({ coverPhoto, userId }) => {
   const utils = trpc.useContext();
+  const { data: session } = useSession();
   const {
     register,
     handleSubmit,
@@ -113,18 +115,22 @@ const CoverPhoto: React.FC<CoverPhotoProps> = ({ coverPhoto, userId }) => {
               </Button>
             </div>
           ) : (
-            <Button
-              onClick={openCover}
-              type="button"
-              className={classNames(
-                "absolute right-3 bottom-3 flex h-8 w-8 items-center justify-center gap-1 rounded-full bg-white px-1 shadow-md md:w-32 md:rounded-md",
-                " hover:bg-zinc-100 active:scale-110",
-                "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-zinc-200 active:text-secondary"
-              )}
-            >
-              <AiFillCamera size={20} />
-              <span className="hidden text-xs md:block">Edit cover photo</span>
-            </Button>
+            session?.user?.id === userId && (
+              <Button
+                onClick={openCover}
+                type="button"
+                className={classNames(
+                  "absolute right-3 bottom-3 flex h-8 w-8 items-center justify-center gap-1 rounded-full bg-white px-1 shadow-md md:w-32 md:rounded-md",
+                  " hover:bg-zinc-100 active:scale-110",
+                  "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-zinc-200 active:text-secondary"
+                )}
+              >
+                <AiFillCamera size={20} />
+                <span className="hidden text-xs md:block">
+                  Edit cover photo
+                </span>
+              </Button>
+            )
           )}
           <input {...getInputProps()} />
           <input {...register("coverPhoto")} type="file" className="hidden" />

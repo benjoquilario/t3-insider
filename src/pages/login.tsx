@@ -10,7 +10,7 @@ import LoginForm from "@/components/form/login";
 
 const Login: NextPage = () => {
   return (
-    <Layout>
+    <Layout isHome={false}>
       <LoginForm />
     </Layout>
   );

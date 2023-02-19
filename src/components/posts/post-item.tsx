@@ -121,7 +121,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
             {post.name}
           </Link>
           <span className="text-xs text-zinc-700">
-            {dayjs(post.createdAt).fromNow()}
+            {dayjs(post.createdAt).fromNow(true)}
           </span>
         </div>
         {session?.user?.id === post.userId && (
@@ -228,7 +228,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
           <Button
             type="button"
             className={classNames(
-              "flex h-[35px] w-full items-center justify-center gap-1 rounded-md text-zinc-600	hover:bg-zinc-100",
+              "flex h-[35px] w-full items-center justify-center gap-1 rounded-md text-zinc-600	hover:bg-zinc-100 active:scale-110",
               "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
             )}
             aria-label="Like Post"
@@ -283,7 +283,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
             type="button"
             aria-label="Share a post"
             className={classNames(
-              "flex h-[35px] w-full items-center justify-center gap-1 rounded-md text-zinc-600 hover:bg-zinc-100 active:scale-110",
+              "flex h-[35px] w-full items-center justify-center gap-1 rounded-md text-zinc-600 hover:bg-zinc-100 ",
               "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
             )}
           >

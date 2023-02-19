@@ -13,6 +13,7 @@ type InputProps = {
   iconClassName?: string;
   className?: string;
   placeholder?: string;
+  children?: React.ReactNode;
 } & React.HTMLProps<HTMLInputElement>;
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
@@ -23,6 +24,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     Icon,
     iconClassName,
     className,
+    children,
     ...inputProps
   } = props;
   return (
@@ -35,11 +37,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       <input
         ref={ref}
         className={classNames(
-          "h-[40px] w-full rounded bg-white px-[15px] text-sm font-normal leading-[40px] text-gray-700 outline-none",
+          "mb-2 h-[40px] w-full rounded border border-zinc-300 bg-white px-[15px] text-sm font-normal leading-[40px] text-gray-700 outline-none focus:outline-offset-1 focus:outline-primary focus:ring-0 ",
           className
         )}
         {...inputProps}
       />
+      {children}
       {Icon && <Icon className={iconClassName} />}
     </div>
   );

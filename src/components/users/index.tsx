@@ -37,8 +37,6 @@ const Users: React.FC<UsersProps> = ({ auth, isLoading }) => {
     setIsOpen(false);
   }, []);
 
-  console.log(isNotificationOpen);
-
   useClickOutside(ref, () => hideDropdown());
 
   const toggleDropDown = () => {
@@ -71,6 +69,7 @@ const Users: React.FC<UsersProps> = ({ auth, isLoading }) => {
                 <BsFillBellFill />
               </span>
             </ButtonTooltip>
+            {isNotificationOpen && <div>..</div>}
           </li>
         </ul>
         <div ref={ref} className="flex items-center justify-end">
@@ -80,7 +79,7 @@ const Users: React.FC<UsersProps> = ({ auth, isLoading }) => {
             ) : (
               <Button
                 onClick={toggleDropDown}
-                className="w-18 flex h-14 items-center justify-center rounded-full hover:opacity-90"
+                className="w-18 flex h-14 items-center justify-center rounded-full hover:opacity-90 active:scale-95"
                 aria-label="dropdown profile"
               >
                 <div
@@ -134,12 +133,13 @@ const Users: React.FC<UsersProps> = ({ auth, isLoading }) => {
                   )}
               {hasNextPage && !isFetchingNextPage && (
                 <li className="flex items-center justify-center">
-                  <button
+                  <Button
+                    type="button"
                     onClick={() => fetchNextPage()}
                     className="text-zinc-900"
                   >
                     Load More
-                  </button>
+                  </Button>
                 </li>
               )}
             </ul>

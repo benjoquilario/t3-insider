@@ -16,9 +16,7 @@ const ButtonTooltip: React.FC<ButtonTooltipProps> = ({
   ...props
 }) => {
   const buttonReference = reference || (
-    <CircleButton secondary {...props}>
-      {children}
-    </CircleButton>
+    <CircleButton {...props}>{children}</CircleButton>
   );
 
   return (
