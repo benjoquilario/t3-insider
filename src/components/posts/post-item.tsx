@@ -11,7 +11,6 @@ import { motion } from "framer-motion";
 import Image from "@/components/shared/image";
 import {
   variants,
-  capitalizeName,
   getImageHeightRatio,
   getImageWidthRatio,
 } from "@/lib/utils/index";

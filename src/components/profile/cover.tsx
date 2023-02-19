@@ -26,7 +26,7 @@ const CoverPhoto: React.FC<CoverPhotoProps> = ({ coverPhoto, userId }) => {
     setValue,
     watch,
     reset,
-    formState: { errors, isSubmitSuccessful },
+    formState: { isSubmitSuccessful },
   } = useForm<CoverValues>({
     defaultValues: {
       coverPhoto: [],
@@ -77,6 +77,8 @@ const CoverPhoto: React.FC<CoverPhotoProps> = ({ coverPhoto, userId }) => {
     getRootProps: getRootCoverProps,
     open: openCover,
   } = useProfileDropZone(setCover);
+
+  console.log(isCoverDragged && "Dragged");
 
   return (
     <div

@@ -1,13 +1,11 @@
 import React, { useEffect } from "react";
-import Image from "../shared/image";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import useCommentStore from "@/store/comment";
 import type { Comment as CommentType, User } from "@/types/types";
 import Comment from "./comment";
 import { ImSpinner8 } from "react-icons/im";
-import classNames from "classnames";
 import CommentForm from "../shared/comment-form";
-import { useAuthQuery, useInfiniteCommentsQuery } from "@/lib/hooks/useQuery";
+import { useInfiniteCommentsQuery } from "@/lib/hooks/useQuery";
 import {
   useMutateCreateComment,
   useMutateUpdateComment,
@@ -42,7 +40,7 @@ const CreateComment: React.FC<CommentProps> = ({ postId }) => {
     setFocus,
     setValue,
     watch,
-    formState: { errors, isSubmitSuccessful },
+    formState: { isSubmitSuccessful },
   } = useForm<CommentValues>({
     defaultValues: {
       comment: "",

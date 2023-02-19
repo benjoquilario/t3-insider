@@ -1,14 +1,14 @@
-import Image from "../shared/image";
+import Image from "@/components/shared/image";
 import Link from "next/link";
-import Button from "../shared/button";
-import ModalComment from "../modal/modal-comment";
+import Button from "@/components/shared/button";
+import ModalComment from "@/components/modal/modal-comment";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import useCommentStore from "@/store/comment";
 import type { ReplyComment, User } from "@/types/types";
 import type { UseFormSetFocus } from "react-hook-form";
 import classNames from "classnames";
 import { AiFillLike } from "react-icons/ai";
-import Loader from "../shared/loader";
+import Loader from "@/components/shared/loader";
 import useClickOutside from "@/lib/hooks/useClickOutside";
 import { useMutationLikeReply } from "@/lib/hooks/useLikeMutation";
 import dayjs from "@/lib/utils/time";

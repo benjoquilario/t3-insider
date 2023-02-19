@@ -23,7 +23,6 @@ const Posts = () => {
     hasNextPage,
     fetchNextPage,
     isError,
-    error,
   } = useInfinitePostsQuery();
 
   return (

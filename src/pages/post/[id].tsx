@@ -4,7 +4,6 @@ import type {
   GetServerSidePropsContext,
   NextPage,
 } from "next";
-import dynamic from "next/dynamic";
 import { getServerAuthSession } from "@/server/auth";
 import { useRouter } from "next/router";
 import { trpc } from "@/lib/utils/trpc";
@@ -26,7 +25,7 @@ const Post: NextPage = () => {
     }
   );
 
-  console.log(data);
+  console.log(data, isLoading);
 
   return (
     <Layout>

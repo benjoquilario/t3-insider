@@ -18,6 +18,7 @@ const LoginForm = () => {
     formState: { errors },
   } = useForm<FormValues>();
 
+  console.log(errors);
   const handleOnSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
       await signIn("credentials", {

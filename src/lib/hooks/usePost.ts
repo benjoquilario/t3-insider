@@ -1,7 +1,7 @@
 import { useDropzone } from "react-dropzone";
 import type { PostValues } from "@/components/form/post";
 import { useForm } from "react-hook-form";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useCallback } from "react";
 
 const usePost = () => {
   const {
@@ -73,18 +73,9 @@ const usePost = () => {
     },
   });
 
-  const sumOfCurrentUploaded = watch("imageUploadProgress")?.reduce(
-    (sum, entry) => sum + entry,
-    0
-  );
-
-  const finalUploadProgress =
-    sumOfCurrentUploaded / selectedImages?.length || 0;
-
   return {
     getRootProps,
     getInputProps,
-    finalUploadProgress,
     isImageDragged,
     openFilePicker,
     handleSubmit,

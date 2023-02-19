@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-import React, { useState } from "react";
+import React from "react";
 import FormContainer from "./container";
 import Input from "@/components/shared/input";
 import Button from "@/components/shared/button";
@@ -17,10 +16,9 @@ type FormValues = {
 
 const RegisterForm = () => {
   const router = useRouter();
-  const [errorMessage, setErrorMessage] = useState<string | undefined>("");
 
   const mutation = trpc.auth.register.useMutation({
-    onError: (e) => setErrorMessage(e.message),
+    onError: (e) => console.log(e.message),
     onSuccess: () => router.push("/login"),
   });
 
@@ -30,8 +28,9 @@ const RegisterForm = () => {
     formState: { errors },
   } = useForm<FormValues>();
 
+  console.log(errors);
+
   const handleOnSubmit: SubmitHandler<FormValues> = async (data) => {
-    setErrorMessage(undefined);
     await mutation.mutateAsync(data);
   };
 

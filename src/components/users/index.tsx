@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
-import { BiWorld, BiBookmark } from "react-icons/bi";
+import { BiBookmark } from "react-icons/bi";
 import { BsFillBellFill } from "react-icons/bs";
 import User from "./user";
 import Image from "../shared/image";
@@ -36,6 +36,8 @@ const Users: React.FC<UsersProps> = ({ auth, isLoading }) => {
   const hideDropdown = useCallback(() => {
     setIsOpen(false);
   }, []);
+
+  console.log(isNotificationOpen);
 
   useClickOutside(ref, () => hideDropdown());
 
@@ -132,7 +134,12 @@ const Users: React.FC<UsersProps> = ({ auth, isLoading }) => {
                   )}
               {hasNextPage && !isFetchingNextPage && (
                 <li className="flex items-center justify-center">
-                  <button className="text-zinc-900">Load More</button>
+                  <button
+                    onClick={() => fetchNextPage()}
+                    className="text-zinc-900"
+                  >
+                    Load More
+                  </button>
                 </li>
               )}
             </ul>
