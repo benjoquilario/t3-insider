@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import FormContainer from "./container";
 import Input from "@/components/shared/input";
 import Button from "@/components/shared/button";
@@ -18,9 +18,10 @@ type FormValues = {
 
 const RegisterForm = () => {
   const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
   const { mutateAsync, isLoading } = trpc.auth.register.useMutation({
-    onError: (e) => console.log(e.message),
+    onError: (e) => setErrorMessage(e.message),
     onSuccess: () => router.push("/login"),
   });
 
@@ -51,7 +52,6 @@ const RegisterForm = () => {
             placeholder="LastName"
           />
         </div>
-
         <Input
           {...register("email", { required: true })}
           type="email"
@@ -67,6 +67,9 @@ const RegisterForm = () => {
           type="password"
           placeholder="Confirm Password"
         />
+        {errorMessage && (
+          <div className="text-sm text-red-500">{errorMessage}</div>
+        )}
         <Button
           disabled={isLoading}
           type="submit"

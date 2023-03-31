@@ -15,6 +15,10 @@ module.exports = {
         primary: "#6a55fa",
         secondary: "#8877fb",
       },
+      fontSize: {
+        base: "15px",
+        lg: "17px",
+      },
     },
   },
   plugins: [

@@ -1,9 +1,8 @@
 import React from "react";
 import Button from "../shared/button";
 import Link from "next/link";
-import { BsFillPersonFill, BsFillBellFill } from "react-icons/bs";
 import { IoMdSettings } from "react-icons/io";
-import { BiLogInCircle, BiBookmark } from "react-icons/bi";
+import { BiLogInCircle } from "react-icons/bi";
 import { signOut } from "next-auth/react";
 import classNames from "classnames";
 import Image from "../shared/image";
@@ -11,22 +10,24 @@ import { isMobile } from "react-device-detect";
 import { RiCloseFill } from "react-icons/ri";
 import useNavStore from "@/store/nav";
 import { useAuthQuery } from "@/lib/hooks/useQuery";
+import { BsPerson, BsPeople } from "react-icons/bs";
+import { SlPeople } from "react-icons/sl";
 
 const LISTS = [
   {
     href: "/",
     linkName: "Profile",
-    Icon: BsFillPersonFill,
+    Icon: BsPerson,
   },
   {
-    href: "/notification",
-    linkName: "Notification",
-    Icon: BsFillBellFill,
+    href: "/followers",
+    linkName: "Followers",
+    Icon: SlPeople,
   },
   {
-    href: "/bookmark",
-    linkName: "Bookmark",
-    Icon: BiBookmark,
+    href: "/following",
+    linkName: "Following",
+    Icon: BsPeople,
   },
   {
     href: "/settings",

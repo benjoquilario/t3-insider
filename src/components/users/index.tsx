@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { BiBookmark } from "react-icons/bi";
-import { BsFillBellFill } from "react-icons/bs";
+import { BsBell } from "react-icons/bs";
 import User from "./user";
 import Image from "../shared/image";
 import UsersSkeleton from "../skeleton/users-skeleton";
@@ -66,7 +66,7 @@ const Users: React.FC<UsersProps> = ({ auth, isLoading }) => {
               className="flex w-full items-center rounded-lg px-3 py-3"
             >
               <span className="text-lg text-zinc-800">
-                <BsFillBellFill />
+                <BsBell />
               </span>
             </ButtonTooltip>
             {isNotificationOpen && <div>..</div>}

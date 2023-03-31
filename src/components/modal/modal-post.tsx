@@ -36,7 +36,7 @@ const ModalButton: React.FC<ModalButtonProps> = ({
         <Button
           onClick={handleClick}
           type="button"
-          className="flex w-full items-center gap-2 py-1 text-zinc-800 md:py-2"
+          className="flex w-full items-center gap-2 py-2 text-zinc-800"
           aria-label={name}
         >
           {children}

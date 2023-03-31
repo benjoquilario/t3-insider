@@ -25,7 +25,7 @@ const NavBar: React.FC<NavBarProps> = ({ auth, isLoading }) => {
       <div className="flex items-center justify-between px-3 py-1">
         <div>
           {isLoading ? (
-            <div className="h-12 w-12 animate-pulse rounded-full border border-zinc-200 bg-zinc-100" />
+            <div className="h-10 w-10 animate-pulse rounded-full border border-zinc-200 bg-zinc-100" />
           ) : (
             <Button
               onClick={toggleNavBar}

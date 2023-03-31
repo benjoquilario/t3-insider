@@ -1,33 +1,33 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import Link from "next/link";
 import Image from "next/legacy/image";
-import { BsPeopleFill, BsFillPersonFill } from "react-icons/bs";
-import { IoIosPeople } from "react-icons/io";
-import { AiFillHome } from "react-icons/ai";
+import { BsPerson, BsPeople } from "react-icons/bs";
+import { SlPeople } from "react-icons/sl";
+import { BiHomeCircle } from "react-icons/bi";
 import classNames from "classnames";
 import Button from "@/components/shared/button";
 import React from "react";
 import UserSkeleton from "../skeleton/user-skeleton";
 import usePostStore from "@/store/post";
 import type { User as UserType } from "@/types/types";
+import { FaEdit } from "react-icons/fa";
 import { useRouter } from "next/router";
 
 export const LINKS = [
   {
     href: "/followers",
-    icon: BsPeopleFill,
+    icon: SlPeople,
     size: 29,
     linkName: "Followers",
   },
   {
     href: "/following",
-    icon: IoIosPeople,
+    icon: BsPeople,
     size: 29,
     linkName: "Following",
   },
   {
     href: "/profile",
-    icon: BsFillPersonFill,
+    icon: BsPerson,
     size: 29,
     linkName: "Profile",
   },
@@ -98,13 +98,13 @@ const Header: React.FC<HeaderProps> = ({ auth, isLoading }) => {
                   aria-label="Home"
                   href="/"
                   className={classNames(
-                    "flex w-full items-center gap-4 rounded-full py-2 px-4 text-zinc-900 focus:outline-none hover:bg-zinc-200",
+                    "flex w-full items-center space-x-3 rounded-full py-2 px-4 text-zinc-900 focus:outline-none hover:bg-zinc-200",
                     "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-zinc-300 active:text-zinc-800",
                     "transition duration-75",
                     router.asPath === "/" ? "bg-[#cec9ef]" : ""
                   )}
                 >
-                  <AiFillHome
+                  <BiHomeCircle
                     aria-hidden="true"
                     size={29}
                     className="text-primary"
@@ -127,7 +127,7 @@ const Header: React.FC<HeaderProps> = ({ auth, isLoading }) => {
                       link.href.includes("profile") ? `/${auth?.id || ""}` : ""
                     }`}
                     className={classNames(
-                      "flex w-full items-center gap-4 rounded-full py-2 px-4 text-zinc-900 focus:outline-none hover:bg-zinc-200",
+                      "flex w-full items-center space-x-3 rounded-full py-2 px-4 text-zinc-900 focus:outline-none hover:bg-zinc-200",
                       "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-zinc-300 active:text-zinc-800",
                       "transition duration-75",
                       router.pathname.includes(link.href) ? "bg-[#cec9ef]" : ""
@@ -158,11 +158,12 @@ const Header: React.FC<HeaderProps> = ({ auth, isLoading }) => {
                     type="button"
                     aria-label="Create post"
                     className={classNames(
-                      "flex h-12 w-full items-center justify-center rounded-full bg-primary text-base text-white ",
+                      "flex h-12 w-full items-center justify-center gap-1 rounded-full bg-primary text-base text-white ",
                       "outline-offset-2 transition duration-75 focus:outline-none focus:ring focus:ring-offset-2 hover:bg-secondary active:bg-[#5544c8]"
                     )}
                   >
-                    Create Post
+                    <FaEdit className="text-white" />
+                    <span>Create Post</span>
                   </Button>
                 </div>
               </li>

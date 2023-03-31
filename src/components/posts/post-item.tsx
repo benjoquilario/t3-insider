@@ -149,7 +149,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
         )}
       </div>
       <div className="px-3 font-normal md:px-5">
-        <span className="break-words">{post.message}</span>
+        <span className="break-words text-base">{post.message}</span>
       </div>
       {post.selectedFile.length !== 0 && (
         <div
