@@ -65,7 +65,7 @@ const CommentForm = React.forwardRef<HTMLFormElement, CommentFormProps>(
                         placeholder="Write a comment..."
                         {...register("comment", { required: true })}
                         className={classNames(
-                          "relative w-full rounded-full bg-zinc-100 py-2 pl-3 pr-9 text-sm text-zinc-800 shadow ring-zinc-200 transition",
+                          "relative w-full rounded-lg bg-zinc-100 py-2 pl-3 pr-9 text-sm text-zinc-800 shadow ring-zinc-200 transition",
                           "hover:text-zinc-900 hover:ring-zinc-300 ",
                           "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-zinc-600 active:text-zinc-700",
                           "focus:outline-none focus:outline-offset-1 focus:outline-primary focus-visible:outline-offset-2 focus-visible:outline-primary"

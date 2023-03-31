@@ -96,7 +96,7 @@ const CreateComment: React.FC<CommentProps> = ({ postId }) => {
     <React.Fragment>
       {!isLoading ? (
         <div className="pb-4" id="comment">
-          <div className="pt-4 pl-5 pr-5">
+          <div className="px-3 pt-4 md:px-5">
             <CommentForm
               commentId={commentId}
               commentText={comment}

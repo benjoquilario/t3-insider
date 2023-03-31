@@ -33,6 +33,7 @@ import { NextSeo, type NextSeoProps } from "next-seo";
 import React from "react";
 import { capitalizeName } from "@/lib/utils";
 import classNames from "classnames";
+import NavBar from "@/components/layout/navbar";
 
 const CreateForm = dynamic(() => import("@/components/form/post"), {
   ssr: false,
@@ -84,10 +85,11 @@ const Profile: NextPage = () => {
       <Layout>
         <Section>
           <div className="col-span-full lg:col-span-9 xl:col-span-6">
+            <NavBar auth={user as User} isLoading={isLoading} />
             {isUserLoading ? (
               <ProfileSkeleton />
             ) : (
-              <div className="mt-1 mb-2">
+              <div className="mt-0 mb-2">
                 <CoverPhoto
                   userId={user?.id || ""}
                   coverPhoto={user?.coverPhoto}

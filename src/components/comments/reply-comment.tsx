@@ -138,8 +138,8 @@ const ReplyComment: React.FC<ReplyCommentProps> = ({
             .reverse()}
         </ul>
       )}
-      <div className="pt-1 pl-5">
-        <div className="absolute left-[42px] h-[27px] w-[45px] border-l-2 border-b-2 border-zinc-300 border-t-white"></div>
+      <div className="pt-1 pl-3 md:pl-5">
+        <div className="absolute left-[30px] h-[27px] w-[45px] border-l-2 border-b-2 border-zinc-300 border-t-white md:left-[42px]"></div>
         <CommentForm
           onSubmit={handleSubmit(handleOnSubmit)}
           register={register}

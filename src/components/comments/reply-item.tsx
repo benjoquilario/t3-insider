@@ -59,8 +59,8 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
 
   return (
     <li>
-      <div className="absolute left-[42px] h-[30px] w-[53px] rounded-l-md border-l-2 border-b-2 border-zinc-300 border-t-white"></div>
-      <div className="group relative flex pt-2 pl-6">
+      <div className="absolute left-[32px] h-[30px] w-[53px] rounded-l-md border-l-2 border-b-2 border-zinc-300 border-t-white md:left-[42px]" />
+      <div className="group relative flex pt-2 pl-4 md:pl-6">
         <div className="relative mt-1 mr-2 block rounded-full">
           <span className="inline">
             <Link
