@@ -6,6 +6,7 @@ import Layout from "@/components/layout"
 import Main from "@/components/layout/main"
 import Section from "@/components/shared/section"
 import React from "react"
+import { signOut } from "next-auth/react"
 
 const Home: NextPage = () => {
   return (

@@ -103,7 +103,7 @@ const Users: React.FC<UsersProps> = ({ auth, isLoading }) => {
           </div>
         </div>
       </div>
-      <div className="mt-16">
+      <div className="mt-12">
         <aside className="dark:bg-primary-dark-200 rounded-md bg-white shadow">
           <h2 className="font-poppins px-5 py-3   text-sm font-semibold ">
             Trends this week
@@ -123,7 +123,7 @@ const Users: React.FC<UsersProps> = ({ auth, isLoading }) => {
               Who to follow
             </p>
 
-            <ul className="mt-3 max-h-96 w-full space-y-1 overflow-y-auto">
+            <ul className="mt-3 max-h-80 w-full space-y-1 overflow-y-auto">
               {isUsersLoading
                 ? Array.from(Array(4), (_, i) => <UsersSkeleton key={i} />)
                 : data?.pages.map((page) =>
