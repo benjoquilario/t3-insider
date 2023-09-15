@@ -1,11 +1,3 @@
-<p align="center">
-  <div align="center">
-    <a href="https://t3-insider.vercel.app/">
-      <img alt="AnimeHi" src="https://t3-insider.vercel.app/_next/static/media/animehi.9fc8dd87.svg" width="49" height="52" />
-    </a>
-  </div>
-</p>
-
 ### Introducing Insider
 
 A Fullstack **social media application** built with **_Next JS_**, **_React_**, **_create-t3-app_**, **_Tanstack-query_**_, and **_tailwindCSS_** as a frontend and **_Prisma_**, and **_Mongo DB_** as a backend.
