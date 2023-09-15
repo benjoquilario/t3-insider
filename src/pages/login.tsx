@@ -7,12 +7,16 @@ import type {
 import { getServerAuthSession } from "@/server/auth";
 import Layout from "@/components/layout";
 import LoginForm from "@/components/form/login";
+import { NextSeo } from "next-seo";
 
 const Login: NextPage = () => {
   return (
-    <Layout isHome={false}>
-      <LoginForm />
-    </Layout>
+    <React.Fragment>
+      <NextSeo title="Insider - login or sign up"/>
+      <Layout isHome={false}>
+        <LoginForm />
+      </Layout>
+    </React.Fragment>
   );
 };
 

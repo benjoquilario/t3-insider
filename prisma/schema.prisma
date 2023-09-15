@@ -66,6 +66,7 @@ model User {
     likeComment   LikeComment[]
     reply         ReplyComment[]
     bookmark      Bookmark[]
+    sharePost     SharePost[]
     LikeReplyCOmment LikeReplyComment[]
     createdAt     DateTime @default(now())
     updatedAt     DateTime @updatedAt
@@ -79,7 +80,8 @@ model Post {
     likes         Likes[]
     comment       Comment[]
     postLike      Postlike[]
-    bookmark       Bookmark[]
+    bookmark      Bookmark[]
+    sharedPost    SharePost[]
     user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId        String?
     createdAt     DateTime @default(now())
@@ -168,6 +170,13 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
+model SharePost {
+    id         String @id @default(cuid()) @map("_id")
+    post       Post?  @relation(fields: [postId], references: [id], onDelete: Cascade)
+    postId     String?
+    userId       String?
+    user         User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
 model SelectedFile {
     id          String @id @default(cuid()) @map("_id")

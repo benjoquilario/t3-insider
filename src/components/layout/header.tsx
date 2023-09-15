@@ -11,6 +11,7 @@ import usePostStore from "@/store/post";
 import type { User as UserType } from "@/types/types";
 import { FaEdit } from "react-icons/fa";
 import { useRouter } from "next/router";
+import { TbCircles } from 'react-icons/tb';
 
 export const LINKS = [
   {
@@ -51,9 +52,10 @@ const Header: React.FC<HeaderProps> = ({ auth, isLoading }) => {
           className="focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
         >
           <div className="flex h-14 w-full items-center justify-center gap-3 text-2xl font-light text-white">
-            <div className="relative h-11 w-11">
+            {/* <div className="relative h-11 w-11">
               <Image layout="fill" src="/icons.svg" alt="Insider - Home" />
-            </div>
+            </div> */}
+            <TbCircles />
             <span className="font-semibold uppercase text-black">Insider</span>
           </div>
         </Link>
