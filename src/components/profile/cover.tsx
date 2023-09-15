@@ -1,27 +1,27 @@
-import React, { useMemo, useEffect } from "react";
-import Image from "@/components/shared/image";
-import { AiFillCamera } from "react-icons/ai";
-import Button from "@/components/shared/button";
-import useProfileDropZone from "@/lib/hooks/useProfileZone";
-import { trpc } from "@/lib/utils/trpc";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { uploadPicture } from "@/lib/utils/cloudinary";
-import { toast } from "react-toastify";
-import classNames from "classnames";
-import { useSession } from "next-auth/react";
+import React, { useMemo, useEffect } from "react"
+import Image from "@/components/shared/image"
+import { AiFillCamera } from "react-icons/ai"
+import Button from "@/components/shared/button"
+import useProfileDropZone from "@/lib/hooks/useProfileZone"
+import { trpc } from "@/lib/utils/trpc"
+import { useForm, type SubmitHandler } from "react-hook-form"
+import { uploadPicture } from "@/lib/utils/cloudinary"
+import { toast } from "react-toastify"
+import classNames from "classnames"
+import { useSession } from "next-auth/react"
 
 type CoverPhotoProps = {
-  coverPhoto?: string | null;
-  userId: string;
-};
+  coverPhoto?: string | null
+  userId: string
+}
 
 interface CoverValues {
-  coverPhoto: File[];
+  coverPhoto: File[]
 }
 
 const CoverPhoto: React.FC<CoverPhotoProps> = ({ coverPhoto, userId }) => {
-  const utils = trpc.useContext();
-  const { data: session } = useSession();
+  const utils = trpc.useContext()
+  const { data: session } = useSession()
   const {
     register,
     handleSubmit,
@@ -33,20 +33,20 @@ const CoverPhoto: React.FC<CoverPhotoProps> = ({ coverPhoto, userId }) => {
     defaultValues: {
       coverPhoto: [],
     },
-  });
+  })
 
   useEffect(() => {
     if (isSubmitSuccessful) {
-      reset();
+      reset()
     }
-  }, [reset, isSubmitSuccessful]);
+  }, [reset, isSubmitSuccessful])
 
-  const draftCoverFile = watch("coverPhoto")[0];
+  const draftCoverFile = watch("coverPhoto")[0]
 
   const draftCover = useMemo(
     () => (draftCoverFile ? URL.createObjectURL(draftCoverFile) : null),
     [draftCoverFile]
-  );
+  )
 
   const { mutateAsync } = trpc.user.uploadPhoto.useMutation({
     onError: (e) => console.log(e.message),
@@ -54,33 +54,33 @@ const CoverPhoto: React.FC<CoverPhotoProps> = ({ coverPhoto, userId }) => {
       toast("Your cover photo was updated successfully", {
         type: "success",
         position: toast.POSITION.BOTTOM_RIGHT,
-      });
+      })
 
-      await utils.user.getUserById.invalidate({ id: userId });
-      await utils.user.getUsers.invalidate();
+      await utils.user.getUserById.invalidate({ id: userId })
+      await utils.user.getUsers.invalidate()
     },
-  });
+  })
 
   const handleOnSubmit: SubmitHandler<CoverValues> = async (data) => {
-    const coverUrl = await uploadPicture(data.coverPhoto[0] as File);
+    const coverUrl = await uploadPicture(data.coverPhoto[0] as File)
 
     await mutateAsync({
       coverPhoto: coverUrl?.url,
-    });
-  };
+    })
+  }
 
   const setCover = (file: File[]) => {
-    setValue("coverPhoto", file);
-  };
+    setValue("coverPhoto", file)
+  }
 
   const {
     isDragActive: isCoverDragged,
     getInputProps: getInputProps,
     getRootProps: getRootCoverProps,
     open: openCover,
-  } = useProfileDropZone(setCover);
+  } = useProfileDropZone(setCover)
 
-  console.log(isCoverDragged && "Dragged");
+  console.log(isCoverDragged && "Dragged")
 
   return (
     <div
@@ -97,7 +97,7 @@ const CoverPhoto: React.FC<CoverPhotoProps> = ({ coverPhoto, userId }) => {
             containerclassnames="h-56 w-full relative"
           />
           {draftCoverFile ? (
-            <div className="absolute right-3 bottom-3 flex items-center gap-1">
+            <div className="absolute bottom-3 right-3 flex items-center gap-1">
               <Button
                 onClick={() => reset()}
                 type="button"
@@ -120,7 +120,7 @@ const CoverPhoto: React.FC<CoverPhotoProps> = ({ coverPhoto, userId }) => {
                 onClick={openCover}
                 type="button"
                 className={classNames(
-                  "absolute right-3 bottom-3 flex h-8 w-8 items-center justify-center gap-1 rounded-full bg-white px-1 shadow-md md:w-32 md:rounded-md",
+                  "absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center gap-1 rounded-full bg-white px-1 shadow-md md:w-32 md:rounded-md",
                   " hover:bg-zinc-100 active:scale-110",
                   "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-zinc-200 active:text-secondary"
                 )}
@@ -137,7 +137,7 @@ const CoverPhoto: React.FC<CoverPhotoProps> = ({ coverPhoto, userId }) => {
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default CoverPhoto;
+export default CoverPhoto

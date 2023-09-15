@@ -1,15 +1,15 @@
-import React from "react";
-import classNames from "classnames";
-import { useRouter } from "next/router";
-import type { User as UserType } from "@/types/types";
-import { useSession } from "next-auth/react";
-import Button from "@/components/shared/button";
-import { BiBookmark, BiHomeCircle } from "react-icons/bi";
-import { BsBell, BsPerson } from "react-icons/bs";
+import React from "react"
+import classNames from "classnames"
+import { useRouter } from "next/router"
+import type { User as UserType } from "@/types/types"
+import { useSession } from "next-auth/react"
+import Button from "@/components/shared/button"
+import { BiBookmark, BiHomeCircle } from "react-icons/bi"
+import { BsBell, BsPerson } from "react-icons/bs"
 
 type MobileNav = {
-  auth: UserType;
-};
+  auth: UserType
+}
 
 const LIST = [
   {
@@ -30,13 +30,13 @@ const LIST = [
 
     linkName: "Profile",
   },
-];
+]
 const MobileNav: React.FC = () => {
-  const router = useRouter();
-  const { data: session } = useSession();
+  const router = useRouter()
+  const { data: session } = useSession()
 
   return (
-    <div className="fixed bottom-0 right-0 left-0 z-20 rounded-t-3xl bg-zinc-50 py-1 px-3 shadow-md ring ring-zinc-100 md:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-20 rounded-t-3xl bg-zinc-50 px-3 py-1 shadow-md ring ring-zinc-100 md:hidden">
       <ul className="flex items-center justify-around gap-3 text-white">
         <li className="">
           <Button
@@ -81,7 +81,7 @@ const MobileNav: React.FC = () => {
         ))}
       </ul>
     </div>
-  );
-};
+  )
+}
 
-export default MobileNav;
+export default MobileNav

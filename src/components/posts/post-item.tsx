@@ -1,87 +1,87 @@
-import Button from "@/components/shared/button";
-import { BiDotsHorizontalRounded } from "react-icons/bi";
-import { AiFillLike, AiOutlineLike } from "react-icons/ai";
-import { ImSpinner8 } from "react-icons/im";
-import { BiComment } from "react-icons/bi";
-import { IoMdShareAlt } from "react-icons/io";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
-import classNames from "classnames";
-import { motion } from "framer-motion";
-import Image from "@/components/shared/image";
+import Button from "@/components/shared/button"
+import { BiDotsHorizontalRounded } from "react-icons/bi"
+import { AiFillLike, AiOutlineLike } from "react-icons/ai"
+import { ImSpinner8 } from "react-icons/im"
+import { BiComment } from "react-icons/bi"
+import { IoMdShareAlt } from "react-icons/io"
+import { useSession } from "next-auth/react"
+import Link from "next/link"
+import classNames from "classnames"
+import { motion } from "framer-motion"
+import Image from "@/components/shared/image"
 import {
   variants,
   getImageHeightRatio,
   getImageWidthRatio,
-} from "@/lib/utils/index";
-import type { Post as PostType, User } from "@/types/types";
-import Comments from "@/components/comments/";
-import usePostStore from "@/store/post";
-import ModalPost from "@/components/modal/modal-post";
-import { trpc } from "@/lib/utils/trpc";
-import useClickOutside from "@/lib/hooks/useClickOutside";
-import { useRouter } from "next/router";
-import dayjs from "@/lib/utils/time";
-import React, { useCallback, useRef, useState } from "react";
+} from "@/lib/utils/index"
+import type { Post as PostType, User } from "@/types/types"
+import Comments from "@/components/comments/"
+import usePostStore from "@/store/post"
+import ModalPost from "@/components/modal/modal-post"
+import { trpc } from "@/lib/utils/trpc"
+import useClickOutside from "@/lib/hooks/useClickOutside"
+import { useRouter } from "next/router"
+import dayjs from "@/lib/utils/time"
+import React, { useCallback, useRef, useState } from "react"
 
 type PostItemProps = {
-  post: PostType<User>;
-};
+  post: PostType<User>
+}
 
 const PostItem: React.FC<PostItemProps> = ({ post }) => {
-  const utils = trpc.useContext();
-  const router = useRouter();
-  const ref = useRef<HTMLDivElement | null>(null);
-  const { data: session } = useSession();
-  const [isCommentOpen, setIsCommentOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLiked, setIsLiked] = useState(post.isLike);
-  const setPostOpen = usePostStore((store) => store.setPostOpen);
-  const setCurrentPostId = usePostStore((store) => store.setCurrentPostId);
-  const setIsEditing = usePostStore((store) => store.setIsEditing);
-  const setSelectedPost = usePostStore((store) => store.setSelectedPost);
+  const utils = trpc.useContext()
+  const router = useRouter()
+  const ref = useRef<HTMLDivElement | null>(null)
+  const { data: session } = useSession()
+  const [isCommentOpen, setIsCommentOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isLiked, setIsLiked] = useState(post.isLike)
+  const setPostOpen = usePostStore((store) => store.setPostOpen)
+  const setCurrentPostId = usePostStore((store) => store.setCurrentPostId)
+  const setIsEditing = usePostStore((store) => store.setIsEditing)
+  const setSelectedPost = usePostStore((store) => store.setSelectedPost)
   const setIsModalDeletePostOpen = usePostStore(
     (store) => store.setIsModalDeletePostOpen
-  );
+  )
 
   const { mutate: mutateLike, isLoading: isLikeLoading } =
     trpc.like.likePost.useMutation({
       onError: (e) => console.log(e.message),
       onSuccess: async () => {
-        await utils.post.getPosts.invalidate();
+        await utils.post.getPosts.invalidate()
       },
-    });
+    })
 
   const handleUpdatePost = () => {
-    setPostOpen(true);
-    setCurrentPostId(post.id);
+    setPostOpen(true)
+    setCurrentPostId(post.id)
     setSelectedPost({
       id: post.id,
       message: post.message,
       selectedFile: post.selectedFile,
-    });
-    setIsEditing(true);
-    setIsModalOpen(false);
-  };
+    })
+    setIsEditing(true)
+    setIsModalOpen(false)
+  }
 
   const handleLikePost = () => {
-    mutateLike({ postId: post.id, isLiked: !isLiked });
-    setIsLiked(!isLiked);
-  };
+    mutateLike({ postId: post.id, isLiked: !isLiked })
+    setIsLiked(!isLiked)
+  }
 
   const handleDeletePost = () => {
-    setIsModalOpen(false);
-    setIsModalDeletePostOpen(true);
-    setCurrentPostId(post.id);
-  };
+    setIsModalOpen(false)
+    setIsModalDeletePostOpen(true)
+    setCurrentPostId(post.id)
+  }
 
-  const hideModalPost = useCallback(() => setIsModalOpen(false), []);
+  const hideModalPost = useCallback(() => setIsModalOpen(false), [])
 
-  useClickOutside(ref, () => hideModalPost());
+  useClickOutside(ref, () => hideModalPost())
 
   const handleOpenModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
+    setIsModalOpen(!isModalOpen)
+  }
 
   return (
     <motion.li
@@ -162,11 +162,11 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
             const widthRatio = getImageWidthRatio(
               post.selectedFile.length,
               index
-            );
+            )
             const heightRatio = getImageHeightRatio(
               post.selectedFile.length,
               index
-            );
+            )
 
             return (
               <div
@@ -197,7 +197,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
                   />
                 </div>
               </div>
-            );
+            )
           })}
         </div>
       )}
@@ -298,7 +298,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
       </ul>
       {isCommentOpen && <Comments postId={post.id} />}
     </motion.li>
-  );
-};
+  )
+}
 
-export default PostItem;
+export default PostItem

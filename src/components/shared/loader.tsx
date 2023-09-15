@@ -1,10 +1,10 @@
-import React from "react";
-import { ImSpinner8 } from "react-icons/im";
+import React from "react"
+import { ImSpinner8 } from "react-icons/im"
 
 type LoaderProps = {
-  classNameContainer: string;
-  classNameIcon: string;
-};
+  classNameContainer: string
+  classNameIcon: string
+}
 
 const Loader: React.FC<LoaderProps> = ({
   classNameContainer,
@@ -14,7 +14,7 @@ const Loader: React.FC<LoaderProps> = ({
     <div className={classNameContainer}>
       <ImSpinner8 className={classNameIcon} />
     </div>
-  );
-};
+  )
+}
 
-export default Loader;
+export default Loader

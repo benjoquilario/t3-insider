@@ -1,34 +1,34 @@
-import useNavStore from "@/store/nav";
-import React, { useEffect, useRef, useCallback } from "react";
-import Dropdown from "../users/dropdown";
-import MobileNav from "./mobile-nav";
-import useClickOutside from "@/lib/hooks/useClickOutside";
+import useNavStore from "@/store/nav"
+import React, { useEffect, useRef, useCallback } from "react"
+import Dropdown from "../users/dropdown"
+import MobileNav from "./mobile-nav"
+import useClickOutside from "@/lib/hooks/useClickOutside"
 
 type LayoutProps = {
-  children: React.ReactNode;
-  isHome?: boolean;
-};
+  children: React.ReactNode
+  isHome?: boolean
+}
 
 const Layout: React.FC<LayoutProps> = ({ children, isHome = true }) => {
   const [isNavOpen, setIsNavOpen] = useNavStore((store) => [
     store.isNavOpen,
     store.setIsNavOpen,
-  ]);
-  const ref = useRef<HTMLElement | null>(null);
+  ])
+  const ref = useRef<HTMLElement | null>(null)
 
   const hideNav = useCallback(() => {
-    setIsNavOpen(false);
-  }, [setIsNavOpen]);
+    setIsNavOpen(false)
+  }, [setIsNavOpen])
 
-  useClickOutside(ref, () => hideNav());
+  useClickOutside(ref, () => hideNav())
 
   useEffect(() => {
-    isNavOpen && (document.body.style.overflow = "hidden");
+    isNavOpen && (document.body.style.overflow = "hidden")
 
     return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isNavOpen]);
+      document.body.style.overflow = "unset"
+    }
+  }, [isNavOpen])
 
   return (
     <div className="min-h-screen bg-zinc-50">
@@ -44,7 +44,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isHome = true }) => {
         </React.Fragment>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Layout;
+export default Layout

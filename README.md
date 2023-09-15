@@ -1,6 +1,6 @@
 ### Introducing Insider
 
-A Fullstack **social media application** built with **_Next JS_**, **_React_**, **_create-t3-app_**, **_Tanstack-query_**_, and **_tailwindCSS_** as a frontend and **_Prisma_**, and **_Mongo DB_** as a backend.
+A Fullstack **social media application** built with **_Next JS_**, **_React_**, **_create-t3-app_**, **_Tanstack-query_**_, and \*\*\_tailwindCSS_** as a frontend and **_Prisma_**, and **_Mongo DB_\*\* as a backend.
 
 <p align="center">
   <a href="https://github.com/benjoquilario/t3-insider">
@@ -59,7 +59,7 @@ This app would not have been possible without the kind and rapid support of the 
 - Post CRUD functionalities
 - Comment CRUD Functionalities
 - Like post
-- like comment 
+- like comment
 - Reply to comments
 - Profile Customization
 - Suggestion to Follow
@@ -77,7 +77,7 @@ This app would not have been possible without the kind and rapid support of the 
 - Dark more
 - Setting page
 - Update profile functionalities
-… and many more
+  … and many more
 
 ## Installation Steps
 
@@ -121,7 +121,6 @@ npm run client or yarn client
 ```
 
 You are all set! Open [localhost:3000](http://localhost:3000/) to see the app.
-
 
 ## Contribution
 

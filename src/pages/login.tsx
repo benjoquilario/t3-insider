@@ -1,24 +1,24 @@
-import React from "react";
+import React from "react"
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
   NextPage,
-} from "next";
-import { getServerAuthSession } from "@/server/auth";
-import Layout from "@/components/layout";
-import LoginForm from "@/components/form/login";
-import { NextSeo } from "next-seo";
+} from "next"
+import { getServerAuthSession } from "@/server/auth"
+import Layout from "@/components/layout"
+import LoginForm from "@/components/form/login"
+import { NextSeo } from "next-seo"
 
 const Login: NextPage = () => {
   return (
     <React.Fragment>
-      <NextSeo title="Insider - login or sign up"/>
+      <NextSeo title="Insider - login or sign up" />
       <Layout isHome={false}>
         <LoginForm />
       </Layout>
     </React.Fragment>
-  );
-};
+  )
+}
 
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
@@ -26,8 +26,8 @@ export const getServerSideProps: GetServerSideProps = async (
   const session = await getServerAuthSession({
     req: context.req,
     res: context.res,
-  });
-  const redirect = "/";
+  })
+  const redirect = "/"
 
   if (session) {
     return {
@@ -35,12 +35,12 @@ export const getServerSideProps: GetServerSideProps = async (
         destination: redirect,
         permanent: false,
       },
-    };
+    }
   }
 
   return {
     props: {},
-  };
-};
+  }
+}
 
-export default Login;
+export default Login

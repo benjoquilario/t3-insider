@@ -1,11 +1,11 @@
-import NextAuth, { type NextAuthOptions } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { env } from "@/env/server.mjs";
-import { prisma } from "@/server/db";
-import bcrpyt from "bcryptjs";
-import { loginSchema } from "@/server/schema/auth";
+import NextAuth, { type NextAuthOptions } from "next-auth"
+import DiscordProvider from "next-auth/providers/discord"
+import CredentialsProvider from "next-auth/providers/credentials"
+import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import { env } from "@/env/server.mjs"
+import { prisma } from "@/server/db"
+import bcrpyt from "bcryptjs"
+import { loginSchema } from "@/server/schema/auth"
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
@@ -15,19 +15,19 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     session({ session, token }) {
       if (token && session.user) {
-        session.user.id = token.id as string;
+        session.user.id = token.id as string
       }
 
-      return session;
+      return session
     },
     // eslint-disable-next-line @typescript-eslint/require-await
     jwt: async ({ token, user }) => {
       if (user?.id) {
-        token.id = user.id;
-        token.email = user.email;
+        token.id = user.id
+        token.email = user.email
       }
 
-      return token;
+      return token
     },
   },
   pages: {
@@ -53,21 +53,18 @@ export const authOptions: NextAuthOptions = {
         },
       },
       async authorize(credentials) {
-        const cred = await loginSchema.parseAsync(credentials);
+        const cred = await loginSchema.parseAsync(credentials)
         const user = await prisma.user.findFirst({
           where: {
             email: cred.email,
           },
-        });
+        })
 
-        if (!user) return null;
+        if (!user) return null
 
-        const isValidPassword = bcrpyt.compareSync(
-          cred.password,
-          user.password
-        );
+        const isValidPassword = bcrpyt.compareSync(cred.password, user.password)
 
-        if (!isValidPassword) return null;
+        if (!isValidPassword) return null
 
         return {
           id: user.id,
@@ -75,10 +72,10 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           image: user.image,
           coverPhoto: user.image,
-        };
+        }
       },
     }),
   ],
-};
+}
 
-export default NextAuth(authOptions);
+export default NextAuth(authOptions)

@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"
 
 const PostSkeleton = () => {
   return (
@@ -26,7 +26,7 @@ const PostSkeleton = () => {
         </div>
       </div>
     </li>
-  );
-};
+  )
+}
 
-export default PostSkeleton;
+export default PostSkeleton

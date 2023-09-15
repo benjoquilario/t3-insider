@@ -2,65 +2,65 @@ import type {
   GetServerSideProps,
   GetServerSidePropsContext,
   NextPage,
-} from "next";
-import dynamic from "next/dynamic";
-import { useSession } from "next-auth/react";
-import { getServerAuthSession } from "@/server/auth";
-import Layout from "@/components/layout";
-import Section from "@/components/shared/section";
-import { BsFillPersonPlusFill } from "react-icons/bs";
-import { AiFillCheckCircle } from "react-icons/ai";
-import { trpc } from "@/lib/utils/trpc";
-import PostItem from "@/components/posts/post-item";
-import type { Post as PostType, User } from "@/types/types";
-import { InView } from "react-intersection-observer";
-import { ToastContainer } from "react-toastify";
-import usePostStore from "@/store/post";
-import CreateButton from "@/components/posts/create-button";
-import ProfilePhoto from "@/components/profile/profile-photo";
-import CoverPhoto from "@/components/profile/cover";
-import { useRouter } from "next/router";
-import ProfileSkeleton from "@/components/skeleton/profile-skeleton";
-import PostSkeleton from "@/components/skeleton/post-skeleton";
-import Delete from "@/components/delete";
-import Loader from "@/components/shared/loader";
+} from "next"
+import dynamic from "next/dynamic"
+import { useSession } from "next-auth/react"
+import { getServerAuthSession } from "@/server/auth"
+import Layout from "@/components/layout"
+import Section from "@/components/shared/section"
+import { BsFillPersonPlusFill } from "react-icons/bs"
+import { AiFillCheckCircle } from "react-icons/ai"
+import { trpc } from "@/lib/utils/trpc"
+import PostItem from "@/components/posts/post-item"
+import type { Post as PostType, User } from "@/types/types"
+import { InView } from "react-intersection-observer"
+import { ToastContainer } from "react-toastify"
+import usePostStore from "@/store/post"
+import CreateButton from "@/components/posts/create-button"
+import ProfilePhoto from "@/components/profile/profile-photo"
+import CoverPhoto from "@/components/profile/cover"
+import { useRouter } from "next/router"
+import ProfileSkeleton from "@/components/skeleton/profile-skeleton"
+import PostSkeleton from "@/components/skeleton/post-skeleton"
+import Delete from "@/components/delete"
+import Loader from "@/components/shared/loader"
 import {
   useInfinitePostsByIdQuery,
   useUserByIdQuery,
-} from "@/lib/hooks/useQuery";
-import { DEFAULT_SEO_PROPS } from "@/lib/seo";
-import { NextSeo, type NextSeoProps } from "next-seo";
-import React from "react";
-import { capitalizeName } from "@/lib/utils";
-import classNames from "classnames";
-import NavBar from "@/components/layout/navbar";
+} from "@/lib/hooks/useQuery"
+import { DEFAULT_SEO_PROPS } from "@/lib/seo"
+import { NextSeo, type NextSeoProps } from "next-seo"
+import React from "react"
+import { capitalizeName } from "@/lib/utils"
+import classNames from "classnames"
+import NavBar from "@/components/layout/navbar"
 
 const CreateForm = dynamic(() => import("@/components/form/post"), {
   ssr: false,
-});
+})
 
 const Profile: NextPage = () => {
-  const router = useRouter();
-  const utils = trpc.useContext();
-  const { data: session } = useSession();
-  const userId = router.query?.id as string;
-  const { data: user, isLoading: isUserLoading } = useUserByIdQuery(userId);
+  const router = useRouter()
+  const utils = trpc.useContext()
+  const { data: session } = useSession()
+  const userId = router.query?.id as string
+  const { data: user, isLoading: isUserLoading } = useUserByIdQuery(userId)
 
   const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
-    useInfinitePostsByIdQuery(userId);
+    useInfinitePostsByIdQuery(userId)
 
   const { mutate: mutateFollowUser, isLoading: isFollowLoading } =
     trpc.follow.followUser.useMutation({
       onSuccess: async () => {
-        await utils.user.getUserById.invalidate({ id: userId });
+        await utils.user.getUserById.invalidate({ id: userId })
       },
-    });
+    })
 
   const handleFollowUser = () => {
     mutateFollowUser({
       followingId: userId,
-    });
-  };
+    })
+  }
 
   const meta: NextSeoProps = {
     ...DEFAULT_SEO_PROPS,
@@ -75,9 +75,9 @@ const Profile: NextPage = () => {
         ],
       }),
     },
-  };
+  }
 
-  const postOpen = usePostStore((store) => store.postOpen);
+  const postOpen = usePostStore((store) => store.postOpen)
 
   return (
     <React.Fragment>
@@ -89,14 +89,14 @@ const Profile: NextPage = () => {
             {isUserLoading ? (
               <ProfileSkeleton />
             ) : (
-              <div className="mt-0 mb-2">
+              <div className="mb-2 mt-0">
                 <CoverPhoto
                   userId={user?.id || ""}
                   coverPhoto={user?.coverPhoto}
                 />
                 <div className="space-y-4">
                   <div className="flex flex-col justify-center bg-white shadow md:flex-row md:justify-between">
-                    <div className="flex flex-col items-center justify-center gap-3 px-5 pt-2 pb-2 md:flex-row md:pb-5">
+                    <div className="flex flex-col items-center justify-center gap-3 px-5 pb-2 pt-2 md:flex-row md:pb-5">
                       <ProfilePhoto
                         userId={user?.id || ""}
                         image={user?.image || ""}
@@ -175,7 +175,7 @@ const Profile: NextPage = () => {
                   fallbackInView
                   onChange={async (InView) => {
                     if (InView && hasNextPage && !isFetchingNextPage) {
-                      await fetchNextPage();
+                      await fetchNextPage()
                     }
                   }}
                 >
@@ -200,8 +200,8 @@ const Profile: NextPage = () => {
         </Section>
       </Layout>
     </React.Fragment>
-  );
-};
+  )
+}
 
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
@@ -209,7 +209,7 @@ export const getServerSideProps: GetServerSideProps = async (
   const session = await getServerAuthSession({
     req: context.req,
     res: context.res,
-  });
+  })
 
   if (!session) {
     return {
@@ -217,14 +217,14 @@ export const getServerSideProps: GetServerSideProps = async (
         destination: "/login",
         permanent: false,
       },
-    };
+    }
   }
 
   return {
     props: {
       session,
     },
-  };
-};
+  }
+}
 
-export default Profile;
+export default Profile

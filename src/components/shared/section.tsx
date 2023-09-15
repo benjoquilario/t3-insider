@@ -1,24 +1,24 @@
-import React from "react";
-import Header from "@/components/layout/header";
-import Users from "@/components/users";
-import { useAuthQuery } from "@/lib/hooks/useQuery";
-import type { User as UserType } from "@/types/types";
+import React from "react"
+import Header from "@/components/layout/header"
+import Users from "@/components/users"
+import { useAuthQuery } from "@/lib/hooks/useQuery"
+import type { User as UserType } from "@/types/types"
 
 type SectionProps = {
-  children: React.ReactNode;
-  showFooter?: boolean;
-  showHeader?: boolean;
-};
+  children: React.ReactNode
+  showFooter?: boolean
+  showHeader?: boolean
+}
 
 const Section: React.FC<SectionProps> = ({
   children,
   showFooter = false,
   showHeader = true,
 }) => {
-  const { data: authUser, isLoading } = useAuthQuery();
+  const { data: authUser, isLoading } = useAuthQuery()
 
   return (
-    <div className="mx-auto grid h-full min-h-screen w-full max-w-screen-2xl grid-cols-12 gap-6 pb-[52px] md:py-4 md:px-10">
+    <div className="mx-auto grid h-full min-h-screen w-full max-w-screen-2xl grid-cols-12 gap-6 pb-[52px] md:px-10 md:py-4">
       {showHeader && (
         <Header auth={authUser as UserType} isLoading={isLoading} />
       )}
@@ -28,7 +28,7 @@ const Section: React.FC<SectionProps> = ({
       </div>
       {showFooter && <footer>Footer.</footer>}
     </div>
-  );
-};
+  )
+}
 
-export default Section;
+export default Section

@@ -1,67 +1,67 @@
-import Image from "@/components/shared/image";
-import Link from "next/link";
-import Button from "@/components/shared/button";
-import ModalComment from "@/components/modal/modal-comment";
-import { BiDotsHorizontalRounded } from "react-icons/bi";
-import useCommentStore from "@/store/comment";
-import type { ReplyComment, User } from "@/types/types";
-import type { UseFormSetFocus } from "react-hook-form";
-import classNames from "classnames";
-import { AiFillLike } from "react-icons/ai";
-import Loader from "@/components/shared/loader";
-import useClickOutside from "@/lib/hooks/useClickOutside";
-import { useMutationLikeReply } from "@/lib/hooks/useLikeMutation";
-import dayjs from "@/lib/utils/time";
-import React, { useState, useRef, useCallback } from "react";
+import Image from "@/components/shared/image"
+import Link from "next/link"
+import Button from "@/components/shared/button"
+import ModalComment from "@/components/modal/modal-comment"
+import { BiDotsHorizontalRounded } from "react-icons/bi"
+import useCommentStore from "@/store/comment"
+import type { ReplyComment, User } from "@/types/types"
+import type { UseFormSetFocus } from "react-hook-form"
+import classNames from "classnames"
+import { AiFillLike } from "react-icons/ai"
+import Loader from "@/components/shared/loader"
+import useClickOutside from "@/lib/hooks/useClickOutside"
+import { useMutationLikeReply } from "@/lib/hooks/useLikeMutation"
+import dayjs from "@/lib/utils/time"
+import React, { useState, useRef, useCallback } from "react"
 
 type ReplyItemProps = {
-  comment: ReplyComment<User>;
-  setFocus: UseFormSetFocus<{ comment: string }>;
-  commentId: string;
-};
+  comment: ReplyComment<User>
+  setFocus: UseFormSetFocus<{ comment: string }>
+  commentId: string
+}
 
 const ReplyItem: React.FC<ReplyItemProps> = ({
   comment,
   setFocus,
   commentId,
 }) => {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const setReplyId = useCommentStore((store) => store.setReplyId);
-  const [isLiked, setIsLiked] = useState(false);
-  const setReplyComment = useCommentStore((store) => store.setReplyComment);
+  const ref = useRef<HTMLDivElement | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const setReplyId = useCommentStore((store) => store.setReplyId)
+  const [isLiked, setIsLiked] = useState(false)
+  const setReplyComment = useCommentStore((store) => store.setReplyComment)
 
   const handleUpdateReplyComment = () => {
-    setReplyId(comment.id);
-    setIsModalOpen(false);
-    setReplyComment(comment.comment);
-    setFocus("comment");
-  };
+    setReplyId(comment.id)
+    setIsModalOpen(false)
+    setReplyComment(comment.comment)
+    setFocus("comment")
+  }
 
   const { mutateLikeReplyComent, isLikeLoading } =
-    useMutationLikeReply(commentId);
+    useMutationLikeReply(commentId)
 
   const handleLikeReply = () => {
     mutateLikeReplyComent({
       replyId: comment.id,
       isLiked: !isLiked,
-    });
-    setIsLiked(!isLiked);
-  };
+    })
+    setIsLiked(!isLiked)
+  }
 
-  const hideModalReply = useCallback(() => setIsModalOpen(false), []);
+  const hideModalReply = useCallback(() => setIsModalOpen(false), [])
 
-  useClickOutside(ref, () => hideModalReply());
+  useClickOutside(ref, () => hideModalReply())
 
   const handleModalOpen = () => {
-    setIsModalOpen(!isModalOpen);
-  };
+    setIsModalOpen(!isModalOpen)
+  }
 
   return (
     <li>
-      <div className="absolute left-[32px] h-[30px] w-[53px] rounded-l-md border-l-2 border-b-2 border-zinc-300 border-t-white md:left-[42px]" />
-      <div className="group relative flex pt-2 pl-4 md:pl-6">
-        <div className="relative mt-1 mr-2 block rounded-full">
+      <div className="absolute left-[32px] h-[30px] w-[53px] rounded-l-md border-b-2 border-l-2 border-zinc-300 border-t-white md:left-[42px]" />
+      <div className="group relative flex pl-4 pt-2 md:pl-6">
+        <div className="relative mr-2 mt-1 block rounded-full">
           <span className="inline">
             <Link
               href={`/profile/${comment.userId}`}
@@ -129,7 +129,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
                       </div>
                     </div>
                   </div>
-                  <div className="absolute -right-2 -bottom-2 ">
+                  <div className="absolute -bottom-2 -right-2 ">
                     <div className="flex items-center gap-1 rounded-full bg-white px-1 shadow">
                       {isLiked || comment._count.likeReplyComments > 0 ? (
                         <div className="flex h-4 w-4 items-center justify-center rounded-full bg-primary">
@@ -171,16 +171,16 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
             </div>
           </div>
         </div>
-        <div ref={ref} className="w-1/2] absolute top-0 right-0 h-0">
+        <div ref={ref} className="w-1/2] absolute right-0 top-0 h-0">
           {isModalOpen && (
-            <div className="absolute top-12 right-3 z-30 h-auto rounded border border-solid border-zinc-200 bg-zinc-100  shadow-xl  md:top-[21px] md:right-[60px]">
+            <div className="absolute right-3 top-12 z-30 h-auto rounded border border-solid border-zinc-200 bg-zinc-100  shadow-xl  md:right-[60px] md:top-[21px]">
               <ModalComment
                 handleEdit={handleUpdateReplyComment}
                 // handleDelete={handleDeleteComment}
               />
             </div>
           )}
-          <div className="absolute top-3 right-5 self-end">
+          <div className="absolute right-5 top-3 self-end">
             <Button
               onClick={handleModalOpen}
               className="rounded-full p-1 text-zinc-800 opacity-0 transition group-hover:opacity-100 hover:bg-zinc-200"
@@ -192,7 +192,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
         </div>
       </div>
     </li>
-  );
-};
+  )
+}
 
-export default ReplyItem;
+export default ReplyItem

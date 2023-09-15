@@ -1,77 +1,77 @@
-import React, { useState, useRef, useCallback } from "react";
-import Button from "../shared/button";
-import Link from "next/link";
-import Image from "../shared/image";
-import { BiDotsHorizontalRounded } from "react-icons/bi";
-import { BsArrow90DegDown } from "react-icons/bs";
-import { AiFillLike } from "react-icons/ai";
-import ModalComment from "../modal/modal-comment";
-import useClickOutside from "@/lib/hooks/useClickOutside";
-import useCommentStore from "@/store/comment";
-import type { Comment as CommentType, User } from "@/types/types";
-import classNames from "classnames";
-import ReplyComment from "./reply-comment";
-import type { UseFormSetFocus } from "react-hook-form";
-import Loader from "../shared/loader";
-import { useSession } from "next-auth/react";
-import dayjs from "@/lib/utils/time";
-import { useMutateLikeComment } from "@/lib/hooks/useLikeMutation";
+import React, { useState, useRef, useCallback } from "react"
+import Button from "../shared/button"
+import Link from "next/link"
+import Image from "../shared/image"
+import { BiDotsHorizontalRounded } from "react-icons/bi"
+import { BsArrow90DegDown } from "react-icons/bs"
+import { AiFillLike } from "react-icons/ai"
+import ModalComment from "../modal/modal-comment"
+import useClickOutside from "@/lib/hooks/useClickOutside"
+import useCommentStore from "@/store/comment"
+import type { Comment as CommentType, User } from "@/types/types"
+import classNames from "classnames"
+import ReplyComment from "./reply-comment"
+import type { UseFormSetFocus } from "react-hook-form"
+import Loader from "../shared/loader"
+import { useSession } from "next-auth/react"
+import dayjs from "@/lib/utils/time"
+import { useMutateLikeComment } from "@/lib/hooks/useLikeMutation"
 
 type CommentProps = {
-  comment: CommentType<User>;
-  setFocus: UseFormSetFocus<{ comment: string }>;
-};
+  comment: CommentType<User>
+  setFocus: UseFormSetFocus<{ comment: string }>
+}
 
 const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
-  const { data: session } = useSession();
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isReplyOpen, setIsReplyOpen] = useState(false);
+  const { data: session } = useSession()
+  const ref = useRef<HTMLDivElement | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isReplyOpen, setIsReplyOpen] = useState(false)
   const [setCommentId, setCommentMessage] = useCommentStore((store) => [
     store.setCommentId,
     store.setCommentMessage,
-  ]);
-  const [isLiked, setIsLiked] = useState(comment.isLike);
+  ])
+  const [isLiked, setIsLiked] = useState(comment.isLike)
   const setIsCommentModalOpen = useCommentStore(
     (store) => store.setIsCommentModalOpen
-  );
+  )
 
   const { mutateLikeComment, isLikeLoading } = useMutateLikeComment(
     comment.postId
-  );
+  )
 
   const handleLikeComment = () => {
     mutateLikeComment({
       commentId: comment.id,
       isLiked: !isLiked,
-    });
-    setIsLiked(!isLiked);
-  };
+    })
+    setIsLiked(!isLiked)
+  }
 
   const handleDeleteComment = () => {
-    setIsCommentModalOpen(true);
-    setCommentId(comment.id);
-    setIsModalOpen(false);
-  };
+    setIsCommentModalOpen(true)
+    setCommentId(comment.id)
+    setIsModalOpen(false)
+  }
 
   const handleUpdateComment = () => {
-    setCommentId(comment.id);
-    setCommentMessage(comment.comment);
-    setFocus("comment");
-  };
+    setCommentId(comment.id)
+    setCommentMessage(comment.comment)
+    setFocus("comment")
+  }
 
-  const hideModalComment = useCallback(() => setIsModalOpen(false), []);
+  const hideModalComment = useCallback(() => setIsModalOpen(false), [])
 
-  useClickOutside(ref, () => hideModalComment());
+  useClickOutside(ref, () => hideModalComment())
 
   const handleModalOpen = () => {
-    setIsModalOpen(!isModalOpen);
-  };
+    setIsModalOpen(!isModalOpen)
+  }
 
   return (
     <li>
-      <div className="relative flex pt-1 pl-4 md:pl-6">
-        <div className="relative mt-1 mr-2 block rounded-full">
+      <div className="relative flex pl-4 pt-1 md:pl-6">
+        <div className="relative mr-2 mt-1 block rounded-full">
           {isReplyOpen || comment._count.reply > 0 ? (
             <div className="absolute left-[18px] top-[30px] h-[calc(100%_-_61px)] w-[2px] bg-gray-300"></div>
           ) : null}
@@ -143,7 +143,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
                     </div>
                   </div>
 
-                  <div className="absolute -right-2 -bottom-2 ">
+                  <div className="absolute -bottom-2 -right-2 ">
                     <div className="relative flex items-center gap-1 rounded-full bg-white px-1 shadow">
                       {isLiked || comment._count.likeComment > 0 ? (
                         <div className="flex h-4 w-4 items-center justify-center rounded-full bg-primary">
@@ -192,8 +192,8 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
                 </span>
               </div>
               {comment._count.reply !== 0 && !isReplyOpen ? (
-                <div className="mt-2 ml-3">
-                  <div className="absolute left-[42px] bottom-[12px] h-[21px] w-[27px] rounded-l border-l-2 border-b-2 border-zinc-300 border-t-white"></div>
+                <div className="ml-3 mt-2">
+                  <div className="absolute bottom-[12px] left-[42px] h-[21px] w-[27px] rounded-l border-b-2 border-l-2 border-zinc-300 border-t-white"></div>
                   <Button
                     type="button"
                     aria-label="show replies"
@@ -217,9 +217,9 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
             )}
           </div>
         </div>
-        <div ref={ref} className="absolute top-0 right-0 h-0 w-1/2">
+        <div ref={ref} className="absolute right-0 top-0 h-0 w-1/2">
           {isModalOpen && (
-            <div className="absolute top-12 right-3 z-30 h-auto rounded border border-solid border-zinc-200 bg-zinc-100 shadow-xl md:top-[21px] md:right-[60px]">
+            <div className="absolute right-3 top-12 z-30 h-auto rounded border border-solid border-zinc-200 bg-zinc-100 shadow-xl md:right-[60px] md:top-[21px]">
               <ModalComment
                 handleEdit={handleUpdateComment}
                 handleDelete={handleDeleteComment}
@@ -227,7 +227,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
             </div>
           )}
           {session?.user?.id === comment.userId && (
-            <div className="absolute top-3 right-5 self-end">
+            <div className="absolute right-5 top-3 self-end">
               <Button
                 type="button"
                 onClick={handleModalOpen}
@@ -241,7 +241,7 @@ const Comment: React.FC<CommentProps> = ({ comment, setFocus }) => {
         </div>
       </div>
     </li>
-  );
-};
+  )
+}
 
-export default Comment;
+export default Comment

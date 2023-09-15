@@ -1,5 +1,5 @@
-import { createTRPCRouter, protectedProcedure } from "../trpc";
-import z from "zod";
+import { createTRPCRouter, protectedProcedure } from "../trpc"
+import z from "zod"
 
 export const bookmarkRouter = createTRPCRouter({
   createBookmark: protectedProcedure
@@ -10,7 +10,7 @@ export const bookmarkRouter = createTRPCRouter({
           postId: input.postId,
           userId: ctx.session.user.id,
         },
-      });
+      })
     }),
   deleteBookmark: protectedProcedure
     .input(z.object({ id: z.string() }))
@@ -19,18 +19,18 @@ export const bookmarkRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
-      });
+      })
 
       if (bookmark) {
         await ctx.prisma.bookmark.delete({
           where: {
             id: bookmark.id,
           },
-        });
+        })
       }
 
       return {
         message: "Successfully Deleted!!",
-      };
+      }
     }),
-});
+})

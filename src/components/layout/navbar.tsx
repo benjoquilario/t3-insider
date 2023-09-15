@@ -1,24 +1,24 @@
-import React from "react";
-import Button from "@/components/shared/button";
-import Image from "@/components/shared/image";
-import { FiSearch } from "react-icons/fi";
-import type { User } from "@/types/types";
-import useNavStore from "@/store/nav";
+import React from "react"
+import Button from "@/components/shared/button"
+import Image from "@/components/shared/image"
+import { FiSearch } from "react-icons/fi"
+import type { User } from "@/types/types"
+import useNavStore from "@/store/nav"
 
 type NavBarProps = {
-  auth: User;
-  isLoading: boolean;
-};
+  auth: User
+  isLoading: boolean
+}
 
 const NavBar: React.FC<NavBarProps> = ({ auth, isLoading }) => {
   const [isNavOpen, setIsNavOpen] = useNavStore((store) => [
     store.isNavOpen,
     store.setIsNavOpen,
-  ]);
+  ])
 
   const toggleNavBar = () => {
-    setIsNavOpen(!isNavOpen);
-  };
+    setIsNavOpen(!isNavOpen)
+  }
 
   return (
     <div className="block shadow-md md:hidden">
@@ -53,7 +53,7 @@ const NavBar: React.FC<NavBarProps> = ({ auth, isLoading }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default NavBar;
+export default NavBar

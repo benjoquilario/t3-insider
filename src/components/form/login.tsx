@@ -1,43 +1,43 @@
-import { signIn } from "next-auth/react";
-import React, { useState } from "react";
-import FormContainer from "./container";
-import Input from "@/components/shared/input";
-import Button from "@/components/shared/button";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import Loader from "../shared/loader";
-import Link from "next/link";
+import { signIn } from "next-auth/react"
+import React, { useState } from "react"
+import FormContainer from "./container"
+import Input from "@/components/shared/input"
+import Button from "@/components/shared/button"
+import { useForm, type SubmitHandler } from "react-hook-form"
+import Loader from "../shared/loader"
+import Link from "next/link"
 
 type FormValues = {
-  email: string;
-  password: string;
-};
+  email: string
+  password: string
+}
 
 const LoginForm = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const [isLoading, setIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | undefined>()
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>();
+  } = useForm<FormValues>()
 
   const handleOnSubmit: SubmitHandler<FormValues> = async (data) => {
-    setIsLoading(true);
+    setIsLoading(true)
     try {
       const result = await signIn("credentials", {
         ...data,
         callbackUrl: "/",
-      });
+      })
 
       if (result?.error) {
-        setErrorMessage(result.error);
+        setErrorMessage(result.error)
       }
 
-      setIsLoading(false);
+      setIsLoading(false)
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
 
   return (
     <FormContainer title="Welcome to Insider!" type="Sign in to your account">
@@ -104,7 +104,7 @@ const LoginForm = () => {
         </div>
       </form>
     </FormContainer>
-  );
-};
+  )
+}
 
-export default LoginForm;
+export default LoginForm

@@ -1,10 +1,10 @@
-import React from "react";
+import React from "react"
 
 const ProfileSkeleton = () => {
   return (
     <div className="w-full animate-pulse rounded-md bg-white">
       <div className="relative h-56 w-full rounded-t bg-white opacity-80">
-        <div className="absolute right-3 bottom-3 h-8 w-8 rounded-full bg-zinc-100"></div>
+        <div className="absolute bottom-3 right-3 h-8 w-8 rounded-full bg-zinc-100"></div>
       </div>
       <div className="z-10 flex flex-col items-center justify-center gap-3 rounded-b-md bg-white p-6 px-4 pt-2 sm:flex-row sm:justify-start">
         <div className="relative -mt-20 ">
@@ -20,7 +20,7 @@ const ProfileSkeleton = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProfileSkeleton;
+export default ProfileSkeleton

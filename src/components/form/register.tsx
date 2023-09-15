@@ -1,41 +1,41 @@
-import React, { useState } from "react";
-import FormContainer from "./container";
-import Input from "@/components/shared/input";
-import Button from "@/components/shared/button";
-import { useRouter } from "next/router";
-import { trpc } from "@/lib/utils/trpc";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import Link from "next/link";
-import Loader from "../shared/loader";
+import React, { useState } from "react"
+import FormContainer from "./container"
+import Input from "@/components/shared/input"
+import Button from "@/components/shared/button"
+import { useRouter } from "next/router"
+import { trpc } from "@/lib/utils/trpc"
+import { useForm, type SubmitHandler } from "react-hook-form"
+import Link from "next/link"
+import Loader from "../shared/loader"
 
 type FormValues = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-  firstName: string;
-  lastName: string;
-};
+  email: string
+  password: string
+  confirmPassword: string
+  firstName: string
+  lastName: string
+}
 
 const RegisterForm = () => {
-  const router = useRouter();
-  const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const router = useRouter()
+  const [errorMessage, setErrorMessage] = useState<string | undefined>()
 
   const { mutateAsync, isLoading } = trpc.auth.register.useMutation({
     onError: (e) => setErrorMessage(e.message),
     onSuccess: () => router.push("/login"),
-  });
+  })
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>();
+  } = useForm<FormValues>()
 
-  console.log(errors);
+  console.log(errors)
 
   const handleOnSubmit: SubmitHandler<FormValues> = async (data) => {
-    await mutateAsync(data);
-  };
+    await mutateAsync(data)
+  }
 
   return (
     <FormContainer title="Welcome to Insider!" type="Create an Account">
@@ -95,7 +95,7 @@ const RegisterForm = () => {
         </div>
       </form>
     </FormContainer>
-  );
-};
+  )
+}
 
-export default RegisterForm;
+export default RegisterForm

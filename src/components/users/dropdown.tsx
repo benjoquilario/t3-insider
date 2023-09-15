@@ -1,17 +1,17 @@
-import React from "react";
-import Button from "../shared/button";
-import Link from "next/link";
-import { IoMdSettings } from "react-icons/io";
-import { BiLogInCircle } from "react-icons/bi";
-import { signOut } from "next-auth/react";
-import classNames from "classnames";
-import Image from "../shared/image";
-import { isMobile } from "react-device-detect";
-import { RiCloseFill } from "react-icons/ri";
-import useNavStore from "@/store/nav";
-import { useAuthQuery } from "@/lib/hooks/useQuery";
-import { BsPerson, BsPeople } from "react-icons/bs";
-import { SlPeople } from "react-icons/sl";
+import React from "react"
+import Button from "../shared/button"
+import Link from "next/link"
+import { IoMdSettings } from "react-icons/io"
+import { BiLogInCircle } from "react-icons/bi"
+import { signOut } from "next-auth/react"
+import classNames from "classnames"
+import Image from "../shared/image"
+import { isMobile } from "react-device-detect"
+import { RiCloseFill } from "react-icons/ri"
+import useNavStore from "@/store/nav"
+import { useAuthQuery } from "@/lib/hooks/useQuery"
+import { BsPerson, BsPeople } from "react-icons/bs"
+import { SlPeople } from "react-icons/sl"
 
 const LISTS = [
   {
@@ -34,16 +34,16 @@ const LISTS = [
     linkName: "Setting",
     Icon: IoMdSettings,
   },
-];
+]
 
 type DropdownProps = {
-  className?: string;
-} & React.HTMLProps<HTMLElement>;
+  className?: string
+} & React.HTMLProps<HTMLElement>
 
 const Dropdown = React.forwardRef<HTMLElement, DropdownProps>((props, ref) => {
-  const { className, ...navProps } = props;
-  const { data: auth } = useAuthQuery();
-  const setIsNavOpen = useNavStore((store) => store.setIsNavOpen);
+  const { className, ...navProps } = props
+  const { data: auth } = useAuthQuery()
+  const setIsNavOpen = useNavStore((store) => store.setIsNavOpen)
 
   return (
     <nav
@@ -62,7 +62,7 @@ const Dropdown = React.forwardRef<HTMLElement, DropdownProps>((props, ref) => {
               <RiCloseFill aria-hidden="true" size={25} />
             </Button>
           </div>
-          <div className="mt-10 mb-5 flex flex-col">
+          <div className="mb-5 mt-10 flex flex-col">
             <Image
               className="rounded-full"
               src={auth?.image || " /default-image.png"}
@@ -134,9 +134,9 @@ const Dropdown = React.forwardRef<HTMLElement, DropdownProps>((props, ref) => {
         </li>
       </ul>
     </nav>
-  );
-});
+  )
+})
 
-Dropdown.displayName = "Dropdown";
+Dropdown.displayName = "Dropdown"
 
-export default Dropdown;
+export default Dropdown

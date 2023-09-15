@@ -1,18 +1,18 @@
-import React, { useRef } from "react";
-import TextareaAutoSize from "react-textarea-autosize";
-import classNames from "classnames";
-import type { UseFormRegister, UseFormReset } from "react-hook-form";
-import { IoMdSend } from "react-icons/io";
-import Image from "./image";
-import { useAuthQuery } from "@/lib/hooks/useQuery";
+import React, { useRef } from "react"
+import TextareaAutoSize from "react-textarea-autosize"
+import classNames from "classnames"
+import type { UseFormRegister, UseFormReset } from "react-hook-form"
+import { IoMdSend } from "react-icons/io"
+import Image from "./image"
+import { useAuthQuery } from "@/lib/hooks/useQuery"
 
 type CommentFormProps = {
-  register: UseFormRegister<{ comment: string }>;
-  commentId: string;
-  commentText: string;
-  handleCancel: () => void;
-  reset: UseFormReset<{ comment: string }>;
-} & React.HTMLProps<HTMLFormElement>;
+  register: UseFormRegister<{ comment: string }>
+  commentId: string
+  commentText: string
+  handleCancel: () => void
+  reset: UseFormReset<{ comment: string }>
+} & React.HTMLProps<HTMLFormElement>
 
 const CommentForm = React.forwardRef<HTMLFormElement, CommentFormProps>(
   (props, ref) => {
@@ -23,20 +23,20 @@ const CommentForm = React.forwardRef<HTMLFormElement, CommentFormProps>(
       reset,
       handleCancel,
       ...formProps
-    } = props;
-    const buttonRef = useRef<HTMLButtonElement | null>(null);
+    } = props
+    const buttonRef = useRef<HTMLButtonElement | null>(null)
 
-    const { data: authUser } = useAuthQuery();
+    const { data: authUser } = useAuthQuery()
 
     const handleKeyPress = (
       event: React.KeyboardEvent<HTMLTextAreaElement>
     ) => {
       if (event.key === "Enter" && event.shiftKey === false) {
-        event.preventDefault();
-        buttonRef?.current?.click();
-        reset();
+        event.preventDefault()
+        buttonRef?.current?.click()
+        reset()
       }
-    };
+    }
 
     return (
       <div className="flex flex-row items-center space-x-2">
@@ -74,7 +74,7 @@ const CommentForm = React.forwardRef<HTMLFormElement, CommentFormProps>(
                       />
                     </div>
                     {commentId && (
-                      <div className="absolute top-[42px] left-2 flex gap-1 text-xs text-primary">
+                      <div className="absolute left-2 top-[42px] flex gap-1 text-xs text-primary">
                         <button type="button" onClick={handleCancel}>
                           Cancel
                         </button>
@@ -96,10 +96,10 @@ const CommentForm = React.forwardRef<HTMLFormElement, CommentFormProps>(
           </div>
         </div>
       </div>
-    );
+    )
   }
-);
+)
 
-CommentForm.displayName = "CommentForm";
+CommentForm.displayName = "CommentForm"
 
-export default CommentForm;
+export default CommentForm

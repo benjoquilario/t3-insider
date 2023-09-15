@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import React from "react";
-import CreateComment from "./create-comments";
-import type { CommentProps } from "./create-comments";
-import { motion } from "framer-motion";
-import { variants } from "@/lib/utils/index";
+import React from "react"
+import CreateComment from "./create-comments"
+import type { CommentProps } from "./create-comments"
+import { motion } from "framer-motion"
+import { variants } from "@/lib/utils/index"
 
 const Comments: React.FC<CommentProps> = ({ postId }) => (
   <motion.div
@@ -15,6 +15,6 @@ const Comments: React.FC<CommentProps> = ({ postId }) => (
   >
     <CreateComment postId={postId} />
   </motion.div>
-);
+)
 
-export default Comments;
+export default Comments

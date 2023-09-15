@@ -1,6 +1,6 @@
-import { createCommentSchema, commentSchema } from "@/server/schema/comments";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { commentIdSchema } from "../../schema/comments";
+import { createCommentSchema, commentSchema } from "@/server/schema/comments"
+import { createTRPCRouter, protectedProcedure } from "../trpc"
+import { commentIdSchema } from "../../schema/comments"
 
 export const commentRouter = createTRPCRouter({
   createComment: protectedProcedure
@@ -12,11 +12,11 @@ export const commentRouter = createTRPCRouter({
           userId: ctx.session.user.id,
           postId: input.postId,
         },
-      });
+      })
 
       return {
         comment,
-      };
+      }
     }),
   updateComment: protectedProcedure
     .input(createCommentSchema)
@@ -28,7 +28,7 @@ export const commentRouter = createTRPCRouter({
         data: {
           comment: input.comment,
         },
-      });
+      })
     }),
   deleteComment: protectedProcedure
     .input(commentIdSchema)
@@ -37,25 +37,25 @@ export const commentRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
-      });
+      })
 
       if (comment) {
         await ctx.prisma.comment.delete({
           where: {
             id: comment.id,
           },
-        });
+        })
       }
 
       await ctx.prisma.replyComment.deleteMany({
         where: {
           replyToId: comment?.id,
         },
-      });
+      })
 
       return {
         message: "Successfully Deleted!!",
-      };
+      }
     }),
   getCommentById: protectedProcedure
     .input(commentIdSchema)
@@ -64,14 +64,14 @@ export const commentRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
-      });
+      })
 
-      return comment;
+      return comment
     }),
   getComments: protectedProcedure
     .input(commentSchema)
     .query(async ({ ctx, input }) => {
-      const skip = input?.cursor || 0;
+      const skip = input?.cursor || 0
       const comments = await ctx.prisma.comment.findMany({
         where: {
           postId: input.postId,
@@ -107,14 +107,14 @@ export const commentRouter = createTRPCRouter({
         orderBy: { createdAt: "desc" },
         take: input?.limit || 3,
         skip,
-      });
+      })
 
       const isLiked = await ctx.prisma.likeComment.findMany({
         where: {
           userId: ctx.session.user.id,
           commentId: { in: comments.map((comment) => comment.id) },
         },
-      });
+      })
 
       return {
         comments: comments.map((comment) => ({
@@ -126,7 +126,7 @@ export const commentRouter = createTRPCRouter({
           comments.length < (input.limit || 3)
             ? null
             : skip + (input.limit as number),
-      };
+      }
     }),
   replyComment: protectedProcedure
     .input(createCommentSchema)
@@ -137,11 +137,11 @@ export const commentRouter = createTRPCRouter({
           userId: ctx.session.user.id,
           replyToId: input.commentId,
         },
-      });
+      })
 
       return {
         comment,
-      };
+      }
     }),
   updateReplyComment: protectedProcedure
     .input(createCommentSchema)
@@ -153,12 +153,12 @@ export const commentRouter = createTRPCRouter({
         data: {
           comment: input.comment,
         },
-      });
+      })
     }),
   getReplyComments: protectedProcedure
     .input(commentSchema)
     .query(async ({ ctx, input }) => {
-      const skip = input?.cursor || 0;
+      const skip = input?.cursor || 0
       const comments = await ctx.prisma.replyComment.findMany({
         where: {
           replyToId: input.commentId,
@@ -193,7 +193,7 @@ export const commentRouter = createTRPCRouter({
         orderBy: { createdAt: "desc" },
         take: input?.limit || 3,
         skip,
-      });
+      })
 
       return {
         replyComments: comments.map((comment) => comment),
@@ -202,6 +202,6 @@ export const commentRouter = createTRPCRouter({
           comments.length < (input.limit || 3)
             ? null
             : skip + (input.limit as number),
-      };
+      }
     }),
-});
+})

@@ -1,59 +1,59 @@
 export const capitalizeName = (name: string) => {
   if (name) {
-    const names = name.split(" ");
-    const namesUpper = [];
+    const names = name.split(" ")
+    const namesUpper = []
 
     for (const name of names) {
       namesUpper.push(
         name.replace(name[0] as string, name[0]?.toUpperCase() as string)
-      );
+      )
     }
 
-    return namesUpper.join(" ");
+    return namesUpper.join(" ")
   }
-};
+}
 
 export const getImageWidthRatio = (imageNumber: number, imageIndex: number) => {
   if (imageNumber === 1) {
-    return 100;
+    return 100
   }
   if (imageNumber === 2) {
-    return 110;
+    return 110
   }
   if (imageNumber === 3) {
     if (imageIndex === 0) {
-      return 50;
+      return 50
     }
-    return 50;
+    return 50
   }
-  return 100;
-};
+  return 100
+}
 
 export const getImageHeightRatio = (
   imageNumber: number,
   imageIndex: number
 ) => {
   if (imageNumber === 1) {
-    return 80;
+    return 80
   }
   if (imageNumber === 2) {
-    return 130;
+    return 130
   }
   if (imageNumber === 3) {
     if (imageIndex === 0) {
-      return 40;
+      return 40
     }
-    return 44;
+    return 44
   }
-  return 110;
-};
+  return 110
+}
 
 export const intitialState = {
   message: "",
   selectedFile: "",
   name: "",
   id: "",
-};
+}
 
 export const backdropVariant = {
   hidden: { opacity: 0 },
@@ -61,7 +61,7 @@ export const backdropVariant = {
     opacity: 1,
     transition: { duration: 0.3 },
   },
-};
+}
 
 export const variants = {
   hidden: {
@@ -70,7 +70,7 @@ export const variants = {
   visible: {
     opacity: 1,
   },
-};
+}
 
 export const formVariant = {
   initial: {
@@ -88,4 +88,4 @@ export const formVariant = {
       duration: 0.3,
     },
   },
-};
+}

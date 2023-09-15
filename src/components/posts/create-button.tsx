@@ -1,24 +1,24 @@
-import React from "react";
-import Link from "next/link";
-import Image from "next/legacy/image";
-import { useSession } from "next-auth/react";
-import Button from "@/components/shared/button";
-import usePostStore from "@/store/post";
-import classNames from "classnames";
-import { useAuthQuery } from "@/lib/hooks/useQuery";
+import React from "react"
+import Link from "next/link"
+import Image from "next/legacy/image"
+import { useSession } from "next-auth/react"
+import Button from "@/components/shared/button"
+import usePostStore from "@/store/post"
+import classNames from "classnames"
+import { useAuthQuery } from "@/lib/hooks/useQuery"
 
 const CreateButton = () => {
-  const session = useSession();
-  const { data: authUser, isLoading } = useAuthQuery();
-  const setPostOpen = usePostStore((store) => store.setPostOpen);
-  const setIsEditing = usePostStore((store) => store.setIsEditing);
-  const setCurrentPostId = usePostStore((store) => store.setCurrentPostId);
+  const session = useSession()
+  const { data: authUser, isLoading } = useAuthQuery()
+  const setPostOpen = usePostStore((store) => store.setPostOpen)
+  const setIsEditing = usePostStore((store) => store.setIsEditing)
+  const setCurrentPostId = usePostStore((store) => store.setCurrentPostId)
 
   const handlePostOpen = () => {
-    setPostOpen(true);
-    setIsEditing(false);
-    setCurrentPostId("");
-  };
+    setPostOpen(true)
+    setIsEditing(false)
+    setCurrentPostId("")
+  }
 
   return (
     <React.Fragment>
@@ -34,7 +34,7 @@ const CreateButton = () => {
               href={`profile/${session.data?.user?.id as string}`}
               className="rounded-full ring-primary ring-offset-1 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary active:ring"
             >
-              <div className="relative h-11 w-11 overflow-hidden before:absolute before:top-0 before:left-0 before:-z-10 before:h-full before:w-full before:rounded-full before:bg-gray-900">
+              <div className="relative h-11 w-11 overflow-hidden before:absolute before:left-0 before:top-0 before:-z-10 before:h-full before:w-full before:rounded-full before:bg-gray-900">
                 <Image
                   className="m-auto rounded-full"
                   src={authUser?.image || "/default-image.png"}
@@ -62,7 +62,7 @@ const CreateButton = () => {
         </div>
       )}
     </React.Fragment>
-  );
-};
+  )
+}
 
-export default CreateButton;
+export default CreateButton

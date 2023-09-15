@@ -1,37 +1,37 @@
-import React, { useEffect } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import useCommentStore from "@/store/comment";
-import type { Comment as CommentType, User } from "@/types/types";
-import Comment from "./comment";
-import { ImSpinner8 } from "react-icons/im";
-import CommentForm from "../shared/comment-form";
-import { useInfiniteCommentsQuery } from "@/lib/hooks/useQuery";
+import React, { useEffect } from "react"
+import { useForm, type SubmitHandler } from "react-hook-form"
+import useCommentStore from "@/store/comment"
+import type { Comment as CommentType, User } from "@/types/types"
+import Comment from "./comment"
+import { ImSpinner8 } from "react-icons/im"
+import CommentForm from "../shared/comment-form"
+import { useInfiniteCommentsQuery } from "@/lib/hooks/useQuery"
 import {
   useMutateCreateComment,
   useMutateUpdateComment,
-} from "@/lib/hooks/useCommentMutation";
-import Button from "../shared/button";
+} from "@/lib/hooks/useCommentMutation"
+import Button from "../shared/button"
 
 type CommentValues = {
-  comment: string;
-};
+  comment: string
+}
 
 export type CommentProps = {
-  postId: string;
-};
+  postId: string
+}
 
 const CreateComment: React.FC<CommentProps> = ({ postId }) => {
   const [commentId, setCommentId] = useCommentStore((store) => [
     store.commentId,
     store.setCommentId,
-  ]);
+  ])
   const [commentMessage, setCommentMessage] = useCommentStore((store) => [
     store.commentMessage,
     store.setCommentMessage,
-  ]);
+  ])
 
   const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
-    useInfiniteCommentsQuery(postId);
+    useInfiniteCommentsQuery(postId)
 
   const {
     register,
@@ -45,52 +45,52 @@ const CreateComment: React.FC<CommentProps> = ({ postId }) => {
     defaultValues: {
       comment: "",
     },
-  });
+  })
 
   useEffect(() => {
-    setFocus("comment");
-  }, [setFocus]);
+    setFocus("comment")
+  }, [setFocus])
 
   useEffect(() => {
     if (isSubmitSuccessful) {
-      reset();
+      reset()
     }
-  }, [isSubmitSuccessful, reset]);
+  }, [isSubmitSuccessful, reset])
 
   // mutation
-  const mutateAsyncCreate = useMutateCreateComment();
-  const mutateAsyncUpdate = useMutateUpdateComment();
+  const mutateAsyncCreate = useMutateCreateComment()
+  const mutateAsyncUpdate = useMutateUpdateComment()
 
   const handleOnSubmit: SubmitHandler<CommentValues> = async (data) => {
-    if (!data.comment) return;
+    if (!data.comment) return
 
     if (commentId && commentMessage) {
       await mutateAsyncUpdate({
         id: commentId,
         postId,
         comment: data.comment,
-      });
+      })
     } else {
       await mutateAsyncCreate({
         comment: data.comment,
         postId,
-      });
+      })
     }
-  };
+  }
 
-  const comment = watch("comment");
+  const comment = watch("comment")
 
   useEffect(() => {
     if (commentId) {
-      setValue("comment", commentMessage);
+      setValue("comment", commentMessage)
     }
-  }, [setValue, commentMessage, commentId]);
+  }, [setValue, commentMessage, commentId])
 
   const cancelUpdate = () => {
-    reset();
-    setCommentId("");
-    setCommentMessage("");
-  };
+    reset()
+    setCommentId("")
+    setCommentMessage("")
+  }
 
   return (
     <React.Fragment>
@@ -140,7 +140,7 @@ const CreateComment: React.FC<CommentProps> = ({ postId }) => {
         </div>
       )}
     </React.Fragment>
-  );
-};
+  )
+}
 
-export default CreateComment;
+export default CreateComment

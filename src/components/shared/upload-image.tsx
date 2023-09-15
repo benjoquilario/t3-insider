@@ -1,14 +1,14 @@
-import React from "react";
-import { useWatch, type Control, type UseFormSetValue } from "react-hook-form";
-import type { PostValues } from "../form/post";
-import { HiPhoto } from "react-icons/hi2";
-import ImageThumbnail from "./image-thumbnail";
+import React from "react"
+import { useWatch, type Control, type UseFormSetValue } from "react-hook-form"
+import type { PostValues } from "../form/post"
+import { HiPhoto } from "react-icons/hi2"
+import ImageThumbnail from "./image-thumbnail"
 
 interface UploadImageProps {
-  control: Control<PostValues>;
-  setValue: UseFormSetValue<PostValues>;
-  openFilePicker: () => void;
-  disabled?: boolean;
+  control: Control<PostValues>
+  setValue: UseFormSetValue<PostValues>
+  openFilePicker: () => void
+  disabled?: boolean
 }
 
 const UploadImage: React.FC<UploadImageProps> = ({
@@ -21,16 +21,16 @@ const UploadImage: React.FC<UploadImageProps> = ({
     control,
     name: "selectedFile",
     defaultValue: [],
-  });
+  })
 
-  console.log(selectedFile);
+  console.log(selectedFile)
 
   const removeImage = (imageName: string) => {
     setValue(
       "selectedFile",
       selectedFile.filter((image) => image.name !== imageName)
-    );
-  };
+    )
+  }
 
   return (
     <React.Fragment>
@@ -51,11 +51,11 @@ const UploadImage: React.FC<UploadImageProps> = ({
                 image={image}
                 removeImage={removeImage}
               />
-            );
+            )
           })}
       </div>
     </React.Fragment>
-  );
-};
+  )
+}
 
-export default UploadImage;
+export default UploadImage

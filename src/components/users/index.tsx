@@ -1,29 +1,29 @@
-import React, { useState, useRef, useCallback } from "react";
-import { IoMdArrowDropdown } from "react-icons/io";
-import { BiBookmark } from "react-icons/bi";
-import { BsBell } from "react-icons/bs";
-import User from "./user";
-import Image from "../shared/image";
-import UsersSkeleton from "../skeleton/users-skeleton";
-import Dropdown from "./dropdown";
-import useClickOutside from "@/lib/hooks/useClickOutside";
-import ButtonTooltip from "../shared/button-tooltip";
-import Button from "../shared/button";
-import { useRouter } from "next/router";
-import classNames from "classnames";
-import type { User as UserType } from "@/types/types";
-import { useInfiniteUsersQuery } from "@/lib/hooks/useQuery";
+import React, { useState, useRef, useCallback } from "react"
+import { IoMdArrowDropdown } from "react-icons/io"
+import { BiBookmark } from "react-icons/bi"
+import { BsBell } from "react-icons/bs"
+import User from "./user"
+import Image from "../shared/image"
+import UsersSkeleton from "../skeleton/users-skeleton"
+import Dropdown from "./dropdown"
+import useClickOutside from "@/lib/hooks/useClickOutside"
+import ButtonTooltip from "../shared/button-tooltip"
+import Button from "../shared/button"
+import { useRouter } from "next/router"
+import classNames from "classnames"
+import type { User as UserType } from "@/types/types"
+import { useInfiniteUsersQuery } from "@/lib/hooks/useQuery"
 
 type UsersProps = {
-  auth: UserType;
-  isLoading: boolean;
-};
+  auth: UserType
+  isLoading: boolean
+}
 
 const Users: React.FC<UsersProps> = ({ auth, isLoading }) => {
-  const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const ref = useRef<HTMLDivElement | null>(null);
+  const router = useRouter()
+  const [isOpen, setIsOpen] = useState(false)
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false)
+  const ref = useRef<HTMLDivElement | null>(null)
 
   const {
     data,
@@ -31,17 +31,17 @@ const Users: React.FC<UsersProps> = ({ auth, isLoading }) => {
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-  } = useInfiniteUsersQuery();
+  } = useInfiniteUsersQuery()
 
   const hideDropdown = useCallback(() => {
-    setIsOpen(false);
-  }, []);
+    setIsOpen(false)
+  }, [])
 
-  useClickOutside(ref, () => hideDropdown());
+  useClickOutside(ref, () => hideDropdown())
 
   const toggleDropDown = () => {
-    setIsOpen(!isOpen);
-  };
+    setIsOpen(!isOpen)
+  }
 
   return (
     <div className="sticky top-0">
@@ -105,7 +105,7 @@ const Users: React.FC<UsersProps> = ({ auth, isLoading }) => {
       </div>
       <div className="mt-16">
         <aside className="dark:bg-primary-dark-200 rounded-md bg-white shadow">
-          <h2 className="font-poppins py-3 px-5   text-sm font-semibold ">
+          <h2 className="font-poppins px-5 py-3   text-sm font-semibold ">
             Trends this week
           </h2>
           <a className="block" href="/tag/trpc">
@@ -147,7 +147,7 @@ const Users: React.FC<UsersProps> = ({ auth, isLoading }) => {
         </aside>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Users;
+export default Users

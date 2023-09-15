@@ -1,11 +1,11 @@
-import type { User } from "@/types/types";
-import React from "react";
-import Image from "./image";
-import Link from "next/link";
+import type { User } from "@/types/types"
+import React from "react"
+import Image from "./image"
+import Link from "next/link"
 
 type FollowCardProps = {
-  follow: User;
-};
+  follow: User
+}
 
 const FollowCard: React.FC<FollowCardProps> = ({ follow }) => {
   return (
@@ -47,7 +47,7 @@ const FollowCard: React.FC<FollowCardProps> = ({ follow }) => {
     //     </div>
     //   )}
     // </li>
-  );
-};
+  )
+}
 
-export default FollowCard;
+export default FollowCard

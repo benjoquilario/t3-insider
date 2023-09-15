@@ -1,28 +1,32 @@
-import classNames from "classnames";
-import React from "react";
-import Button, { type ButtonProps } from "@/components/shared/button";
+import classNames from "classnames"
+import React from "react"
+import Button, { type ButtonProps } from "@/components/shared/button"
 
 export interface CircleButtonProps extends ButtonProps {
-  secondary?: boolean;
+  secondary?: boolean
 }
 
 const CircleButton = React.forwardRef<HTMLButtonElement, CircleButtonProps>(
   (props, ref) => {
-    const { children, className, secondary, ...rest } = props;
+    const { children, className, secondary, ...rest } = props
 
     return (
       <Button
-        className={classNames(secondary && 'bg-primary', "rounded-full p-2", className)}
+        className={classNames(
+          secondary && "bg-primary",
+          "rounded-full p-2",
+          className
+        )}
         type="button"
         ref={ref}
         {...rest}
       >
         {children}
       </Button>
-    );
+    )
   }
-);
+)
 
-CircleButton.displayName = "CircleButton";
+CircleButton.displayName = "CircleButton"
 
-export default CircleButton;
+export default CircleButton

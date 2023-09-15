@@ -1,6 +1,6 @@
-import { trpc } from "@/lib/utils/trpc";
+import { trpc } from "@/lib/utils/trpc"
 
-export const useAuthQuery = () => trpc.user.authUser.useQuery();
+export const useAuthQuery = () => trpc.user.authUser.useQuery()
 
 export const useInfiniteCommentsQuery = (postId: string) =>
   trpc.comment.getComments.useInfiniteQuery(
@@ -9,7 +9,7 @@ export const useInfiniteCommentsQuery = (postId: string) =>
       getNextPageParam: (lastPage) => lastPage.nextSkip,
       refetchOnWindowFocus: false,
     }
-  );
+  )
 
 export const useInfinitePostsQuery = () =>
   trpc.post.getPosts.useInfiniteQuery(
@@ -18,7 +18,7 @@ export const useInfinitePostsQuery = () =>
       getNextPageParam: (lastPage) => lastPage.nextSkip,
       refetchOnWindowFocus: false,
     }
-  );
+  )
 
 export const useInfiniteUsersQuery = () =>
   trpc.user.getUsers.useInfiniteQuery(
@@ -27,7 +27,7 @@ export const useInfiniteUsersQuery = () =>
       getNextPageParam: (lastPage) => lastPage.nextSkip,
       refetchOnWindowFocus: false,
     }
-  );
+  )
 
 export const useInfinitePostsByIdQuery = (userId: string) =>
   trpc.post.getPostsById.useInfiniteQuery(
@@ -36,7 +36,7 @@ export const useInfinitePostsByIdQuery = (userId: string) =>
       getNextPageParam: (lastPage) => lastPage.nextSkip,
       refetchOnWindowFocus: false,
     }
-  );
+  )
 
 export const useUserByIdQuery = (userId: string) =>
   trpc.user.getUserById.useQuery(
@@ -46,7 +46,7 @@ export const useUserByIdQuery = (userId: string) =>
     {
       enabled: !!userId,
     }
-  );
+  )
 
 export const useInfiniteReplyQuery = (commentId: string) =>
   trpc.comment.getReplyComments.useInfiniteQuery(
@@ -58,4 +58,4 @@ export const useInfiniteReplyQuery = (commentId: string) =>
       getNextPageParam: (lastPage) => lastPage.nextSkip,
       refetchOnWindowFocus: false,
     }
-  );
+  )

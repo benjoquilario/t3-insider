@@ -1,22 +1,22 @@
-import React, { useState } from "react";
-import { useWatch, type Control, type UseFormSetValue } from "react-hook-form";
-import type { PostValues } from "../form/post";
-import { HiPhoto } from "react-icons/hi2";
-import { RiCloseFill } from "react-icons/ri";
-import ImageThumbnail from "@/components/shared/image-thumbnail";
-import Image from "@/components/shared/image";
-import classNames from "classnames";
-import type { SelectedFileType } from "@/types/types";
-import Button from "@/components/shared/button";
-import usePostStore from "@/store/post";
+import React, { useState } from "react"
+import { useWatch, type Control, type UseFormSetValue } from "react-hook-form"
+import type { PostValues } from "../form/post"
+import { HiPhoto } from "react-icons/hi2"
+import { RiCloseFill } from "react-icons/ri"
+import ImageThumbnail from "@/components/shared/image-thumbnail"
+import Image from "@/components/shared/image"
+import classNames from "classnames"
+import type { SelectedFileType } from "@/types/types"
+import Button from "@/components/shared/button"
+import usePostStore from "@/store/post"
 
 interface PostInputProps {
-  control: Control<PostValues>;
-  setValue: UseFormSetValue<PostValues>;
-  openFilePicker: () => void;
-  children: React.ReactNode;
-  disabled?: boolean;
-  selectedFile?: SelectedFileType[];
+  control: Control<PostValues>
+  setValue: UseFormSetValue<PostValues>
+  openFilePicker: () => void
+  children: React.ReactNode
+  disabled?: boolean
+  selectedFile?: SelectedFileType[]
 }
 
 const PostInput: React.FC<PostInputProps> = ({
@@ -27,31 +27,31 @@ const PostInput: React.FC<PostInputProps> = ({
   disabled,
   selectedFile,
 }) => {
-  const setIsRemove = usePostStore((store) => store.setIsRemove);
+  const setIsRemove = usePostStore((store) => store.setIsRemove)
   const [currentImages, setCurrentImages] = useState<
     SelectedFileType[] | undefined
-  >(selectedFile);
-  const setDeleteImages = usePostStore((store) => store.setDeleteImages);
+  >(selectedFile)
+  const setDeleteImages = usePostStore((store) => store.setDeleteImages)
   const selectedImage = useWatch({
     control,
     name: "selectedFile",
     defaultValue: [],
-  });
+  })
 
   const removeImage = (imageName: string) => {
     setValue(
       "selectedFile",
       selectedImage.filter((image) => image.name !== imageName)
-    );
-  };
+    )
+  }
 
   const handleRemove = (id: string) => {
-    setDeleteImages(id);
-    setIsRemove(true);
-    const removeItem = currentImages?.filter((image) => image.id !== id);
+    setDeleteImages(id)
+    setIsRemove(true)
+    const removeItem = currentImages?.filter((image) => image.id !== id)
 
-    setCurrentImages(removeItem);
-  };
+    setCurrentImages(removeItem)
+  }
 
   return (
     <div className="rounded-b-md bg-white p-3">
@@ -67,7 +67,7 @@ const PostInput: React.FC<PostInputProps> = ({
                 <Button
                   type="button"
                   onClick={() => handleRemove(image.id)}
-                  className="absolute top-2 right-0 z-50 rounded-full bg-gray-600 p-1 text-white transition duration-75 ease-in hover:bg-gray-700"
+                  className="absolute right-0 top-2 z-50 rounded-full bg-gray-600 p-1 text-white transition duration-75 ease-in hover:bg-gray-700"
                 >
                   <RiCloseFill aria-hidden="true" size={22} />
                 </Button>
@@ -93,12 +93,12 @@ const PostInput: React.FC<PostInputProps> = ({
                   image={image}
                   removeImage={removeImage}
                 />
-              );
+              )
             })
           : null}
       </div>
 
-      <div className="flex items-center gap-4 rounded border border-zinc-200 py-2 px-2">
+      <div className="flex items-center gap-4 rounded border border-zinc-200 px-2 py-2">
         <p className="text-sm text-black md:text-sm">Upload Photo :</p>
         <div className="overflow-hidden rounded-full p-1 text-xs text-white transition hover:bg-zinc-100 md:text-sm">
           <button
@@ -113,7 +113,7 @@ const PostInput: React.FC<PostInputProps> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PostInput;
+export default PostInput

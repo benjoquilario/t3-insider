@@ -1,4 +1,4 @@
-import type { NextSeoProps } from "next-seo";
+import type { NextSeoProps } from "next-seo"
 
 export const DEFAULT_SEO_PROPS: NextSeoProps = {
   title: "Home",
@@ -17,4 +17,4 @@ export const DEFAULT_SEO_PROPS: NextSeoProps = {
   twitter: {
     cardType: "summary_large_image",
   },
-};
+}

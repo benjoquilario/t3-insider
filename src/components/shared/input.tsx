@@ -1,20 +1,20 @@
-import React from "react";
-import classNames from "classnames";
+import React from "react"
+import classNames from "classnames"
 
 type Icon = {
-  className?: string;
-};
+  className?: string
+}
 
 type InputProps = {
-  containerClassName?: string;
-  labelClassName?: string;
-  label?: string;
-  Icon?: React.ComponentType<Icon>;
-  iconClassName?: string;
-  className?: string;
-  placeholder?: string;
-  children?: React.ReactNode;
-} & React.HTMLProps<HTMLInputElement>;
+  containerClassName?: string
+  labelClassName?: string
+  label?: string
+  Icon?: React.ComponentType<Icon>
+  iconClassName?: string
+  className?: string
+  placeholder?: string
+  children?: React.ReactNode
+} & React.HTMLProps<HTMLInputElement>
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const {
@@ -26,7 +26,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     className,
     children,
     ...inputProps
-  } = props;
+  } = props
   return (
     <div className={containerClassName}>
       {label && (
@@ -45,9 +45,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       {children}
       {Icon && <Icon className={iconClassName} />}
     </div>
-  );
-});
+  )
+})
 
-Input.displayName = "Input";
+Input.displayName = "Input"
 
-export default React.memo(Input);
+export default React.memo(Input)

@@ -1,6 +1,6 @@
-import { useEffect, type RefObject } from "react";
+import { useEffect, type RefObject } from "react"
 
-type Event = MouseEvent | TouchEvent | KeyboardEvent;
+type Event = MouseEvent | TouchEvent | KeyboardEvent
 
 function useClickOutside<T extends HTMLElement = HTMLElement>(
   ref: RefObject<T>,
@@ -9,19 +9,19 @@ function useClickOutside<T extends HTMLElement = HTMLElement>(
   useEffect(() => {
     const listener = (event: Event) => {
       if (!ref.current || ref.current.contains(event.target as Node) || null) {
-        return;
+        return
       }
 
-      callback?.(event);
-    };
+      callback?.(event)
+    }
 
-    document.addEventListener("mousedown", listener);
-    document.addEventListener("touchstart", listener);
+    document.addEventListener("mousedown", listener)
+    document.addEventListener("touchstart", listener)
     return () => {
-      document.removeEventListener("mousedown", listener);
-      document.removeEventListener("touchstart", listener);
-    };
-  }, [ref, callback]);
+      document.removeEventListener("mousedown", listener)
+      document.removeEventListener("touchstart", listener)
+    }
+  }, [ref, callback])
 }
 
-export default useClickOutside;
+export default useClickOutside

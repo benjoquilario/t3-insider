@@ -2,14 +2,14 @@ import {
   userIdSchema,
   userProfileSchema,
   userSchema,
-} from "@/server/schema/user";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+} from "@/server/schema/user"
+import { createTRPCRouter, protectedProcedure } from "../trpc"
 
 export const userRouter = createTRPCRouter({
   getUsers: protectedProcedure
     .input(userSchema)
     .query(async ({ ctx, input }) => {
-      const skip = input?.cursor || 0;
+      const skip = input?.cursor || 0
       const users = await ctx.prisma.user.findMany({
         select: {
           _count: {
@@ -26,7 +26,7 @@ export const userRouter = createTRPCRouter({
         orderBy: { createdAt: "desc" },
         take: input?.limit || 3,
         skip,
-      });
+      })
       return {
         users: users.map((user) => user),
         hasNextPage: users.length < (input.limit || 3) ? false : true,
@@ -34,7 +34,7 @@ export const userRouter = createTRPCRouter({
           users.length < (input.limit || 3)
             ? null
             : skip + (input.limit as number),
-      };
+      }
     }),
   getUserById: protectedProcedure
     .input(userIdSchema)
@@ -54,21 +54,21 @@ export const userRouter = createTRPCRouter({
             },
           },
         },
-      });
+      })
 
-      if (!user) throw new Error(`no user with ${input.id}`);
+      if (!user) throw new Error(`no user with ${input.id}`)
 
       const followByMe = await ctx.prisma.follow.findFirst({
         where: {
           followerId: ctx.session.user.id,
           followingId: user.id,
         },
-      });
+      })
 
       return {
         ...user,
         followedByMe: Boolean(followByMe),
-      };
+      }
     }),
   authUser: protectedProcedure
     .input(userIdSchema.optional())
@@ -89,7 +89,7 @@ export const userRouter = createTRPCRouter({
             },
           },
         },
-      });
+      })
     }),
   uploadPhoto: protectedProcedure
     .input(userProfileSchema)
@@ -98,7 +98,7 @@ export const userRouter = createTRPCRouter({
         where: {
           id: ctx.session.user.id,
         },
-      });
+      })
 
       if (user) {
         await ctx.prisma.user.update({
@@ -109,7 +109,7 @@ export const userRouter = createTRPCRouter({
             image: input.image,
             coverPhoto: input.coverPhoto,
           },
-        });
+        })
       }
     }),
-});
+})

@@ -1,12 +1,12 @@
-import React from "react";
-import Button from "../shared/button";
-import { FaEdit } from "react-icons/fa";
-import { AiFillDelete } from "react-icons/ai";
+import React from "react"
+import Button from "../shared/button"
+import { FaEdit } from "react-icons/fa"
+import { AiFillDelete } from "react-icons/ai"
 
 type ModalCommentProps = {
-  handleEdit?: () => void;
-  handleDelete?: () => void;
-};
+  handleEdit?: () => void
+  handleDelete?: () => void
+}
 
 const ModalComment: React.FC<ModalCommentProps> = ({
   handleEdit,
@@ -37,7 +37,7 @@ const ModalComment: React.FC<ModalCommentProps> = ({
         </li>
       </ul>
     </div>
-  );
-};
+  )
+}
 
-export default ModalComment;
+export default ModalComment

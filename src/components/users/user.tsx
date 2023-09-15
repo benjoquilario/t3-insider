@@ -1,13 +1,13 @@
-import React from "react";
-import Image from "@/components/shared/image";
-import Link from "next/link";
-import { BsFillPersonPlusFill } from "react-icons/bs";
-import classNames from "classnames";
-import type { User as UserType } from "@/types/types";
+import React from "react"
+import Image from "@/components/shared/image"
+import Link from "next/link"
+import { BsFillPersonPlusFill } from "react-icons/bs"
+import classNames from "classnames"
+import type { User as UserType } from "@/types/types"
 
 type UserProps = {
-  user: UserType;
-};
+  user: UserType
+}
 
 const User: React.FC<UserProps> = ({ user }) => {
   return (
@@ -42,7 +42,7 @@ const User: React.FC<UserProps> = ({ user }) => {
           <BsFillCheckCircleFill aria-hidden="true" size={15} />
         </div>
       ) : ( */}
-      <div className="absolute top-4 right-0">
+      <div className="absolute right-0 top-4">
         <button
           aria-label="follow user"
           className={classNames(
@@ -56,7 +56,7 @@ const User: React.FC<UserProps> = ({ user }) => {
         </button>
       </div>
     </li>
-  );
-};
+  )
+}
 
-export default User;
+export default User

@@ -1,30 +1,30 @@
-import { AiFillCamera } from "react-icons/ai";
-import { RiCloseFill } from "react-icons/ri";
-import useProfileDropZone from "@/lib/hooks/useProfileZone";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { uploadPicture } from "@/lib/utils/cloudinary";
-import { trpc } from "@/lib/utils/trpc";
-import { toast } from "react-toastify";
-import classNames from "classnames";
-import Image from "@/components/shared/image";
-import Button from "@/components/shared/button";
-import Backdrop from "@/components/shared/backdrop";
-import Loader from "@/components/shared/loader";
-import React, { useMemo, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { AiFillCamera } from "react-icons/ai"
+import { RiCloseFill } from "react-icons/ri"
+import useProfileDropZone from "@/lib/hooks/useProfileZone"
+import { useForm, type SubmitHandler } from "react-hook-form"
+import { uploadPicture } from "@/lib/utils/cloudinary"
+import { trpc } from "@/lib/utils/trpc"
+import { toast } from "react-toastify"
+import classNames from "classnames"
+import Image from "@/components/shared/image"
+import Button from "@/components/shared/button"
+import Backdrop from "@/components/shared/backdrop"
+import Loader from "@/components/shared/loader"
+import React, { useMemo, useEffect } from "react"
+import { useSession } from "next-auth/react"
 
 type ProfilePhotoProps = {
-  image?: string;
-  userId: string;
-};
+  image?: string
+  userId: string
+}
 
 interface ProfileValues {
-  images: File[];
+  images: File[]
 }
 
 const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ image, userId }) => {
-  const utils = trpc.useContext();
-  const { data: session } = useSession();
+  const utils = trpc.useContext()
+  const { data: session } = useSession()
   const {
     register,
     handleSubmit,
@@ -36,20 +36,20 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ image, userId }) => {
     defaultValues: {
       images: [],
     },
-  });
+  })
 
   useEffect(() => {
     if (isSubmitSuccessful) {
-      reset();
+      reset()
     }
-  }, [reset, isSubmitSuccessful]);
+  }, [reset, isSubmitSuccessful])
 
-  const draftImageFile = watch("images")[0];
+  const draftImageFile = watch("images")[0]
 
   const draftImage = useMemo(
     () => (draftImageFile ? URL.createObjectURL(draftImageFile) : null),
     [draftImageFile]
-  );
+  )
 
   const { mutateAsync, isLoading } = trpc.user.uploadPhoto.useMutation({
     onError: (e) => console.log(e.message),
@@ -57,33 +57,33 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ image, userId }) => {
       toast("Your post was updated successfully", {
         type: "success",
         position: toast.POSITION.BOTTOM_RIGHT,
-      });
+      })
 
-      await utils.user.getUsers.invalidate();
-      await utils.post.getPostsById.invalidate({ id: userId, limit: 3 });
-      await utils.user.authUser.invalidate();
-      await utils.user.getUserById.invalidate({ id: userId });
+      await utils.user.getUsers.invalidate()
+      await utils.post.getPostsById.invalidate({ id: userId, limit: 3 })
+      await utils.user.authUser.invalidate()
+      await utils.user.getUserById.invalidate({ id: userId })
     },
-  });
+  })
 
   const handleOnSubmit: SubmitHandler<ProfileValues> = async (data) => {
-    const imageUrl = await uploadPicture(data.images[0] as File);
+    const imageUrl = await uploadPicture(data.images[0] as File)
 
     await mutateAsync({
       image: imageUrl?.url,
-    });
-  };
+    })
+  }
 
   const setImage = (file: File[]) => {
-    setValue("images", file);
-  };
+    setValue("images", file)
+  }
 
   const {
     isDragActive: isImageDragged,
     getInputProps: getInputProps,
     getRootProps: getRootImageProps,
     open: openImage,
-  } = useProfileDropZone(setImage);
+  } = useProfileDropZone(setImage)
 
   return (
     <React.Fragment>
@@ -178,7 +178,7 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ image, userId }) => {
               type="button"
               onClick={openImage}
               className={classNames(
-                "absolute right-0 bottom-3 flex h-8 w-8 items-center justify-center rounded-full bg-white text-primary shadow-md",
+                "absolute bottom-3 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-white text-primary shadow-md",
                 " hover:bg-zinc-50 hover:text-secondary active:scale-110",
                 "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-zinc-200 active:text-secondary"
               )}
@@ -189,7 +189,7 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ image, userId }) => {
         </form>
       </div>
     </React.Fragment>
-  );
-};
+  )
+}
 
-export default ProfilePhoto;
+export default ProfilePhoto

@@ -1,13 +1,12 @@
-import Layout from "@/components/layout";
-import Section from "@/components/shared/section";
-import { trpc } from "@/lib/utils/trpc";
-import { MdPersonAddDisabled } from "react-icons/md";
-import React from "react";
+import Layout from "@/components/layout"
+import Section from "@/components/shared/section"
+import { trpc } from "@/lib/utils/trpc"
+import { MdPersonAddDisabled } from "react-icons/md"
+import React from "react"
 
 const Followers = () => {
-  const { data: followers, isLoading } = trpc.follow.getFollowers.useQuery();
+  const { data: followers, isLoading } = trpc.follow.getFollowers.useQuery()
 
-  console.log(followers);
   return (
     <Layout>
       <Section>
@@ -23,7 +22,7 @@ const Followers = () => {
         </div>
       </Section>
     </Layout>
-  );
-};
+  )
+}
 
-export default Followers;
+export default Followers

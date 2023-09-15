@@ -1,13 +1,13 @@
-import React from "react";
+import React from "react"
 
 export type ButtonProps = {
-  type?: "button" | "submit" | "reset";
-  className?: string;
-  children?: React.ReactNode;
+  type?: "button" | "submit" | "reset"
+  className?: string
+  children?: React.ReactNode
   onClick?: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null
-  ) => void;
-} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onClick">;
+  ) => void
+} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onClick">
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
@@ -18,13 +18,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       onClick,
       disabled = false,
       ...buttonProps
-    } = props;
+    } = props
     return (
       <button
         onClick={(e) => {
-          if (disabled) return;
+          if (disabled) return
 
-          onClick?.(e);
+          onClick?.(e)
         }}
         ref={ref}
         type={type}
@@ -33,10 +33,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {children}
       </button>
-    );
+    )
   }
-);
+)
 
-Button.displayName = "Button";
+Button.displayName = "Button"
 
-export default React.memo(Button);
+export default React.memo(Button)

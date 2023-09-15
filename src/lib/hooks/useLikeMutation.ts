@@ -1,7 +1,7 @@
-import { trpc } from "@/lib/utils/trpc";
+import { trpc } from "@/lib/utils/trpc"
 
 export const useMutateLikeComment = (postId: string) => {
-  const utils = trpc.useContext();
+  const utils = trpc.useContext()
   const { mutate: mutateLikeComment, isLoading: isLikeLoading } =
     trpc.like.likeComment.useMutation({
       onError: (e) => console.log(e.message),
@@ -9,15 +9,15 @@ export const useMutateLikeComment = (postId: string) => {
         await utils.comment.getComments.invalidate({
           postId,
           limit: 3,
-        });
+        })
       },
-    });
+    })
 
-  return { mutateLikeComment, isLikeLoading };
-};
+  return { mutateLikeComment, isLikeLoading }
+}
 
 export const useMutationLikeReply = (commentId: string) => {
-  const utils = trpc.useContext();
+  const utils = trpc.useContext()
   const { mutate: mutateLikeReplyComent, isLoading: isLikeLoading } =
     trpc.like.likeReplyComment.useMutation({
       onError: (e) => console.log(e.message),
@@ -25,9 +25,9 @@ export const useMutationLikeReply = (commentId: string) => {
         await utils.comment.getReplyComments.invalidate({
           limit: 3,
           commentId,
-        });
+        })
       },
-    });
+    })
 
-  return { mutateLikeReplyComent, isLikeLoading };
-};
+  return { mutateLikeReplyComent, isLikeLoading }
+}

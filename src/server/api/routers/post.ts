@@ -2,9 +2,9 @@ import {
   createPostSchema,
   postSchema,
   postIdSchema,
-} from "@/server/schema/post";
-import z from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+} from "@/server/schema/post"
+import z from "zod"
+import { createTRPCRouter, protectedProcedure } from "../trpc"
 
 export const postRouter = createTRPCRouter({
   createPost: protectedProcedure
@@ -16,7 +16,7 @@ export const postRouter = createTRPCRouter({
           name: input?.name || ctx.session.user.name || "",
           userId: ctx.session.user.id,
         },
-      });
+      })
 
       if (input.selectedFile?.length) {
         await ctx.prisma.selectedFile.createMany({
@@ -27,12 +27,12 @@ export const postRouter = createTRPCRouter({
             width: image.width,
             postId: newPost.id,
           })),
-        });
+        })
       }
 
       return {
         message: "Success",
-      };
+      }
     }),
   updatePost: protectedProcedure
     .input(createPostSchema)
@@ -45,7 +45,7 @@ export const postRouter = createTRPCRouter({
           message: input.message,
           name: input?.name || ctx.session.user.name || "",
         },
-      });
+      })
 
       if (input.selectedFile?.length) {
         await ctx.prisma.selectedFile.createMany({
@@ -56,7 +56,7 @@ export const postRouter = createTRPCRouter({
             width: image.width,
             postId: updatePost.id,
           })),
-        });
+        })
       }
     }),
   deletePost: protectedProcedure
@@ -66,43 +66,43 @@ export const postRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
-      });
+      })
 
       if (post) {
         const comment = await ctx.prisma.comment.findFirst({
           where: {
             postId: post?.id,
           },
-        });
+        })
 
         await ctx.prisma.post.delete({
           where: {
             id: post.id,
           },
-        });
+        })
 
         await ctx.prisma.comment.deleteMany({
           where: {
             postId: post?.id,
           },
-        });
+        })
 
         await ctx.prisma.replyComment.deleteMany({
           where: {
             replyToId: comment?.id,
           },
-        });
+        })
       }
 
       await ctx.prisma.selectedFile.deleteMany({
         where: {
           postId: post?.id,
         },
-      });
+      })
 
       return {
         message: "Successfully Deleted!!",
-      };
+      }
     }),
   deleteImage: protectedProcedure
     .input(z.object({ id: z.string() }))
@@ -111,12 +111,12 @@ export const postRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
-      });
+      })
     }),
   getPosts: protectedProcedure
     .input(postSchema)
     .query(async ({ ctx, input }) => {
-      const skip = input?.cursor || 0;
+      const skip = input?.cursor || 0
       const posts = await ctx.prisma.post.findMany({
         include: {
           user: {
@@ -150,14 +150,14 @@ export const postRouter = createTRPCRouter({
         orderBy: { createdAt: "desc" },
         take: input?.limit || 3,
         skip,
-      });
+      })
 
       const isLiked = await ctx.prisma.likes.findMany({
         where: {
           userId: ctx.session.user.id,
           postId: { in: posts.map((post) => post.id) },
         },
-      });
+      })
 
       return {
         posts: posts.map((post) => ({
@@ -169,7 +169,7 @@ export const postRouter = createTRPCRouter({
           posts.length < (input.limit || 3)
             ? null
             : skip + (input.limit as number),
-      };
+      }
     }),
   getPostById: protectedProcedure
     .input(z.object({ id: z.string() }))
@@ -206,25 +206,25 @@ export const postRouter = createTRPCRouter({
             },
           },
         },
-      });
+      })
 
       const isLiked = await ctx.prisma.likes.findMany({
         where: {
           userId: ctx.session.user.id,
           postId: post?.id,
         },
-      });
+      })
 
       return {
         ...post,
         isLike: true,
         isLiked: isLiked,
-      };
+      }
     }),
   getPostsById: protectedProcedure
     .input(postIdSchema)
     .query(async ({ ctx, input }) => {
-      const skip = input?.cursor || 0;
+      const skip = input?.cursor || 0
       const posts = await ctx.prisma.post.findMany({
         where: {
           userId: input.id,
@@ -260,14 +260,14 @@ export const postRouter = createTRPCRouter({
         orderBy: { createdAt: "desc" },
         take: input?.limit || 3,
         skip,
-      });
+      })
 
       const isLiked = await ctx.prisma.likes.findMany({
         where: {
           userId: ctx.session.user.id,
           postId: { in: posts.map((post) => post.id) },
         },
-      });
+      })
 
       return {
         posts: posts.map((post) => ({
@@ -279,6 +279,6 @@ export const postRouter = createTRPCRouter({
           posts.length < (input.limit || 3)
             ? null
             : skip + (input.limit as number),
-      };
+      }
     }),
-});
+})

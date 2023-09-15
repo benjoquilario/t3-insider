@@ -1,7 +1,7 @@
-import { useDropzone } from "react-dropzone";
-import type { PostValues } from "@/components/form/post";
-import { useForm } from "react-hook-form";
-import { useState, useCallback } from "react";
+import { useDropzone } from "react-dropzone"
+import type { PostValues } from "@/components/form/post"
+import { useForm } from "react-hook-form"
+import { useState, useCallback } from "react"
 
 const usePost = () => {
   const {
@@ -20,28 +20,25 @@ const usePost = () => {
       selectedFile: [],
       imageUploadProgress: [],
     },
-  });
-  const [isUploading, setIsUploading] = useState(false);
+  })
+  const [isUploading, setIsUploading] = useState(false)
 
   const setImages = useCallback(
     (files: File[]) => {
-      const currentImages = getValues("selectedFile");
+      const currentImages = getValues("selectedFile")
 
       if (files?.length + currentImages?.length > 4) {
-        return;
+        return
       }
 
-      const imageToVerify = files.slice(0, 4 - currentImages?.length);
+      const imageToVerify = files.slice(0, 4 - currentImages?.length)
 
-      setValue("selectedFile", [
-        ...getValues("selectedFile"),
-        ...imageToVerify,
-      ]);
+      setValue("selectedFile", [...getValues("selectedFile"), ...imageToVerify])
     },
     [getValues, setValue]
-  );
+  )
 
-  const selectedImages = watch("selectedFile");
+  const selectedImages = watch("selectedFile")
 
   const {
     getRootProps,
@@ -54,12 +51,12 @@ const usePost = () => {
       "image/*": [".png", ".gif", ".jpeg", ".jpg"],
     },
     onDrop: (files: File[]) => {
-      setImages(files);
+      setImages(files)
       setValue(
         "imageUploadProgress",
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         Array(selectedImages?.length + files.length).fill(0)
-      );
+      )
     },
     disabled: isUploading,
     validator: (file: File) => {
@@ -67,11 +64,11 @@ const usePost = () => {
         return {
           code: "file-exists",
           message: `File with name ${file.name} was added already`,
-        };
+        }
       }
-      return null;
+      return null
     },
-  });
+  })
 
   return {
     getRootProps,
@@ -89,7 +86,7 @@ const usePost = () => {
     setFocus,
     isUploading,
     setIsUploading,
-  };
-};
+  }
+}
 
-export default usePost;
+export default usePost

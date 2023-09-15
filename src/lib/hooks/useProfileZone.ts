@@ -1,4 +1,4 @@
-import { useDropzone } from "react-dropzone";
+import { useDropzone } from "react-dropzone"
 
 const useProfileDropZone = (setFormValue: (files: File[]) => void) =>
   useDropzone({
@@ -9,9 +9,9 @@ const useProfileDropZone = (setFormValue: (files: File[]) => void) =>
     },
     onDrop: (files: File[]) => {
       if (files[0]) {
-        setFormValue(files);
+        setFormValue(files)
       }
     },
-  });
+  })
 
-export default useProfileDropZone;
+export default useProfileDropZone

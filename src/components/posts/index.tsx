@@ -1,20 +1,20 @@
-import PostItem from "./post-item";
-import dynamic from "next/dynamic";
-import React from "react";
-import type { Post as PostType, User } from "@/types/types";
-import usePostStore from "@/store/post";
-import { InView } from "react-intersection-observer";
-import { ToastContainer } from "react-toastify";
-import Delete from "@/components/delete";
-import PostSkeleton from "../skeleton/post-skeleton";
-import { useInfinitePostsQuery } from "@/lib/hooks/useQuery";
+import PostItem from "./post-item"
+import dynamic from "next/dynamic"
+import React from "react"
+import type { Post as PostType, User } from "@/types/types"
+import usePostStore from "@/store/post"
+import { InView } from "react-intersection-observer"
+import { ToastContainer } from "react-toastify"
+import Delete from "@/components/delete"
+import PostSkeleton from "../skeleton/post-skeleton"
+import { useInfinitePostsQuery } from "@/lib/hooks/useQuery"
 
 const CreateForm = dynamic(() => import("@/components/form/post"), {
   ssr: false,
-});
+})
 
 const Posts = () => {
-  const postOpen = usePostStore((store) => store.postOpen);
+  const postOpen = usePostStore((store) => store.postOpen)
 
   const {
     data,
@@ -23,7 +23,7 @@ const Posts = () => {
     hasNextPage,
     fetchNextPage,
     isError,
-  } = useInfinitePostsQuery();
+  } = useInfinitePostsQuery()
 
   return (
     <React.Fragment>
@@ -43,7 +43,7 @@ const Posts = () => {
           fallbackInView
           onChange={async (InView) => {
             if (InView && hasNextPage && !isFetchingNextPage) {
-              await fetchNextPage();
+              await fetchNextPage()
             }
           }}
         >
@@ -57,7 +57,7 @@ const Posts = () => {
       </ul>
       <ToastContainer />
     </React.Fragment>
-  );
-};
+  )
+}
 
-export default Posts;
+export default Posts

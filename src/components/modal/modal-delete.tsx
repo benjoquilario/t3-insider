@@ -1,15 +1,15 @@
-import React, { useRef, useEffect } from "react";
-import Button from "../shared/button";
-import { RiCloseFill } from "react-icons/ri";
-import Backdrop from "../shared/backdrop";
-import useClickOutside from "@/lib/hooks/useClickOutside";
+import React, { useRef, useEffect } from "react"
+import Button from "../shared/button"
+import { RiCloseFill } from "react-icons/ri"
+import Backdrop from "../shared/backdrop"
+import useClickOutside from "@/lib/hooks/useClickOutside"
 
 type ModalDeleteProps = {
-  handleDelete: () => void;
-  type: string;
-  isModalOpen: boolean;
-  setIsModalOpen: (arg: boolean) => void;
-};
+  handleDelete: () => void
+  type: string
+  isModalOpen: boolean
+  setIsModalOpen: (arg: boolean) => void
+}
 
 const ModalDelete: React.FC<ModalDeleteProps> = ({
   handleDelete,
@@ -17,25 +17,25 @@ const ModalDelete: React.FC<ModalDeleteProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement | null>(null)
 
-  useClickOutside(ref, () => setIsModalOpen(false));
+  useClickOutside(ref, () => setIsModalOpen(false))
 
   useEffect(() => {
-    isModalOpen && (document.body.style.overflow = "hidden");
+    isModalOpen && (document.body.style.overflow = "hidden")
 
     const focusTrap = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsModalOpen(false);
-      if (event.key !== "Tab") return;
-    };
+      if (event.key === "Escape") setIsModalOpen(false)
+      if (event.key !== "Tab") return
+    }
 
-    document.addEventListener("keydown", focusTrap);
+    document.addEventListener("keydown", focusTrap)
 
     return () => {
-      document.body.style.overflow = "unset";
-      document.removeEventListener("keydown", focusTrap);
-    };
-  }, [isModalOpen, setIsModalOpen]);
+      document.body.style.overflow = "unset"
+      document.removeEventListener("keydown", focusTrap)
+    }
+  }, [isModalOpen, setIsModalOpen])
 
   return (
     <Backdrop>
@@ -44,7 +44,7 @@ const ModalDelete: React.FC<ModalDeleteProps> = ({
         className="z-20 m-4 h-auto w-full max-w-2xl rounded-md bg-white shadow-md md:w-2/4"
       >
         <div className="relative flex w-full flex-col items-center justify-center p-4">
-          <h3 className="pt-2 pb-4 text-center text-base font-semibold text-black md:text-lg">
+          <h3 className="pb-4 pt-2 text-center text-base font-semibold text-black md:text-lg">
             Delete {type}?
           </h3>
           <div className="flex w-full flex-col gap-2 border-t border-zinc-300 pt-2">
@@ -68,14 +68,14 @@ const ModalDelete: React.FC<ModalDeleteProps> = ({
           </div>
           <Button
             onClick={() => setIsModalOpen(false)}
-            className="absolute top-2 right-4 rounded-full bg-[#edf1f5] p-2 text-zinc-700 transition duration-75 ease-in hover:bg-[#e5e8eb]"
+            className="absolute right-4 top-2 rounded-full bg-[#edf1f5] p-2 text-zinc-700 transition duration-75 ease-in hover:bg-[#e5e8eb]"
           >
             <RiCloseFill aria-hidden="true" size={25} />
           </Button>
         </div>
       </div>
     </Backdrop>
-  );
-};
+  )
+}
 
-export default ModalDelete;
+export default ModalDelete

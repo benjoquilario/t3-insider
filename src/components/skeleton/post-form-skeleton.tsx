@@ -1,7 +1,7 @@
-import React from "react";
+import React from "react"
 
 const PostFormSkeleton = () => {
-  return <div>PostFormSkeleton</div>;
-};
+  return <div>PostFormSkeleton</div>
+}
 
-export default PostFormSkeleton;
+export default PostFormSkeleton

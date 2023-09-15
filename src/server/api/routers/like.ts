@@ -1,5 +1,5 @@
-import { createTRPCRouter, protectedProcedure } from "../trpc";
-import z from "zod";
+import { createTRPCRouter, protectedProcedure } from "../trpc"
+import z from "zod"
 
 export const likeRouter = createTRPCRouter({
   likePost: protectedProcedure
@@ -15,26 +15,26 @@ export const likeRouter = createTRPCRouter({
           postId: input.postId,
           userId: ctx.session.user.id,
         },
-      });
+      })
 
       if (!input.isLiked && isLikeExist.length > 0) {
         await ctx.prisma.likes.delete({
           where: {
             id: isLikeExist[0]?.id,
           },
-        });
+        })
       } else {
         await ctx.prisma.likes.create({
           data: {
             postId: input.postId,
             userId: ctx.session.user.id,
           },
-        });
+        })
       }
 
       return {
         message: "OK",
-      };
+      }
     }),
   likeComment: protectedProcedure
     .input(
@@ -51,18 +51,18 @@ export const likeRouter = createTRPCRouter({
             commentId: input.commentId,
             userId: ctx.session.user.id,
           },
-        });
+        })
       } else {
         await ctx.prisma.likeComment.delete({
           where: {
             id: input.id,
           },
-        });
+        })
       }
 
       return {
         message: "OK",
-      };
+      }
     }),
   likeReplyComment: protectedProcedure
     .input(
@@ -77,25 +77,25 @@ export const likeRouter = createTRPCRouter({
           replyId: input.replyId,
           userId: ctx.session.user.id,
         },
-      });
+      })
 
       if (!input.isLiked && isLikeExist.length > 0) {
         await ctx.prisma.likeReplyComment.delete({
           where: {
             id: isLikeExist[0]?.id,
           },
-        });
+        })
       } else {
         await ctx.prisma.likeReplyComment.create({
           data: {
             replyId: input.replyId,
             userId: ctx.session.user.id,
           },
-        });
+        })
       }
 
       return {
         message: "OK",
-      };
+      }
     }),
-});
+})

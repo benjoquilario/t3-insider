@@ -1,28 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Portal from "@/components/shared/portal";
-import useDevice from "@/lib/hooks/useDevice";
-import { type Options, type Placement } from "@popperjs/core";
-import classNames from "classnames";
-import { AnimatePresence, motion, type Variants } from "framer-motion";
-import { usePopper } from "react-popper";
-import React, { useCallback, useMemo, useState } from "react";
+import Portal from "@/components/shared/portal"
+import useDevice from "@/lib/hooks/useDevice"
+import { type Options, type Placement } from "@popperjs/core"
+import classNames from "classnames"
+import { AnimatePresence, motion, type Variants } from "framer-motion"
+import { usePopper } from "react-popper"
+import React, { useCallback, useMemo, useState } from "react"
 
 export interface PopupProps {
-  children: React.ReactNode;
-  reference?: React.ReactNode;
-  options?: Partial<Options>;
-  type?: "hover" | "click";
-  placement?: Placement;
-  showArrow?: boolean;
-  offset?: number[];
-  className?: string;
-  portalSelector?: string;
-  referenceClassName?: string;
-  disabled?: boolean;
-  popperComponent?: string | React.ComponentType<any>;
-  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
-  onMouseEnter?: (event: React.MouseEvent<HTMLDivElement>) => void;
-  onMouseLeave?: (event: React.MouseEvent<HTMLDivElement>) => void;
+  children: React.ReactNode
+  reference?: React.ReactNode
+  options?: Partial<Options>
+  type?: "hover" | "click"
+  placement?: Placement
+  showArrow?: boolean
+  offset?: number[]
+  className?: string
+  portalSelector?: string
+  referenceClassName?: string
+  disabled?: boolean
+  popperComponent?: string | React.ComponentType<any>
+  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void
+  onMouseEnter?: (event: React.MouseEvent<HTMLDivElement>) => void
+  onMouseLeave?: (event: React.MouseEvent<HTMLDivElement>) => void
 }
 
 const variants: Variants = {
@@ -37,10 +37,10 @@ const variants: Variants = {
   exit: {
     opacity: 0,
   },
-};
+}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-const emptyFn = () => {};
+const emptyFn = () => {}
 
 const Popup: React.FC<PopupProps> = (props) => {
   const {
@@ -59,17 +59,17 @@ const Popup: React.FC<PopupProps> = (props) => {
     onClick = emptyFn,
     onMouseEnter = emptyFn,
     onMouseLeave = emptyFn,
-  } = props;
+  } = props
 
   const [referenceElement, setReferenceElement] =
-    useState<HTMLDivElement | null>(null);
+    useState<HTMLDivElement | null>(null)
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
     null
-  );
-  const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
+  )
+  const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null)
 
-  const [active, setActive] = useState(false);
-  const { isMobile } = useDevice();
+  const [active, setActive] = useState(false)
+  const { isMobile } = useDevice()
 
   const arrowModifier = useMemo(
     () =>
@@ -84,7 +84,7 @@ const Popup: React.FC<PopupProps> = (props) => {
           ]
         : [],
     [showArrow, arrowElement]
-  );
+  )
 
   const popperOptions = useMemo(
     () => ({
@@ -109,50 +109,50 @@ const Popup: React.FC<PopupProps> = (props) => {
       ...options,
     }),
     [arrowModifier, modifiers, offset, options, placement]
-  );
+  )
 
   const { styles, attributes } = usePopper(
     referenceElement,
     popperElement,
     popperOptions
-  );
+  )
 
   const handleMouseEnter = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      onMouseEnter?.(e);
+      onMouseEnter?.(e)
 
-      if (disabled || isMobile) return;
+      if (disabled || isMobile) return
 
-      setActive(true);
+      setActive(true)
     },
     [disabled, isMobile, onMouseEnter]
-  );
+  )
 
   const handleMouseLeave = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      onMouseLeave?.(e);
+      onMouseLeave?.(e)
 
-      setActive(false);
+      setActive(false)
     },
     [onMouseLeave]
-  );
+  )
 
   const handleToggle = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      onClick?.(e);
+      onClick?.(e)
 
-      if (disabled) return;
+      if (disabled) return
 
-      setActive((prev) => !prev);
+      setActive((prev) => !prev)
     },
     [onClick, disabled]
-  );
+  )
 
   const handleDisable = useCallback(() => {
-    setActive(false);
-  }, []);
+    setActive(false)
+  }, [])
 
-  const isHover = useMemo(() => type === "hover", [type]);
+  const isHover = useMemo(() => type === "hover", [type])
 
   return (
     <React.Fragment>
@@ -206,7 +206,7 @@ const Popup: React.FC<PopupProps> = (props) => {
         )}
       </AnimatePresence>
     </React.Fragment>
-  );
-};
+  )
+}
 
-export default React.memo(Popup);
+export default React.memo(Popup)

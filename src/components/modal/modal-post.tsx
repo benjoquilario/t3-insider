@@ -1,23 +1,23 @@
-import React from "react";
-import { variants } from "@/lib/utils/index";
-import { motion } from "framer-motion";
-import { FaEdit } from "react-icons/fa";
-import { AiFillDelete } from "react-icons/ai";
-import Button from "@/components/shared/button";
-import { BiBookmark } from "react-icons/bi";
-import classNames from "classnames";
+import React from "react"
+import { variants } from "@/lib/utils/index"
+import { motion } from "framer-motion"
+import { FaEdit } from "react-icons/fa"
+import { AiFillDelete } from "react-icons/ai"
+import Button from "@/components/shared/button"
+import { BiBookmark } from "react-icons/bi"
+import classNames from "classnames"
 
 type ModalPostProps = {
-  handleEdit: () => void;
-  handleDelete: () => void;
-} & React.HTMLProps<HTMLDivElement>;
+  handleEdit: () => void
+  handleDelete: () => void
+} & React.HTMLProps<HTMLDivElement>
 
 type ModalButtonProps = {
-  handleClick: () => void;
-  children: React.ReactNode;
-  name: string;
-  className?: string;
-};
+  handleClick: () => void
+  children: React.ReactNode
+  name: string
+  className?: string
+}
 
 const ModalButton: React.FC<ModalButtonProps> = ({
   handleClick,
@@ -44,12 +44,12 @@ const ModalButton: React.FC<ModalButtonProps> = ({
         </Button>
       </div>
     </li>
-  );
-};
+  )
+}
 
 const ModalPost = React.forwardRef<HTMLDivElement, ModalPostProps>(
   (props, ref) => {
-    const { handleDelete, handleEdit } = props;
+    const { handleDelete, handleEdit } = props
     return (
       <motion.div
         ref={ref}
@@ -57,7 +57,7 @@ const ModalPost = React.forwardRef<HTMLDivElement, ModalPostProps>(
         initial="hidden"
         animate="visible"
         exit="hidden"
-        className="absolute top-14 right-3 z-30 h-auto rounded-md border-zinc-300 bg-zinc-100 shadow"
+        className="absolute right-3 top-14 z-30 h-auto rounded-md border-zinc-300 bg-zinc-100 shadow"
       >
         <div className="relative">
           <ul className="w-full">
@@ -73,10 +73,10 @@ const ModalPost = React.forwardRef<HTMLDivElement, ModalPostProps>(
           </ul>
         </div>
       </motion.div>
-    );
+    )
   }
-);
+)
 
-ModalPost.displayName = "ModalPost";
+ModalPost.displayName = "ModalPost"
 
-export default ModalPost;
+export default ModalPost
