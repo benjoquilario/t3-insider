@@ -4,9 +4,9 @@ export const useMutateDeletePost = (callback: () => void, userId?: string) => {
   const utils = trpc.useContext()
   const { mutate: mutateDeletePost } = trpc.post.deletePost.useMutation({
     onError: (e) => console.log(e.message),
-    onSuccess: async () => {
-      await utils.post.getPosts.invalidate()
-      await utils.post.getPostsById.invalidate({
+    onSuccess: () => {
+      utils.post.getPosts.invalidate()
+      utils.post.getPostsById.invalidate({
         id: userId,
         limit: 3,
       })
@@ -22,8 +22,8 @@ export const useMutateDeleteComment = () => {
   const { mutate: mutateDeleteComment } =
     trpc.comment.deleteComment.useMutation({
       onError: (e) => console.log(e.message),
-      onSuccess: async () => {
-        await utils.comment.getComments.invalidate()
+      onSuccess: () => {
+        utils.comment.getComments.invalidate()
       },
     })
 

@@ -4,15 +4,16 @@ export const useMutateCreateComment = () => {
   const utils = trpc.useContext()
 
   const onSuccess = async () => {
-    await utils.comment.getComments.invalidate()
-    await utils.post.getPosts.invalidate()
+    utils.comment.getComments.invalidate()
+    utils.post.getPosts.invalidate()
   }
 
   const { mutateAsync: mutateAsyncCreate } =
     trpc.comment.createComment.useMutation({
       onError: (e) => console.log(e.message),
-      onSuccess: async () => {
-        await onSuccess()
+      onSuccess: () => {
+        utils.comment.getComments.invalidate()
+        utils.post.getPosts.invalidate()
       },
     })
 
@@ -22,16 +23,12 @@ export const useMutateCreateComment = () => {
 export const useMutateUpdateComment = () => {
   const utils = trpc.useContext()
 
-  const onSuccess = async () => {
-    await utils.comment.getComments.invalidate()
-    await utils.post.getPosts.invalidate()
-  }
-
   const { mutateAsync: mutateAsyncUpdate } =
     trpc.comment.updateComment.useMutation({
       onError: (e) => console.log(e.message),
       onSuccess: async () => {
-        await onSuccess()
+        utils.comment.getComments.invalidate()
+        utils.post.getPosts.invalidate()
       },
     })
 
@@ -43,8 +40,8 @@ export const useMutateUpdateComment = () => {
 export const useMutateCreateReply = (commentId: string) => {
   const utils = trpc.useContext()
 
-  const onSuccess = async () => {
-    await utils.comment.getReplyComments.invalidate({
+  const onSuccess = () => {
+    utils.comment.getReplyComments.invalidate({
       limit: 3,
       commentId,
     })
@@ -53,8 +50,8 @@ export const useMutateCreateReply = (commentId: string) => {
   const { mutateAsync: mutateAsyncCreate } =
     trpc.comment.replyComment.useMutation({
       onError: (e) => console.log(e.message),
-      onSuccess: async () => {
-        await onSuccess()
+      onSuccess: () => {
+        onSuccess()
       },
     })
 
@@ -64,8 +61,8 @@ export const useMutateCreateReply = (commentId: string) => {
 export const useMutateUpdateReply = (commentId: string) => {
   const utils = trpc.useContext()
 
-  const onSuccess = async () => {
-    await utils.comment.getReplyComments.invalidate({
+  const onSuccess = () => {
+    utils.comment.getReplyComments.invalidate({
       limit: 3,
       commentId,
     })
@@ -75,7 +72,7 @@ export const useMutateUpdateReply = (commentId: string) => {
     trpc.comment.updateReplyComment.useMutation({
       onError: (e) => console.log(e.message),
       onSuccess: async () => {
-        await onSuccess()
+        onSuccess()
       },
     })
 

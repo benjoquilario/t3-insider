@@ -53,16 +53,16 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ image, userId }) => {
 
   const { mutateAsync, isLoading } = trpc.user.uploadPhoto.useMutation({
     onError: (e) => console.log(e.message),
-    onSuccess: async () => {
+    onSuccess: () => {
       toast("Your post was updated successfully", {
         type: "success",
         position: toast.POSITION.BOTTOM_RIGHT,
       })
 
-      await utils.user.getUsers.invalidate()
-      await utils.post.getPostsById.invalidate({ id: userId, limit: 3 })
-      await utils.user.authUser.invalidate()
-      await utils.user.getUserById.invalidate({ id: userId })
+      utils.user.getUsers.invalidate()
+      utils.post.getPostsById.invalidate({ id: userId, limit: 3 })
+      utils.user.authUser.invalidate()
+      utils.user.getUserById.invalidate({ id: userId })
     },
   })
 
