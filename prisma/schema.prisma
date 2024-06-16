@@ -1,189 +1,108 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mongodb"
-    // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid()) @map("_id")
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
-
-// Necessary for Next auth
-model Account {
-    id                String  @id @default(cuid()) @map("_id")
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? // @db.Text
-    access_token      String? // @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? // @db.Text
-    session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@unique([provider, providerAccountId])
-}
-
-model Session {
-    id           String   @id @default(cuid()) @map("_id")
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
 
 model User {
-    id            String    @id @default(cuid()) @map("_id")
-    name          String?
-    email         String?   @unique
-    password      String
-    emailVerified DateTime?
-    coverPhoto    String?
-    image         String?
-    followers     Follow[]  @relation("followings")
-    followings    Follow[]  @relation("followers")
-    accounts      Account[]
-    sessions      Session[]
-    likes         Likes[]
-    post          Post[]
-    comment       Comment[]
-    postLike      Postlike[]
-    likeComment   LikeComment[]
-    reply         ReplyComment[]
-    bookmark      Bookmark[]
-    sharePost     SharePost[]
-    LikeReplyCOmment LikeReplyComment[]
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
+  id              String @id @default(uuid())
+  name            String?
+  email           String? @unique
+  emailVerified   DateTime?
+  image           String?
+  hashedPassword  String?
+  password        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  sessions        Session[]
+  conversationIds String[]
+
+  accounts        Account[]
+  posts           Post[]
+  likePosts       LikePost[]
 }
 
-model Post {
-    id            String  @id @default(cuid()) @map("_id")
-    name          String
-    message       String
-    selectedFile  SelectedFile[]
-    likes         Likes[]
-    comment       Comment[]
-    postLike      Postlike[]
-    bookmark      Bookmark[]
-    sharedPost    SharePost[]
-    user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId        String?
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
 }
 
-model Likes {
-    id            String   @id @default(cuid()) @map("_id")
-    user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId        String?
-    post          Post?    @relation(fields: [postId], references: [id])
-    postId        String?
-}
 
-model LikeComment {
-    id            String   @id @default(cuid()) @map("_id")
-    user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId        String?
-    comment       Comment?    @relation(fields: [commentId], references: [id])
-    commentId      String?
-}
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-model Comment {
-    id            String   @id @default(cuid()) @map("_id")
-    comment       String
-    user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId        String?
-    post          Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
-    postId        String?
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
-    reply         ReplyComment[]
-    likeComment   LikeComment[]
-}
-
-model ReplyComment {
-    id           String @id @default(cuid()) @map("_id")
-    comment      String
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
-    replyTo      Comment? @relation(fields: [replyToId], references: [id], onDelete: Cascade)
-    replyToId    String?
-    likeReplyComments LikeReplyComment[]
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId       String
-}
-
-model LikeReplyComment {
-    id            String   @id @default(cuid()) @map("_id")
-    user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId        String?
-    replyComments ReplyComment?    @relation(fields: [replyId], references: [id])
-    replyId       String?
-}
-
-model Postlike {
-    id           String @id @default(cuid()) @map("_id")
-    userId       String?
-    user         User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    postId       String?
-    post         Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
-}
-
-model Bookmark {
-    id           String @id @default(cuid()) @map("_id")
-    userId       String?
-    user         User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    postId       String?
-    post         Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
-}
-
-model Follow {
-    id           String @id @default(cuid()) @map("_id")
-    followerId   String
-    followingId  String
-    follower     User      @relation("followers", fields: [followerId], references: [id])
-    following    User      @relation("followings", fields: [followingId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
-    id            String    @id @default(cuid()) @map("_id")
-    identifier    String
-    token         String   @unique
-    expires       DateTime
+  id         String   @id @default(uuid())
+  identifier String
+  token      String
+  expires    DateTime
 
-    @@unique([identifier, token])
+  @@unique([identifier, token])
 }
 
-model SharePost {
-    id         String @id @default(cuid()) @map("_id")
-    post       Post?  @relation(fields: [postId], references: [id], onDelete: Cascade)
-    postId     String?
-    userId       String?
-    user         User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Post {
+  id            String  @id @default(uuid())
+  // name          String
+  content       String
+  selectedFile  SelectedFile[]
+  // likes         Likes[]
+  // comment       Comment[]
+  likePost      LikePost[]
+  // bookmark      Bookmark[]
+  // sharedPost    SharePost[]
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model LikePost {
+  id            String  @id @default(uuid())
+  userId        String
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId        String
+  post          Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model SelectedFile {
-    id          String @id @default(cuid()) @map("_id")
-    url         String
-    fallbackUrl String
-    post        Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
-    postId      String?
-    width       Int
-    height      Int
-} 
+  id            String  @id @default(uuid())
+  url           String
+  post          Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId        String?
+}
+

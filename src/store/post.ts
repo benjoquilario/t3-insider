@@ -1,64 +1,50 @@
 import { create } from "zustand"
-import type { SelectedFileType } from "@/types/types"
 
-interface SelectedPost {
+interface ISelectPost {
   id: string
-  message: string
-  selectedFile: SelectedFileType[]
+  content: string
+  selectedFile: ISelectedFile[]
 }
 
-interface InitialState {
-  postOpen: boolean
+interface InitialPost {
+  isPostOpen: boolean
+  setIsPostOpen: (isPostOpen: boolean) => void
   currentPostId: string
+  setCurrentPostId: (currentPostId: string) => void
+  selectPost: {
+    id: string
+    content: string
+    selectedFile: ISelectedFile[]
+  }
+  clearSelectPost: () => void
+  setSelectPost: (selectPost: ISelectPost) => void
   isEditing: boolean
-  isModalDeletePostOpen: boolean
-  deleteImages: string[]
-  isRemove: boolean
-  selectedPost: SelectedPost
-  setSelectedPost: (post: SelectedPost) => void
-  clearSelectedPost: () => void
-  setIsRemove: (action: boolean) => void
-  setDeleteImages: (id: string) => void
-  clearDeletedImages: () => void
-  setIsModalDeletePostOpen: (action: boolean) => void
-  setIsEditing: (action: boolean) => void
-  setPostOpen: (action: boolean) => void
-  setCurrentPostId: (id: string) => void
+  setIsEditing: (isEditing: boolean) => void
 }
 
-const usePostStore = create<InitialState>((set) => ({
-  postOpen: false,
+const usePostStore = create<InitialPost>((set) => ({
+  isPostOpen: false,
+  setIsPostOpen: (isPostOpen: boolean) => set({ isPostOpen }),
   currentPostId: "",
-  isEditing: false,
-  isModalDeletePostOpen: false,
-  deleteImages: [],
-  isRemove: false,
-  selectedPost: {
+  setCurrentPostId: (currentPostId: string) => set({ currentPostId }),
+  selectPost: {
     id: "",
-    message: "",
+    content: "",
     selectedFile: [],
   },
-  setSelectedPost: (post: SelectedPost) => set({ selectedPost: post }),
-  clearSelectedPost: () =>
+
+  setSelectPost: (selectPost: ISelectPost) => set({ selectPost }),
+  clearSelectPost: () =>
     set({
-      selectedPost: {
+      selectPost: {
         id: "",
-        message: "",
+        content: "",
         selectedFile: [],
       },
     }),
-  setIsRemove: (action: boolean) => set({ isRemove: action }),
-  setDeleteImages: (id) => {
-    set((state) => ({
-      deleteImages: [id, ...state.deleteImages],
-    }))
-  },
-  clearDeletedImages: () => set({ deleteImages: [] }),
-  setIsModalDeletePostOpen: (action: boolean) =>
-    set({ isModalDeletePostOpen: action }),
-  setIsEditing: (action: boolean) => set({ isEditing: action }),
-  setCurrentPostId: (id: string) => set({ currentPostId: id }),
-  setPostOpen: (action: boolean) => set({ postOpen: action }),
+
+  isEditing: false,
+  setIsEditing: (isEditing: boolean) => set({ isEditing }),
 }))
 
 export default usePostStore

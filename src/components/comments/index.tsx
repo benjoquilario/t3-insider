@@ -1,20 +1,22 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-import React from "react"
-import CreateComment from "./create-comments"
-import type { CommentProps } from "./create-comments"
-import { motion } from "framer-motion"
-import { variants } from "@/lib/utils/index"
+"use client"
 
-const Comments: React.FC<CommentProps> = ({ postId }) => (
-  <motion.div
-    initial="hidden"
-    variants={variants}
-    animate="visible"
-    exit="hidden"
-    className="relative rounded"
-  >
-    <CreateComment postId={postId} />
-  </motion.div>
-)
+import React from "react"
+import { variants } from "@/lib/variants"
+import { motion } from "framer-motion"
+import CreateComment from "./create-comment"
+
+const Comments = () => {
+  return (
+    <motion.div
+      initial="hidden"
+      variants={variants}
+      animate="visible"
+      exit="hidden"
+      className="relative rounded"
+    >
+      <CreateComment />
+    </motion.div>
+  )
+}
 
 export default Comments
