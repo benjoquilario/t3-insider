@@ -1,12 +1,13 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useCallback, useState } from "react"
 import { useWatch, type Control, type UseFormSetValue } from "react-hook-form"
 import ImageThumbnail from "@/components/image-thumbnail"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
 import { RiCloseFill } from "react-icons/ri"
+import usePostStore from "@/store/post"
 
 type PostUploadProps = {
   control: Control<IPostValues>
@@ -23,41 +24,72 @@ const PostUpload: React.FC<PostUploadProps> = (props) => {
     ISelectedFile[] | undefined
   >(selectedFile)
 
+  const [setDeletedFiles, setDeletedKeys] = usePostStore((store) => [
+    store.setDeletedFiles,
+    store.setDeletedKeys,
+  ])
+
   const selectedImage = useWatch({
     control,
     name: "selectedFile",
     defaultValue: [],
   })
 
+  console.log(currentImages, selectedImage)
+
+  const removeImage = (imageName: string) => {
+    setValue(
+      "selectedFile",
+      selectedImage.filter((image) => image.name !== imageName)
+    )
+  }
+
+  const handleRemove = useCallback((id: string, key: string) => {
+    setDeletedFiles(id)
+    setDeletedKeys(key)
+    const removeItem = currentImages?.filter((image) => image.id !== id)
+
+    setCurrentImages(removeItem)
+  }, [])
+
   return (
     <>
-      {currentImages?.length
-        ? currentImages?.map((image, index) => (
-            <div className="relative" key={index}>
-              <Button
-                type="button"
-                className="absolute right-0 top-2 z-50 rounded-full bg-gray-600 p-1 text-white transition duration-75 ease-in hover:bg-gray-700"
-              >
-                <RiCloseFill aria-hidden="true" size={22} />
-              </Button>
-              <div className={cn("relative")}>
-                <Image
-                  src={image.url}
-                  layout="responsive"
-                  objectFit="cover"
-                  className="rounded-lg"
-                  alt=""
-                />
+      <div className="max-h-52 overflow-auto">
+        {currentImages?.length
+          ? currentImages?.map((image, index) => (
+              <div className="relative" key={index}>
+                <Button
+                  onClick={() => handleRemove(image.id!, image.key)}
+                  type="button"
+                  className="absolute right-0 top-2 z-50 rounded-full bg-gray-600 p-1 text-white transition duration-75 ease-in hover:bg-gray-700"
+                >
+                  <RiCloseFill aria-hidden="true" size={22} />
+                </Button>
+                <div className={cn("relative h-40 w-full")}>
+                  <Image
+                    src={image.url}
+                    style={{ objectFit: "cover" }}
+                    fill
+                    className="rounded-lg"
+                    alt=""
+                  />
+                </div>
               </div>
-            </div>
-          ))
-        : null}
+            ))
+          : null}
 
-      {selectedImage.length
-        ? selectedImage?.map((image, index) => {
-            return <ImageThumbnail key={index} image={image} />
-          })
-        : null}
+        {selectedImage.length
+          ? selectedImage?.map((image, index) => {
+              return (
+                <ImageThumbnail
+                  key={index}
+                  image={image}
+                  removeImage={removeImage}
+                />
+              )
+            })
+          : null}
+      </div>
       {children}
     </>
   )

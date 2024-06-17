@@ -43,13 +43,19 @@ const CreatePostForm = () => {
   ])
   const isEditing = usePostStore((store) => store.isEditing)
   const setIsEditing = usePostStore((store) => store.setIsEditing)
+  const [clearDeletedKeys, clearDeletedFiles] = usePostStore((store) => [
+    store.clearDeletedKeys,
+    store.clearDeletedFiles,
+  ])
 
   const handleOnReset = useCallback(() => {
     form.reset()
-    setIsPostOpen(false)
     setIsEditing(false)
     setCurrentPostId("")
+    clearDeletedKeys()
+    clearDeletedFiles()
     clearSelectPost()
+    setIsPostOpen(false)
   }, [])
 
   const { updatePostMutation, deletePostMutation } =
@@ -57,6 +63,11 @@ const CreatePostForm = () => {
   const { createPostMutation } = useCreatePostMutation(handleOnReset)
   const selectPost = usePostStore((store) => store.selectPost)
   const clearSelectPost = usePostStore((store) => store.clearSelectPost)
+
+  const [deletedFiles, deletedKeys] = usePostStore((store) => [
+    store.deletedFiles,
+    store.deletedKeys,
+  ])
 
   console.log(currentPostId, isEditing)
 
@@ -83,9 +94,12 @@ const CreatePostForm = () => {
         selectedFile: uploadImages
           ? uploadImages?.map((image) => ({
               url: image.url,
+              key: image.key,
             }))
           : null,
         postId: currentPostId,
+        fileIds: deletedFiles,
+        deletedKeys,
       })
     } else {
       createPostMutation.mutate({
@@ -93,6 +107,7 @@ const CreatePostForm = () => {
         selectedFile: uploadImages
           ? uploadImages?.map((image) => ({
               url: image.url,
+              key: image.key,
             }))
           : null,
       })
@@ -143,11 +158,15 @@ const CreatePostForm = () => {
                   </FormItem>
                 )}
               />
-              <div className="flex border p-3">
-                <PostUpload control={form.control} setValue={form.setValue}>
+              <div className="flex flex-col gap-2">
+                <PostUpload
+                  control={form.control}
+                  setValue={form.setValue}
+                  selectedFile={selectPost.selectedFile}
+                >
                   <div
                     {...getRootProps()}
-                    className="flex cursor-pointer items-center"
+                    className="flex cursor-pointer items-center border p-2"
                   >
                     <input {...getInputProps()} />
                     <div></div>

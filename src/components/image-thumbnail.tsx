@@ -1,18 +1,18 @@
 "use client"
 
 import React, { useMemo } from "react"
-import Image from "next/legacy/image"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { RiCloseFill } from "react-icons/ri"
 
 type ImageThumbnailProps = {
   image: File
-  // removeImage: (imageName: string) => void
+  removeImage: (imageName: string) => void
 }
 
 const ImageThumbnail: React.FC<ImageThumbnailProps> = ({
   image,
-  // removeImage,
+  removeImage,
 }) => {
   const src = useMemo(() => URL.createObjectURL(image), [image])
 
@@ -20,20 +20,21 @@ const ImageThumbnail: React.FC<ImageThumbnailProps> = ({
     <div className="relative">
       <Button
         type="button"
-        // onClick={() =  > removeImage(image.name)}
-        className="absolute right-0 top-2 z-50 rounded-full bg-gray-600 p-1 text-white transition duration-75 ease-in hover:bg-gray-700"
+        size="icon"
+        onClick={() => removeImage(image.name)}
+        className="absolute right-1 top-2 z-50 rounded-full bg-foreground transition duration-75 ease-in hover:bg-gray-700"
       >
         <RiCloseFill aria-hidden="true" size={22} />
       </Button>
-      <Image
-        src={src}
-        layout="responsive"
-        width={200}
-        height={50}
-        objectFit="cover"
-        className="rounded-lg"
-        alt=""
-      />
+      <div className="relative h-40 w-full">
+        <Image
+          src={src}
+          style={{ objectFit: "cover" }}
+          className="rounded-lg"
+          alt=""
+          fill
+        />
+      </div>
     </div>
   )
 }

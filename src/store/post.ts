@@ -20,20 +20,33 @@ interface InitialPost {
   setSelectPost: (selectPost: ISelectPost) => void
   isEditing: boolean
   setIsEditing: (isEditing: boolean) => void
+  deletedFiles: string[]
+  setDeletedFiles: (id: string) => void
+  clearDeletedFiles: () => void
+  deletedKeys: string[]
+  setDeletedKeys: (key: string) => void
+  clearDeletedKeys: () => void
 }
 
 const usePostStore = create<InitialPost>((set) => ({
   isPostOpen: false,
-  setIsPostOpen: (isPostOpen: boolean) => set({ isPostOpen }),
+  setIsPostOpen: (isPostOpen) => set({ isPostOpen }),
   currentPostId: "",
-  setCurrentPostId: (currentPostId: string) => set({ currentPostId }),
+  setCurrentPostId: (currentPostId) => set({ currentPostId }),
   selectPost: {
     id: "",
     content: "",
     selectedFile: [],
   },
-
-  setSelectPost: (selectPost: ISelectPost) => set({ selectPost }),
+  deletedKeys: [],
+  setDeletedKeys: (key) =>
+    set((state) => ({ deletedKeys: [key, ...state.deletedKeys] })),
+  clearDeletedKeys: () => set({ deletedKeys: [] }),
+  deletedFiles: [],
+  setDeletedFiles: (id) =>
+    set((state) => ({ deletedFiles: [id, ...state.deletedFiles] })),
+  clearDeletedFiles: () => set({ deletedFiles: [] }),
+  setSelectPost: (selectPost) => set({ selectPost }),
   clearSelectPost: () =>
     set({
       selectPost: {
@@ -44,7 +57,7 @@ const usePostStore = create<InitialPost>((set) => ({
     }),
 
   isEditing: false,
-  setIsEditing: (isEditing: boolean) => set({ isEditing }),
+  setIsEditing: (isEditing) => set({ isEditing }),
 }))
 
 export default usePostStore

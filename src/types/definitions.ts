@@ -7,6 +7,7 @@ interface ISelectedFile {
   url: string
   postId?: string
   id?: string
+  key: string
 }
 
 interface IPost<T> {

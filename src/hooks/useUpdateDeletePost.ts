@@ -16,7 +16,9 @@ export function useUpdateDeleteMutation(handleOnCallback?: () => void) {
   const { toast } = useToast()
 
   const updatePostMutation = useMutation({
-    mutationFn: (values: IUpdatePost) => updatePost(values),
+    mutationFn: (
+      values: IUpdatePost & { fileIds: string[]; deletedKeys: string[] }
+    ) => updatePost(values),
     onMutate: async (updatedPost) => {
       queryClient.setQueryData<InfiniteData<IPage<IPosts[]>>>(
         queryKey,
@@ -55,7 +57,7 @@ export function useUpdateDeleteMutation(handleOnCallback?: () => void) {
         title: "Post successfully updated",
       })
 
-      handleOnCallback()
+      handleOnCallback?.()
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   })

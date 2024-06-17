@@ -27,8 +27,11 @@ model User {
   sessions        Session[]
   conversationIds String[]
 
+
   accounts        Account[]
   posts           Post[]
+  commentLikes    CommentLike[]
+  comments        Comment[]
   likePosts       LikePost[]
 }
 
@@ -80,8 +83,8 @@ model Post {
   // name          String
   content       String
   selectedFile  SelectedFile[]
-  // likes         Likes[]
-  // comment       Comment[]
+
+  comment       Comment[]
   likePost      LikePost[]
   // bookmark      Bookmark[]
   // sharedPost    SharePost[]
@@ -104,5 +107,32 @@ model SelectedFile {
   url           String
   post          Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId        String?
+  key           String
 }
 
+model Comment {
+  id           String          @id @default(cuid())
+  comment      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  isEdited     Boolean?
+  commentLike  CommentLike[]
+
+  postId       String
+  post         Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CommentLike {
+  id            String          @id @default(cuid())
+  createdAt    DateTime   @default(now())
+  commentId    String
+  comment      Comment    @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId])
+}

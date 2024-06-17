@@ -34,7 +34,6 @@ export type PostItemProps = {
 }
 
 const PostItem: React.FC<PostItemProps> = ({ post }) => {
-  console.log(post)
   const [isCommentOpen, setIsCommentOpen] = useState(false)
   const setIsPostOpen = usePostStore((store) => store.setIsPostOpen)
   const setCurrentPostId = usePostStore((store) => store.setCurrentPostId)
@@ -42,6 +41,8 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
   const setIsEditing = usePostStore((store) => store.setIsEditing)
 
   const { deletePostMutation } = useUpdateDeleteMutation()
+
+  console.log(post)
 
   const handleUpdatePost = () => {
     setIsPostOpen(true)
@@ -108,7 +109,11 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Button
-                  onClick={() => deletePostMutation.mutate({ postId: post.id })}
+                  onClick={() =>
+                    deletePostMutation.mutate({
+                      postId: post.id,
+                    })
+                  }
                   variant="ghost"
                   className="w-full cursor-pointer"
                 >
