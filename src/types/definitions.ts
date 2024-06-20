@@ -21,10 +21,24 @@ interface IPost<T> {
   updatedAt: Date
   isLiked: boolean
   _count: {
-    likes: number
+    likePost: number
     comment: number
   }
   likePost: LikePost<T>[]
+}
+
+interface IComment<T> {
+  id: string
+  isEdited: boolean
+  comment: string
+  user: T
+  userId: string
+  createdAt: Date
+  updatedAt: Date
+  isLiked: boolean
+  _count: {
+    commentLike: number
+  }
 }
 
 interface LikePost<T> {
@@ -39,6 +53,12 @@ interface IPage<T> {
   nextSkip: number
 }
 
+interface ICommentPage<T> {
+  comments: T
+  hasNextPage: boolean
+  nextSkip: number
+}
+
 interface ICreatePost {
   content: string
   selectedFile: ISelectedFile[] | null
@@ -46,4 +66,13 @@ interface ICreatePost {
 
 interface IUpdatePost extends ICreatePost {
   postId: string
+}
+
+interface ICreateComment {
+  commentText: string
+  postId: string
+}
+
+interface IUpdateComment extends ICreateComment {
+  commentId: string
 }

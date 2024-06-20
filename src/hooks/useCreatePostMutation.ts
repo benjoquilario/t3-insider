@@ -7,8 +7,8 @@ import {
 } from "@tanstack/react-query"
 import { QUERY_KEYS } from "@/lib/queriesKey"
 import { createPost } from "@/server/post"
-import { IPosts } from "@/components/posts/post-item"
 import { useToast } from "@/components/ui/use-toast"
+import type { User } from "@prisma/client"
 
 export function useCreatePostMutation(handleOnCallback: () => void) {
   const queryClient = useQueryClient()
@@ -19,7 +19,7 @@ export function useCreatePostMutation(handleOnCallback: () => void) {
     mutationFn: (post: ICreatePost) => createPost(post),
     // mutationKey: ["createComment"],
     onSuccess: (newPost) => {
-      queryClient.setQueryData<InfiniteData<IPage<IPosts[]>>>(
+      queryClient.setQueryData<InfiniteData<IPage<IPost<User>[]>>>(
         queryKey,
         (oldData) => {
           if (!oldData) return

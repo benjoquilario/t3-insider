@@ -29,6 +29,7 @@
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "dayjs": "^1.11.11",
     "framer-motion": "^11.2.10",
     "lodash.chunk": "^4.2.0",
     "next": "14.2.3",

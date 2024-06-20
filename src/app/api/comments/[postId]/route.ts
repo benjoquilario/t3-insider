@@ -2,13 +2,21 @@ import db from "@/lib/db"
 import { auth } from "@/auth"
 import { type NextRequest, NextResponse } from "next/server"
 
-export async function GET(req: NextRequest) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { postId: string } }
+) {
+  const postId = params.postId
+
   const searchParams = req.nextUrl.searchParams
   const limit = searchParams.get("limit")
   const skip = searchParams.get("cursor")
   const session = await auth()
 
-  const posts = await db.post.findMany({
+  const comments = await db.comment.findMany({
+    where: {
+      postId,
+    },
     include: {
       user: {
         select: {
@@ -18,18 +26,16 @@ export async function GET(req: NextRequest) {
           email: true,
         },
       },
-      likePost: {
+      commentLike: {
         select: {
           id: true,
         },
       },
       _count: {
         select: {
-          likePost: true,
-          comment: true,
+          commentLike: true,
         },
       },
-      selectedFile: true,
     },
     orderBy: { createdAt: "desc" },
     take: Number(limit) || 5,
@@ -37,9 +43,9 @@ export async function GET(req: NextRequest) {
   })
 
   const nextId =
-    posts.length < Number(limit) ? undefined : posts[Number(limit) - 1].id
+    comments.length < Number(limit) ? undefined : comments[Number(limit) - 1].id
 
-  if (posts.length === 0) {
+  if (comments.length === 0) {
     return NextResponse.json({
       comments: [],
       hasNextPage: false,
@@ -47,20 +53,20 @@ export async function GET(req: NextRequest) {
     })
   }
 
-  const transformedPosts = posts.map((post) => {
+  const transformedPosts = comments.map((post) => {
     const { _count, ...rest } = post
     return {
       ...rest,
       _count,
-      isLiked: session ? _count.likePost > 0 : false,
+      isLiked: session ? _count.commentLike > 0 : false,
     }
   })
 
   return NextResponse.json({
-    posts: transformedPosts,
-    hasNextPage: posts.length < (Number(limit) || 5) ? false : true,
+    comments: transformedPosts,
+    hasNextPage: comments.length < (Number(limit) || 5) ? false : true,
     nextSkip:
-      posts.length < (Number(limit) || 5)
+      comments.length < (Number(limit) || 5)
         ? null
         : Number(skip) + (Number(limit) as number),
   })

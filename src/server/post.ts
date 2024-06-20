@@ -21,6 +21,7 @@ export const createPost = async (values: ICreatePost) => {
     },
     include: {
       selectedFile: true,
+      likePost: true,
     },
   })
 

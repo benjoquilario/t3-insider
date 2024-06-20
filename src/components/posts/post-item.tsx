@@ -19,18 +19,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import usePostStore from "@/store/post"
-import type { User, Post as IPost } from "@prisma/client"
+import type { User } from "@prisma/client"
 import { useUpdateDeleteMutation } from "@/hooks/useUpdateDeletePost"
 import Image from "next/image"
-
-export interface IPosts extends IPost {
-  selectedFile: ISelectedFile[]
-}
+import { useLikePostMutation } from "@/hooks/useLikePost"
+import { getImageHeightRatio, getImageWidthRatio } from "@/lib/utils"
+import { VscCommentDiscussion } from "react-icons/vsc"
+import { BiSolidLike } from "react-icons/bi"
+import dayjs from "@/lib/time"
 
 export type PostItemProps = {
-  post: IPost & {
-    selectedFile: ISelectedFile[]
-  }
+  post: IPost<User>
 }
 
 const PostItem: React.FC<PostItemProps> = ({ post }) => {
@@ -41,6 +40,9 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
   const setIsEditing = usePostStore((store) => store.setIsEditing)
 
   const { deletePostMutation } = useUpdateDeleteMutation()
+  const { likePostMutation, unlikePostMutation } = useLikePostMutation({
+    postId: post.id,
+  })
 
   console.log(post)
 
@@ -53,6 +55,10 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
       selectedFile: post.selectedFile,
     })
     setIsEditing(true)
+  }
+
+  const handleLikePost = (isLiked: boolean) => {
+    return !isLiked ? likePostMutation.mutate() : unlikePostMutation.mutate()
   }
 
   return (
@@ -77,9 +83,11 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
               "ring-primary ring-offset-1 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary active:ring"
             )}
           >
-            Benjo Quilario
+            {post.user.name}
           </Link>
-          <span className="text-xs text-muted-foreground/70">4d</span>
+          <span className="text-xs text-muted-foreground/70">
+            {dayjs(post.createdAt).fromNow(true)}
+          </span>
         </div>
 
         <div className="self-end">
@@ -134,6 +142,15 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
             )}
           >
             {post.selectedFile.map((image, index) => {
+              const widthRatio = getImageWidthRatio(
+                post.selectedFile.length,
+                index
+              )
+              const heightRatio = getImageHeightRatio(
+                post.selectedFile.length,
+                index
+              )
+
               return (
                 <div
                   key={index + 1}
@@ -150,14 +167,15 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
                     tabIndex={0}
                     role="button"
                   >
-                    <Image
-                      src={image.url}
-                      style={{ objectFit: "cover" }}
-                      alt={image.url}
-                      unoptimized
-                      width={500}
-                      height={500}
-                    />
+                    <div className="h-60 w-full md:h-96">
+                      <Image
+                        src={image.url}
+                        style={{ objectFit: "cover" }}
+                        alt={image.url}
+                        fill
+                        unoptimized
+                      />
+                    </div>
                   </div>
                 </div>
               )
@@ -168,15 +186,21 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
 
       <div className="mt-2 flex items-center justify-between px-5">
         <div className="flex items-center gap-1 text-sm text-foreground">
-          <span className="flex h-5 w-5 items-center justify-center rounded-full">
-            <AiFillLike aria-hidden size={13} className="text-foreground" />
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary">
+            <BiSolidLike
+              aria-hidden
+              size={14}
+              className="text-primary-foreground"
+            />
           </span>
 
-          <span className="font-normal text-foreground/80">4</span>
+          <span className="font-medium text-foreground/80">
+            {post._count.likePost}
+          </span>
         </div>
-        <div className="flex gap-1 text-sm font-semibold text-muted-foreground/50">
-          <span>4</span>
-          <BiComment aria-hidden size={20} />
+        <div className="flex gap-1 text-sm font-semibold text-muted-foreground/80">
+          <span>{post._count.comment}</span>
+          <VscCommentDiscussion aria-hidden size={20} />
         </div>
       </div>
       <ul className="rou mx-1 mt-1 flex justify-between rounded-t-md border-t border-l-secondary/40 font-light">
@@ -189,16 +213,36 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
             )}
             variant="ghost"
             aria-label="Like Post"
-            // onClick={handleLikePost}
+            onClick={() => handleLikePost(post.isLiked)}
           >
-            <span>
-              <AiFillLike
-                aria-hidden="true"
-                size={21}
-                className="text-primary"
-              />
+            {post.isLiked ? (
+              <span>
+                <AiFillLike
+                  aria-hidden="true"
+                  size={21}
+                  className="text-primary"
+                />
+              </span>
+            ) : (
+              <span>
+                <AiOutlineLike
+                  aria-hidden="true"
+                  size={21}
+                  className="text-foreground"
+                />
+              </span>
+            )}
+
+            <span
+              className={cn(
+                "text-sm",
+                post.isLiked
+                  ? "font-bold text-primary"
+                  : "font-medium text-foreground"
+              )}
+            >
+              Like
             </span>
-            <span className={cn("text-sm font-bold text-primary")}>Like</span>
           </Button>
         </li>
 
@@ -213,7 +257,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
             )}
             aria-label="Leave a Comment"
           >
-            <BiComment
+            <VscCommentDiscussion
               aria-hidden="true"
               size={20}
               className="text-foreground/90"
@@ -244,7 +288,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
           </Button>
         </li>
       </ul>
-      {isCommentOpen && <Comments />}
+      {isCommentOpen && <Comments postId={post.id} />}
     </>
   )
 }

@@ -8,10 +8,19 @@ import { Button } from "@/components/ui/button"
 import { BiDotsHorizontalRounded } from "react-icons/bi"
 import { BsArrow90DegDown } from "react-icons/bs"
 import { AiFillLike } from "react-icons/ai"
+import type { User } from "@prisma/client"
+import { SlLike } from "react-icons/sl"
+import dayjs from "@/lib/time"
 
-const CommentItem = () => {
+type CommentItemProps = {
+  comment: IComment<User>
+}
+
+const CommentItem = (props: CommentItemProps) => {
+  const { comment } = props
+
   return (
-    <li>
+    <>
       <div className="relative flex pl-4 pt-1 md:pl-6">
         <div className="relative mr-2 mt-1 block rounded-full">
           {/* {isReplyOpen || comment._count.reply > 0 ? (
@@ -34,6 +43,7 @@ const CommentItem = () => {
             </Link>
           </span>
         </div>
+
         <div className="mr-6 grow basis-0 overflow-hidden pr-2 md:mr-10 md:pr-4">
           <div>
             <div
@@ -43,7 +53,7 @@ const CommentItem = () => {
               <div className="relative inline-flex w-full align-middle">
                 <div className="base-[auto] w-full min-w-0 shrink grow">
                   <div
-                    className="relative inline-block max-w-full whitespace-normal break-words rounded-2xl bg-zinc-100 text-zinc-900"
+                    className="relative inline-block max-w-full whitespace-normal break-words rounded-2xl bg-secondary text-foreground"
                     style={{ wordBreak: "break-word" }}
                   >
                     <div className="py-2 pl-4 pr-7">
@@ -51,14 +61,14 @@ const CommentItem = () => {
                         <span className="inline">
                           <Link
                             className="inline bg-secondary"
-                            href={`/profile`}
+                            href={`/profile/${comment.userId}`}
                           >
                             <span className="inline-flex">
                               <span
-                                className="max-w-full text-[15px] font-semibold capitalize text-foreground/90 underline-offset-1 hover:underline"
+                                className="max-w-full text-sm font-medium capitalize text-foreground underline-offset-1 hover:underline"
                                 style={{ wordBreak: "break-word" }}
                               >
-                                Benjo Quilario
+                                {comment.user?.name}
                               </span>
                             </span>
                           </Link>
@@ -74,8 +84,7 @@ const CommentItem = () => {
                             style={{ wordBreak: "break-word" }}
                           >
                             <div dir="auto" className="text-start font-sans">
-                              Lorem ipsum dolor sit amet consectetur adipisicing
-                              elit. Aut, nesciunt.
+                              {comment.comment}
                             </div>
                           </div>
                         </span>
@@ -96,29 +105,24 @@ const CommentItem = () => {
                   </div>
                 </div>
               </div>
-              <div className="ml-1 flex gap-2 text-xs font-semibold text-muted-foreground/60">
-                <Button
-                  variant="ghost"
-                  size="sm"
+              <div className="ml-1 mt-2 flex gap-2 text-xs font-semibold text-muted-foreground/70">
+                <span className="text-xs text-foreground/70">
+                  {dayjs(comment.createdAt).fromNow(true)}
+                </span>
+                <button
                   type="button"
                   // onClick={handleLikeComment}
-                  className={cn("underline-offset-1 hover:underline")}
+                  className="underline-offset-1 hover:underline"
                 >
                   Like
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
+                </button>
+                <button
                   // type="button"
                   // onClick={() => setIsReplyOpen(true)}
                   className="underline-offset-1 hover:underline"
                 >
                   Reply
-                </Button>
-                <span className="text-xs text-foreground/70">
-                  {/* {dayjs(comment.createdAt).fromNow(true)} */}
-                  4d
-                </span>
+                </button>
               </div>
 
               <div className="ml-3 mt-2">
@@ -161,7 +165,7 @@ const CommentItem = () => {
           {/* )} */}
         </div>
       </div>
-    </li>
+    </>
   )
 }
 

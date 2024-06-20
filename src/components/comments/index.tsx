@@ -5,7 +5,13 @@ import { variants } from "@/lib/variants"
 import { motion } from "framer-motion"
 import CreateComment from "./create-comment"
 
-const Comments = () => {
+type CommentsProps = {
+  postId: string
+}
+
+const Comments = (props: CommentsProps) => {
+  const { postId } = props
+
   return (
     <motion.div
       initial="hidden"
@@ -14,7 +20,7 @@ const Comments = () => {
       exit="hidden"
       className="relative rounded"
     >
-      <CreateComment />
+      <CreateComment postId={postId} />
     </motion.div>
   )
 }

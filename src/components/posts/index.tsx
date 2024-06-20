@@ -1,12 +1,13 @@
 "use client"
 
 import React from "react"
-import PostItem, { type IPosts } from "./post-item"
+import PostItem from "./post-item"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { QUERY_KEYS } from "@/lib/queriesKey"
 import PostSkeleton from "@/components/skeleton/post-skeleton"
 import { InView } from "react-intersection-observer"
 import { motion, AnimatePresence } from "framer-motion"
+import { User } from "@prisma/client"
 
 const Posts = () => {
   const {
@@ -32,7 +33,7 @@ const Posts = () => {
         {isPending
           ? Array.from(Array(2), (_, i) => <PostSkeleton key={i} />)
           : posts?.pages.map((page) =>
-              page?.posts.map((post: IPosts) => (
+              page?.posts.map((post: IPost<User>) => (
                 <motion.li
                   key={post.id}
                   initial={{ opacity: 0 }}

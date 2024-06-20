@@ -9,18 +9,27 @@ import { QUERY_KEYS } from "@/lib/queriesKey"
 import { updatePost, deletePost } from "@/server/post"
 import { useToast } from "@/components/ui/use-toast"
 import type { User } from "@prisma/client"
+import { useMemo } from "react"
+import { updateComment, deleteComment } from "@/server/comment"
 
-export function useUpdateDeleteMutation(handleOnCallback?: () => void) {
+export function useUpdateDeleteMutation({ postId }: { postId: string }) {
   const queryClient = useQueryClient()
-  const queryKey = [QUERY_KEYS.GET_INFINITE_POSTS]
+  const queryKey = useMemo(
+    () => [QUERY_KEYS.GET_INFINITE_COMMENTS, postId],
+    [postId]
+  )
   const { toast } = useToast()
 
-  const updatePostMutation = useMutation({
-    mutationFn: (
-      values: IUpdatePost & { fileIds: string[]; deletedKeys: string[] }
-    ) => updatePost(values),
-    onMutate: async (updatedPost) => {
-      queryClient.setQueryData<InfiniteData<IPage<IPost<User>[]>>>(
+  const updateCommentMutation = useMutation({
+    mutationFn: ({
+      comment,
+      commentId,
+    }: {
+      comment: string
+      commentId: string
+    }) => updateComment({ commentId, comment }),
+    onMutate: async (updatedComment) => {
+      queryClient.setQueryData<InfiniteData<ICommentPage<IComment<User>[]>>>(
         queryKey,
         (oldData) => {
           if (!oldData) return
@@ -28,22 +37,21 @@ export function useUpdateDeleteMutation(handleOnCallback?: () => void) {
           const updatedPosts = {
             ...oldData,
             pages: oldData.pages.map((page) => {
-              const index = page.posts?.findIndex(
-                (oldPost) => oldPost.id === updatedPost.postId
+              const index = page.comments?.findIndex(
+                (oldPost) => oldPost.id === updatedComment.commentId
               )
 
-              const newPosts = [...page.posts]
+              const newComments = [...page.comments]
 
-              newPosts[index] = {
-                ...page.posts[index],
+              newComments[index] = {
+                ...page.comments[index],
                 updatedAt: new Date(),
-                id: updatedPost.postId,
-                content: updatedPost.content,
+                comment: updatedComment.commentId,
               }
 
               return {
                 ...page,
-                posts: newPosts,
+                posts: newComments,
               }
             }),
           }
@@ -56,21 +64,20 @@ export function useUpdateDeleteMutation(handleOnCallback?: () => void) {
       toast({
         title: "Post successfully updated",
       })
-
-      handleOnCallback?.()
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   })
 
-  const deletePostMutation = useMutation({
-    mutationFn: ({ postId }: { postId: string }) => deletePost({ postId }),
+  const deleteCommentMutation = useMutation({
+    mutationFn: ({ commentId }: { commentId: string }) =>
+      deleteComment({ commentId }),
     // onSuccess: () => queryClient.invalidateQueries({ queryKey }),
     onMutate: async (deletedPost) => {
       await queryClient.cancelQueries({ queryKey })
 
       const previousComment = queryClient.getQueryData(queryKey)
 
-      queryClient.setQueryData<InfiniteData<IPage<IPost<User>[]>>>(
+      queryClient.setQueryData<InfiniteData<ICommentPage<IComment<User>[]>>>(
         queryKey,
         (oldData) => {
           if (!oldData) return
@@ -78,13 +85,13 @@ export function useUpdateDeleteMutation(handleOnCallback?: () => void) {
           const newPosts = {
             ...oldData,
             pages: oldData.pages.map((page, i) => {
-              const deletedPosts = page.posts.filter(
-                (post) => post.id !== deletedPost.postId
+              const deletedComments = page.comments.filter(
+                (post) => post.id !== deletedPost.commentId
               )
 
               return {
                 ...page,
-                posts: deletedPosts,
+                posts: deletedComments,
               }
             }),
           }
@@ -97,5 +104,5 @@ export function useUpdateDeleteMutation(handleOnCallback?: () => void) {
     },
   })
 
-  return { updatePostMutation, deletePostMutation }
+  return { updateCommentMutation, deleteCommentMutation }
 }
