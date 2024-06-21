@@ -35,8 +35,8 @@ export type PostItemProps = {
 const PostItem: React.FC<PostItemProps> = ({ post }) => {
   const [isCommentOpen, setIsCommentOpen] = useState(false)
   const setIsPostOpen = usePostStore((store) => store.setIsPostOpen)
-  const setCurrentPostId = usePostStore((store) => store.setCurrentPostId)
-  const setSelectPost = usePostStore((store) => store.setSelectPost)
+  const setSelectedPostId = usePostStore((store) => store.setSelectedPostId)
+  const setSelectedPost = usePostStore((store) => store.setSelectedPost)
   const setIsEditing = usePostStore((store) => store.setIsEditing)
 
   const { deletePostMutation } = useUpdateDeleteMutation()
@@ -48,8 +48,8 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
 
   const handleUpdatePost = () => {
     setIsPostOpen(true)
-    setCurrentPostId(post.id)
-    setSelectPost({
+    setSelectedPostId(post.id)
+    setSelectedPost({
       id: post.id,
       content: post.content,
       selectedFile: post.selectedFile,
@@ -79,8 +79,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
           <Link
             href={`/profile`}
             className={cn(
-              "block rounded-full text-base font-semibold capitalize text-foreground/90",
-              "ring-primary ring-offset-1 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary active:ring"
+              "block font-medium capitalize text-foreground/90 underline-offset-1 hover:underline"
             )}
           >
             {post.user.name}

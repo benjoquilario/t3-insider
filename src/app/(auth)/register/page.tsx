@@ -187,7 +187,7 @@ const Register = () => {
                 />
               </div>
               <div className="mt-2 text-destructive">{error}</div>
-              <Button className="w-full" type="submit">
+              <Button disabled={isPending} className="w-full" type="submit">
                 Create an account
               </Button>
             </form>

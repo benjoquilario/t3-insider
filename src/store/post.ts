@@ -9,15 +9,15 @@ interface ISelectPost {
 interface InitialPost {
   isPostOpen: boolean
   setIsPostOpen: (isPostOpen: boolean) => void
-  currentPostId: string
-  setCurrentPostId: (currentPostId: string) => void
-  selectPost: {
+  selectedPostId: string
+  setSelectedPostId: (currentPostId: string) => void
+  selectedPost: {
     id: string
     content: string
     selectedFile: ISelectedFile[]
   }
-  clearSelectPost: () => void
-  setSelectPost: (selectPost: ISelectPost) => void
+  clearSelectedPost: () => void
+  setSelectedPost: (selectPost: ISelectPost) => void
   isEditing: boolean
   setIsEditing: (isEditing: boolean) => void
   deletedFiles: string[]
@@ -31,9 +31,9 @@ interface InitialPost {
 const usePostStore = create<InitialPost>((set) => ({
   isPostOpen: false,
   setIsPostOpen: (isPostOpen) => set({ isPostOpen }),
-  currentPostId: "",
-  setCurrentPostId: (currentPostId) => set({ currentPostId }),
-  selectPost: {
+  selectedPostId: "",
+  setSelectedPostId: (selectedPostId) => set({ selectedPostId }),
+  selectedPost: {
     id: "",
     content: "",
     selectedFile: [],
@@ -46,10 +46,10 @@ const usePostStore = create<InitialPost>((set) => ({
   setDeletedFiles: (id) =>
     set((state) => ({ deletedFiles: [id, ...state.deletedFiles] })),
   clearDeletedFiles: () => set({ deletedFiles: [] }),
-  setSelectPost: (selectPost) => set({ selectPost }),
-  clearSelectPost: () =>
+  setSelectedPost: (selectedPost) => set({ selectedPost }),
+  clearSelectedPost: () =>
     set({
-      selectPost: {
+      selectedPost: {
         id: "",
         content: "",
         selectedFile: [],

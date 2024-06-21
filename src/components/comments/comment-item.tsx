@@ -1,23 +1,126 @@
 "use client"
 
-import React from "react"
+import React, { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { BiDotsHorizontalRounded } from "react-icons/bi"
 import { BsArrow90DegDown } from "react-icons/bs"
 import { AiFillLike } from "react-icons/ai"
 import type { User } from "@prisma/client"
-import { SlLike } from "react-icons/sl"
 import dayjs from "@/lib/time"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { useUpdateDeleteMutation } from "@/hooks/useUpdateDeleteComment"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+  FormLabel,
+} from "@/components/ui/form"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import TextareaAutoSize from "react-textarea-autosize"
+import * as z from "zod"
+import { cn } from "@/lib/utils"
+import useCommentStore from "@/store/comment"
 
 type CommentItemProps = {
   comment: IComment<User>
+  postId: string
 }
 
+const editSchema = z.object({
+  comment: z
+    .string()
+    .min(1, { message: "Comment must be at least 1 character" }),
+})
+
 const CommentItem = (props: CommentItemProps) => {
-  const { comment } = props
+  const { comment, postId } = props
+
+  const [isAlertOpen, setIsAlertOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+
+  const { deleteCommentMutation, updateCommentMutation } =
+    useUpdateDeleteMutation({ postId })
+
+  const setSelectedComment = useCommentStore(
+    (store) => store.setSelectedComment
+  )
+  const selectedComment = useCommentStore((store) => store.selectedComment)
+  const commentId = useCommentStore((store) => store.commentId)
+  const setCommentId = useCommentStore((store) => store.setCommentId)
+  const clearSelectedComment = useCommentStore(
+    (store) => store.clearSelectedComment
+  )
+  const buttonRef = useRef<HTMLButtonElement | null>(null)
+
+  const form = useForm<z.infer<typeof editSchema>>({
+    resolver: zodResolver(editSchema),
+  })
+
+  const handleSelectComment = async function () {
+    setSelectedComment({
+      comment: comment.comment,
+      commentId: comment.id,
+    })
+    setCommentId(comment.id)
+
+    setIsEditing(true)
+
+    form.setFocus("comment")
+  }
+
+  const handleReset = async function () {
+    clearSelectedComment()
+    setIsEditing(false)
+  }
+
+  useEffect(() => {
+    if (commentId && selectedComment) {
+      form.setValue("comment", selectedComment.comment)
+    }
+  }, [commentId, form.setValue, selectedComment])
+
+  const handleOnSubmit = async function (data: z.infer<typeof editSchema>) {
+    updateCommentMutation.mutate({
+      commentId: comment.id,
+      comment: data.comment,
+    })
+
+    handleReset()
+  }
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Enter" && event.shiftKey === false) {
+      event.preventDefault()
+      buttonRef?.current?.click()
+      form.reset()
+
+      handleReset()
+    }
+  }
 
   return (
     <>
@@ -44,67 +147,131 @@ const CommentItem = (props: CommentItemProps) => {
           </span>
         </div>
 
-        <div className="mr-6 grow basis-0 overflow-hidden pr-2 md:mr-10 md:pr-4">
+        <div className="mr-14 grow basis-0 overflow-hidden pr-2 md:mr-10 md:pr-4">
           <div>
             <div
-              className="max-w-[calc(100%_-_26px] inline-block break-words"
+              className="max-w-[calc(100%_-_26px] inline-block w-full break-words"
               style={{ wordBreak: "break-word" }}
             >
-              <div className="relative inline-flex w-full align-middle">
-                <div className="base-[auto] w-full min-w-0 shrink grow">
-                  <div
-                    className="relative inline-block max-w-full whitespace-normal break-words rounded-2xl bg-secondary text-foreground"
-                    style={{ wordBreak: "break-word" }}
-                  >
-                    <div className="py-2 pl-4 pr-7">
-                      <span>
-                        <span className="inline">
-                          <Link
-                            className="inline bg-secondary"
-                            href={`/profile/${comment.userId}`}
-                          >
-                            <span className="inline-flex">
-                              <span
-                                className="max-w-full text-sm font-medium capitalize text-foreground underline-offset-1 hover:underline"
-                                style={{ wordBreak: "break-word" }}
-                              >
-                                {comment.user?.name}
-                              </span>
-                            </span>
-                          </Link>
-                        </span>
+              <span>
+                <span className="inline">
+                  <Link className="inline" href={`/profile/${comment.userId}`}>
+                    <span className="inline-flex">
+                      <span
+                        className="max-w-full text-sm font-medium capitalize text-foreground underline-offset-1 hover:underline"
+                        style={{ wordBreak: "break-word" }}
+                      >
+                        {comment.user?.name}
                       </span>
-                      <div className="block pb-[4px] pt-[4px]">
-                        <span
-                          className="break-words"
-                          style={{ wordBreak: "break-word" }}
-                        >
-                          <div
-                            className="text-sm"
-                            style={{ wordBreak: "break-word" }}
-                          >
-                            <div dir="auto" className="text-start font-sans">
-                              {comment.comment}
+                    </span>
+                  </Link>
+                </span>
+              </span>
+              {isEditing ? (
+                <div className="grow overflow-hidden">
+                  <div>
+                    <Form {...form}>
+                      <form
+                        onSubmit={form.handleSubmit(handleOnSubmit)}
+                        className="relative flex w-full flex-wrap justify-end"
+                      >
+                        <div className="relative w-full">
+                          <div className="flex flex-wrap justify-end">
+                            <div className="shrink grow basis-[auto] overflow-hidden pb-2">
+                              <div className="relative p-1">
+                                <FormField
+                                  control={form.control}
+                                  name="comment"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel className="sr-only">
+                                        Comment
+                                      </FormLabel>
+                                      <FormControl>
+                                        <TextareaAutoSize
+                                          {...field}
+                                          placeholder="Write a comment..."
+                                          className={cn(
+                                            "relative mt-0 w-full rounded bg-secondary py-2 pl-3 pr-9 text-sm text-foreground/90 transition",
+                                            "hover:ring-secondary-70 hover:text-foreground",
+                                            "focus-visible:outline-offset-1 focus-visible:outline-primary focus-visible:ring-foreground/60 active:text-foreground/70",
+                                            "focus:outline-none focus:outline-offset-1 focus:outline-primary focus-visible:outline-offset-1 focus-visible:outline-primary"
+                                          )}
+                                          onKeyDown={handleKeyPress}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              </div>
+                              {commentId && (
+                                <div className="flex gap-1 text-xs text-primary">
+                                  <button
+                                    onClick={() => handleReset()}
+                                    type="button"
+                                  >
+                                    Cancel
+                                  </button>
+                                  <span>Esc</span>
+                                </div>
+                              )}
                             </div>
                           </div>
-                        </span>
+                          <button
+                            ref={buttonRef}
+                            type="submit"
+                            className="absolute bottom-6 right-4 text-xl text-primary"
+                          ></button>
+                        </div>
+                      </form>
+                    </Form>
+                  </div>
+                </div>
+              ) : (
+                <div className="relative inline-flex w-full align-middle">
+                  <div className="base-[auto] w-full min-w-0 shrink grow">
+                    <div
+                      className="relative m-1 inline-block max-w-full whitespace-normal break-words rounded bg-secondary text-foreground"
+                      style={{ wordBreak: "break-word" }}
+                    >
+                      <div className="py-2 pl-4 pr-7">
+                        <div className="block pb-[4px] pt-[4px]">
+                          <span
+                            className="break-words"
+                            style={{ wordBreak: "break-word" }}
+                          >
+                            <div
+                              className="text-sm"
+                              style={{ wordBreak: "break-word" }}
+                            >
+                              <div dir="auto" className="text-start font-sans">
+                                {comment.comment}
+                              </div>
+                            </div>
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="absolute -bottom-2 -right-2">
-                    <div className="relative flex items-center gap-1 rounded-full bg-background px-1 shadow">
-                      <div className="flex h-4 w-4 items-center justify-center rounded-full bg-primary">
-                        <AiFillLike size={12} className="text-white" />
+                    <div className="absolute -bottom-2 -right-2">
+                      <div className="relative flex items-center gap-1 rounded-full bg-background px-1 shadow">
+                        {comment.isLiked || comment._count.commentLike > 0 ? (
+                          <>
+                            <div className="flex h-4 w-4 items-center justify-center rounded-full bg-primary">
+                              <AiFillLike size={12} className="text-white" />
+                            </div>
+
+                            <span className="text-sm font-medium text-foreground/70">
+                              {comment._count.commentLike}
+                            </span>
+                          </>
+                        ) : null}
                       </div>
-
-                      <span className="text-sm font-medium text-foreground/70">
-                        4
-                      </span>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
               <div className="ml-1 mt-2 flex gap-2 text-xs font-semibold text-muted-foreground/70">
                 <span className="text-xs text-foreground/70">
                   {dayjs(comment.createdAt).fromNow(true)}
@@ -152,19 +319,74 @@ const CommentItem = (props: CommentItemProps) => {
           )} */}
           {/* {session?.user?.id === comment.userId && ( */}
           <div className="absolute right-5 top-3 self-end">
-            <Button
-              variant="ghost"
-              // type="button"
-              // onClick={handleModalOpen}
-              className="rounded-full p-1 px-2 text-foreground/80 transition hover:bg-secondary/90"
-              aria-label="show post modal"
-            >
-              <BiDotsHorizontalRounded aria-hidden="true" size={22} />
-            </Button>
+            <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  // type="button"
+                  // onClick={handleModalOpen}
+                  onClick={() => setIsOpen((isOpen) => !isOpen)}
+                  className="rounded-full p-1 px-2 text-foreground/80 transition hover:bg-secondary/90"
+                  aria-label="show post modal"
+                >
+                  <BiDotsHorizontalRounded aria-hidden="true" size={22} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <Button
+                    onClick={handleSelectComment}
+                    variant="ghost"
+                    className="w-full cursor-pointer"
+                  >
+                    Edit
+                  </Button>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setIsAlertOpen((isAlertOpen) => !isAlertOpen)
+                      setIsOpen(false)
+                    }}
+                    className="w-full cursor-pointer"
+                  >
+                    Delete
+                  </Button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           {/* )} */}
         </div>
       </div>
+      <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+        <AlertDialogTrigger asChild></AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              comment and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction asChild>
+              <Button
+                className="cursor-pointer"
+                size="sm"
+                disabled={deleteCommentMutation.isPending}
+                onClick={() =>
+                  deleteCommentMutation.mutateAsync({ commentId: comment.id })
+                }
+              >
+                Delete
+              </Button>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }

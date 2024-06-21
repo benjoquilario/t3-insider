@@ -95,6 +95,7 @@ export function useUpdateDeleteMutation(handleOnCallback?: () => void) {
 
       return { previousComment }
     },
+    onSettled: () => queryClient.invalidateQueries({ queryKey }),
   })
 
   return { updatePostMutation, deletePostMutation }

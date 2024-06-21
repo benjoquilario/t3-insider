@@ -67,6 +67,7 @@ export function useLikePostMutation({ postId }: { postId: string }) {
 
       return { previousPost }
     },
+    onSettled: () => queryClient.invalidateQueries({ queryKey }),
   })
 
   const unlikePostMutation = useMutation({
@@ -122,6 +123,7 @@ export function useLikePostMutation({ postId }: { postId: string }) {
 
       return { previousPost }
     },
+    onSettled: () => queryClient.invalidateQueries({ queryKey }),
   })
 
   return { likePostMutation, unlikePostMutation }

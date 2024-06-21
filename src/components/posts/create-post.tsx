@@ -37,9 +37,9 @@ const CreatePostForm = () => {
     store.setIsPostOpen,
   ])
 
-  const [currentPostId, setCurrentPostId] = usePostStore((store) => [
-    store.currentPostId,
-    store.setCurrentPostId,
+  const [selectedPostId, setSelectedPostId] = usePostStore((store) => [
+    store.selectedPostId,
+    store.setSelectedPostId,
   ])
   const isEditing = usePostStore((store) => store.isEditing)
   const setIsEditing = usePostStore((store) => store.setIsEditing)
@@ -51,35 +51,33 @@ const CreatePostForm = () => {
   const handleOnReset = useCallback(() => {
     form.reset()
     setIsEditing(false)
-    setCurrentPostId("")
+    setSelectedPostId("")
     clearDeletedKeys()
     clearDeletedFiles()
-    clearSelectPost()
+    clearSelectedPost()
     setIsPostOpen(false)
   }, [])
 
   const { updatePostMutation, deletePostMutation } =
     useUpdateDeleteMutation(handleOnReset)
   const { createPostMutation } = useCreatePostMutation(handleOnReset)
-  const selectPost = usePostStore((store) => store.selectPost)
-  const clearSelectPost = usePostStore((store) => store.clearSelectPost)
+  const selectedPost = usePostStore((store) => store.selectedPost)
+  const clearSelectedPost = usePostStore((store) => store.clearSelectedPost)
 
   const [deletedFiles, deletedKeys] = usePostStore((store) => [
     store.deletedFiles,
     store.deletedKeys,
   ])
 
-  console.log(currentPostId, isEditing)
-
   useEffect(() => {
     form.setFocus("content")
   }, [form.setFocus])
 
   useEffect(() => {
-    if (currentPostId && selectPost) {
-      form.setValue("content", selectPost.content)
+    if (selectedPostId && selectedPost) {
+      form.setValue("content", selectedPost.content)
     }
-  }, [currentPostId, form.setValue, selectPost])
+  }, [selectedPostId, form.setValue, selectedPost])
 
   const handleOnSubmit = async function (values: IPostValues) {
     let uploadImages
@@ -88,7 +86,7 @@ const CreatePostForm = () => {
       uploadImages = await startUpload(values.selectedFile)
     }
 
-    if (isEditing && currentPostId) {
+    if (isEditing && selectedPostId) {
       updatePostMutation.mutate({
         content: values.content,
         selectedFile: uploadImages
@@ -97,7 +95,7 @@ const CreatePostForm = () => {
               key: image.key,
             }))
           : null,
-        postId: currentPostId,
+        postId: selectedPostId,
         fileIds: deletedFiles,
         deletedKeys,
       })
@@ -162,7 +160,7 @@ const CreatePostForm = () => {
                 <PostUpload
                   control={form.control}
                   setValue={form.setValue}
-                  selectedFile={selectPost.selectedFile}
+                  selectedFile={selectedPost.selectedFile}
                 >
                   <div
                     {...getRootProps()}

@@ -8,6 +8,7 @@ import { useInfiniteQuery } from "@tanstack/react-query"
 import { motion } from "framer-motion"
 import type { User } from "@prisma/client"
 import { ImSpinner8 } from "react-icons/im"
+import { Button } from "@/components/ui/button"
 
 type CreateCommentProps = {
   postId: string
@@ -51,9 +52,26 @@ const CreateComment = (props: CreateCommentProps) => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <CommentItem comment={comment} />
+              <CommentItem comment={comment} postId={postId} />
             </motion.li>
           ))
+        )}
+        {isFetchingNextPage && (
+          <div className="flex items-center justify-center py-4">
+            <ImSpinner8 className="animate-spin text-2xl text-foreground" />
+          </div>
+        )}
+        {!isFetchingNextPage && hasNextPage && (
+          <li className="ml-4">
+            <Button
+              variant="ghost"
+              type="button"
+              onClick={() => fetchNextPage()}
+              className="underline-offset-1 hover:underline"
+            >
+              View more comments
+            </Button>
+          </li>
         )}
       </ul>
     </div>

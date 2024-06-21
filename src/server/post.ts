@@ -20,6 +20,14 @@ export const createPost = async (values: ICreatePost) => {
       userId,
     },
     include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          email: true,
+        },
+      },
       selectedFile: true,
       likePost: true,
     },

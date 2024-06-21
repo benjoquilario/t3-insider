@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useRef } from "react"
+import React, { useRef, useEffect } from "react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import TextareaAutoSize from "react-textarea-autosize"
@@ -39,6 +39,10 @@ const CommentForm = (props: CommentFormProps) => {
 
   const buttonRef = useRef<HTMLButtonElement | null>(null)
   const { createCommentMutation } = useCreateCommentMutation({ postId })
+
+  useEffect(() => {
+    form.setFocus("comment")
+  }, [form.setFocus])
 
   async function handleOnSubmit(data: z.infer<typeof commentSchema>) {
     await createCommentMutation.mutateAsync({

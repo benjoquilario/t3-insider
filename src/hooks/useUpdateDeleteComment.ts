@@ -34,7 +34,7 @@ export function useUpdateDeleteMutation({ postId }: { postId: string }) {
         (oldData) => {
           if (!oldData) return
 
-          const updatedPosts = {
+          const updatedComments = {
             ...oldData,
             pages: oldData.pages.map((page) => {
               const index = page.comments?.findIndex(
@@ -46,17 +46,17 @@ export function useUpdateDeleteMutation({ postId }: { postId: string }) {
               newComments[index] = {
                 ...page.comments[index],
                 updatedAt: new Date(),
-                comment: updatedComment.commentId,
+                comment: updatedComment.comment,
               }
 
               return {
                 ...page,
-                posts: newComments,
+                comments: newComments,
               }
             }),
           }
 
-          return updatedPosts
+          return updatedComments
         }
       )
     },
@@ -82,26 +82,27 @@ export function useUpdateDeleteMutation({ postId }: { postId: string }) {
         (oldData) => {
           if (!oldData) return
 
-          const newPosts = {
+          const newCommens = {
             ...oldData,
             pages: oldData.pages.map((page, i) => {
               const deletedComments = page.comments.filter(
-                (post) => post.id !== deletedPost.commentId
+                (comment) => comment.id !== deletedPost.commentId
               )
 
               return {
                 ...page,
-                posts: deletedComments,
+                comments: deletedComments,
               }
             }),
           }
 
-          return newPosts
+          return newCommens
         }
       )
 
       return { previousComment }
     },
+    onSettled: () => queryClient.invalidateQueries({ queryKey }),
   })
 
   return { updateCommentMutation, deleteCommentMutation }
