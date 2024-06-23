@@ -2,15 +2,20 @@ import db from "@/lib/db"
 import { auth } from "@/auth"
 import { type NextRequest, NextResponse } from "next/server"
 
-export async function GET(req: NextRequest) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { userId: string } }
+) {
+  const userId = params.userId
   const searchParams = req.nextUrl.searchParams
   const limit = searchParams.get("limit")
   const skip = searchParams.get("cursor")
   const session = await auth()
 
-  console.log(session?.user)
-
   const posts = await db.post.findMany({
+    where: {
+      userId,
+    },
     include: {
       user: {
         select: {

@@ -49,9 +49,13 @@ const CommentForm = (props: CommentFormProps) => {
       postId,
       commentText: data.comment,
     })
-
-    console.log(data.comment)
   }
+
+  useEffect(() => {
+    if (form.formState.isSubmitSuccessful) {
+      form.reset()
+    }
+  }, [form])
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && event.shiftKey === false) {
@@ -119,6 +123,7 @@ const CommentForm = (props: CommentFormProps) => {
                 </div>
                 <button
                   ref={buttonRef}
+                  disabled={form.formState.isSubmitting}
                   type="submit"
                   className="absolute bottom-6 right-4 text-xl text-primary"
                 >

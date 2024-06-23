@@ -21,7 +21,9 @@ const CreateButton = () => {
           >
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarFallback>
+                <div className="h-full w-full animate-pulse"></div>
+              </AvatarFallback>
             </Avatar>
           </Link>
         </div>

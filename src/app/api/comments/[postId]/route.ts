@@ -30,6 +30,9 @@ export async function GET(
         select: {
           id: true,
         },
+        where: {
+          userId: session?.user.id,
+        },
       },
       _count: {
         select: {
@@ -54,11 +57,12 @@ export async function GET(
   }
 
   const transformedPosts = comments.map((post) => {
-    const { _count, ...rest } = post
+    const { _count, commentLike, ...rest } = post
     return {
       ...rest,
       _count,
-      isLiked: session ? _count.commentLike > 0 : false,
+      commentLike,
+      isLiked: session ? commentLike.length > 0 : false,
     }
   })
 

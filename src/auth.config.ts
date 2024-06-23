@@ -4,11 +4,6 @@ export const authConfig = {
   session: {
     strategy: "jwt",
   },
-  pages: {
-    error: "/",
-    signIn: "/",
-    signOut: "/",
-  },
   callbacks: {
     jwt({ token, user }) {
       if (user) {

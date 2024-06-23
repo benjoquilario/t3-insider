@@ -20,13 +20,13 @@ model User {
   email           String? @unique
   emailVerified   DateTime?
   image           String?
+  cover           String?
   hashedPassword  String?
   password        String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   sessions        Session[]
   conversationIds String[]
-
 
   accounts        Account[]
   posts           Post[]

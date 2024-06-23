@@ -62,7 +62,7 @@ export function useUpdateDeleteMutation({ postId }: { postId: string }) {
     },
     onSuccess: () => {
       toast({
-        title: "Post successfully updated",
+        title: "Comment successfully updated",
       })
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
@@ -101,6 +101,11 @@ export function useUpdateDeleteMutation({ postId }: { postId: string }) {
       )
 
       return { previousComment }
+    },
+    onSuccess: () => {
+      toast({
+        title: "Comment successfully deleted",
+      })
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   })

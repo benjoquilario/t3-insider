@@ -30,6 +30,12 @@ export const createPost = async (values: ICreatePost) => {
       },
       selectedFile: true,
       likePost: true,
+      _count: {
+        select: {
+          likePost: true,
+          comment: true,
+        },
+      },
     },
   })
 
@@ -136,6 +142,11 @@ export const deletePost = async ({ postId }: { postId: string }) => {
         selectedFile: {
           where: {
             postId: post.id,
+          },
+        },
+        comment: {
+          where: {
+            postId,
           },
         },
       },

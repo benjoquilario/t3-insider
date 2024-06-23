@@ -4,28 +4,25 @@ import { useDropzone } from "@uploadthing/react"
 import { generateClientDropzoneAccept } from "uploadthing/client"
 import { useUploadThing } from "@/lib/uploadthing"
 
-export const usePostUpload = () => {
-  const form = useForm<IPostValues>({
+interface ProfileValues {
+  images: File[]
+}
+
+export const useUploadProfile = () => {
+  const form = useForm<ProfileValues>({
     defaultValues: {
-      content: "",
-      selectedFile: [],
+      images: [],
     },
   })
 
   const [files, setFiles] = useState<File[]>([])
 
-  const { startUpload, permittedFileInfo, isUploading } = useUploadThing(
-    "mediaPost",
-    {
-      onClientUploadComplete: () => {
-        alert("uploaded successfully!")
-      },
-    }
-  )
+  const { startUpload, permittedFileInfo, isUploading } =
+    useUploadThing("mediaPost")
 
   const setImages = useCallback(
     (files: File[]) => {
-      const currentImages = form.getValues("selectedFile")
+      const currentImages = form.getValues("images")
 
       if (files?.length + currentImages?.length > 4) {
         return
@@ -33,10 +30,7 @@ export const usePostUpload = () => {
 
       const imageToVerify = files.slice(0, 4 - currentImages?.length)
 
-      form.setValue("selectedFile", [
-        ...form.getValues("selectedFile"),
-        ...imageToVerify,
-      ])
+      form.setValue("images", [...form.getValues("images"), ...imageToVerify])
     },
     [form.getValues, form.setValue]
   )
@@ -55,7 +49,7 @@ export const usePostUpload = () => {
     ? Object.keys(permittedFileInfo?.config)
     : []
 
-  const selectedImages = form.watch("selectedFile")
+  const selectedImages = form.watch("images")
 
   return { getRootProps, getInputProps, form, startUpload, isUploading }
 }

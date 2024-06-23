@@ -30,9 +30,10 @@ import dayjs from "@/lib/time"
 
 export type PostItemProps = {
   post: IPost<User>
+  userId?: string
 }
 
-const PostItem: React.FC<PostItemProps> = ({ post }) => {
+const PostItem: React.FC<PostItemProps> = ({ post, userId }) => {
   const [isCommentOpen, setIsCommentOpen] = useState(false)
   const setIsPostOpen = usePostStore((store) => store.setIsPostOpen)
   const setSelectedPostId = usePostStore((store) => store.setSelectedPostId)
@@ -42,9 +43,8 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
   const { deletePostMutation } = useUpdateDeleteMutation()
   const { likePostMutation, unlikePostMutation } = useLikePostMutation({
     postId: post.id,
+    userId: userId,
   })
-
-  console.log(post)
 
   const handleUpdatePost = () => {
     setIsPostOpen(true)
@@ -72,7 +72,9 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
         >
           <Avatar>
             <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarFallback>
+              <div className="h-full w-full animate-pulse"></div>
+            </AvatarFallback>
           </Avatar>
         </Link>
         <div className="mr-auto flex flex-col self-center leading-none">
@@ -252,7 +254,8 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
             variant="ghost"
             className={cn(
               "flex h-[35px] w-full items-center justify-center gap-1 text-foreground/60 hover:bg-secondary",
-              "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
+              "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary",
+              isCommentOpen && "bg-secondary"
             )}
             aria-label="Leave a Comment"
           >

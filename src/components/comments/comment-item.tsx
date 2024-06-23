@@ -43,6 +43,7 @@ import TextareaAutoSize from "react-textarea-autosize"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
 import useCommentStore from "@/store/comment"
+import { useLikeCommentMutation } from "@/hooks/useLikeComment"
 
 type CommentItemProps = {
   comment: IComment<User>
@@ -64,6 +65,10 @@ const CommentItem = (props: CommentItemProps) => {
 
   const { deleteCommentMutation, updateCommentMutation } =
     useUpdateDeleteMutation({ postId })
+
+  const { likeCommentMutation, unlikeCommentMutation } = useLikeCommentMutation(
+    { postId, commentId: comment.id }
+  )
 
   const setSelectedComment = useCommentStore(
     (store) => store.setSelectedComment
@@ -120,6 +125,12 @@ const CommentItem = (props: CommentItemProps) => {
 
       handleReset()
     }
+  }
+
+  const handleLikeComment = (isLiked: boolean) => {
+    return !isLiked
+      ? likeCommentMutation.mutate()
+      : unlikeCommentMutation.mutate()
   }
 
   return (
@@ -278,8 +289,11 @@ const CommentItem = (props: CommentItemProps) => {
                 </span>
                 <button
                   type="button"
-                  // onClick={handleLikeComment}
-                  className="underline-offset-1 hover:underline"
+                  onClick={() => handleLikeComment(comment.isLiked)}
+                  className={cn(
+                    "underline-offset-1 hover:underline",
+                    comment.isLiked && "font-bold text-primary"
+                  )}
                 >
                   Like
                 </button>

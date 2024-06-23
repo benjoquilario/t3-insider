@@ -1,62 +1,85 @@
 "use client"
 
-import React from "react"
+import React, { useCallback } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { AiFillCamera } from "react-icons/ai"
 import { cn } from "@/lib/utils"
+import { useDropzone } from "@uploadthing/react"
+import { generateClientDropzoneAccept } from "uploadthing/client"
+import { updateProfilePicture } from "@/server/user"
+import { ImSpinner3 } from "react-icons/im"
+import { useUpdateDataMutation } from "@/hooks/useUpdateDataMutation"
+import { useSession } from "next-auth/react"
+import { useQueryUser } from "@/hooks/queries/useQueryUser"
+import { useUploadThing } from "@/lib/uploadthing"
 
-const CoverPhoto = () => {
+type CoverPhotoProps = {
+  userId?: string
+  photoUrl?: string
+}
+
+const CoverPhoto: React.FC<CoverPhotoProps> = ({ userId, photoUrl }) => {
+  const { updateCoverPhoto } = useUpdateDataMutation({
+    userId,
+  })
+
+  const { startUpload, permittedFileInfo, isUploading } = useUploadThing(
+    "coverPhoto",
+    {
+      onClientUploadComplete: (res) => {
+        alert("uploaded successfully!")
+        updateCoverPhoto.mutate({ url: res[0].url })
+      },
+    }
+  )
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    startUpload(acceptedFiles)
+  }, [])
+
+  const fileTypes = permittedFileInfo?.config
+    ? Object.keys(permittedFileInfo?.config)
+    : []
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: fileTypes ? generateClientDropzoneAccept(fileTypes) : undefined,
+  })
   return (
     <div
       className="relative h-56 w-full overflow-hidden bg-white shadow"
       // {...getRootCoverProps}
     >
-      <form>
-        <div className="h-full w-full">
+      <div className="h-full w-full">
+        <div className="relative h-56 w-full">
           <Image
-            src={"/cover.svg"}
+            src={photoUrl ?? "/cover.svg"}
             alt="profile"
             layout="fill"
             objectFit="cover"
             // containerclassnames="h-56 w-full relative"
           />
-          {/* {draftCoverFile ? ( */}
-          <div className="absolute bottom-3 right-3 flex items-center gap-1">
-            <Button
-              // onClick={() => reset()}
-              type="button"
-              className="flex h-8 w-20 items-center justify-center rounded-md bg-white text-primary transition hover:bg-zinc-100"
-              aria-label="Close upload modal"
-            >
-              Cancel
-            </Button>
-            <Button
-              className="flex h-8 w-20 items-center justify-center rounded-md bg-primary p-2 text-white transition duration-75 ease-in hover:bg-[#8371f8]"
-              aria-label="Save upload profile"
-              type="submit"
-            >
-              Save
-            </Button>
-          </div>
-
-          <Button
-            // onClick={openCover}
-            type="button"
+        </div>
+        <div {...getRootProps()}>
+          <div
             className={cn(
-              "absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center gap-1 rounded-full bg-white px-1 shadow-md md:w-32 md:rounded-md",
+              "absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center gap-1 rounded-full bg-white px-1 text-foreground shadow-md md:w-32 md:rounded-md",
               "hover:bg-zinc-100 active:scale-110",
-              "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-zinc-200 active:text-secondary"
+              "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-zinc-200 active:text-secondary",
+              "cursor-pointer"
             )}
           >
-            <AiFillCamera size={20} />
+            <input {...getInputProps()} disabled={isUploading} />
+            {isUploading ? (
+              <ImSpinner3 size={20} className="animate-spin" />
+            ) : (
+              <AiFillCamera size={20} />
+            )}
             <span className="hidden text-xs md:block">Edit cover photo</span>
-          </Button>
-
-          <input />
-          <input type="file" className="hidden" />
+          </div>
         </div>
-      </form>
+      </div>
     </div>
   )
 }

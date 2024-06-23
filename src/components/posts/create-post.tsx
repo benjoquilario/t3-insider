@@ -86,6 +86,8 @@ const CreatePostForm = () => {
       uploadImages = await startUpload(values.selectedFile)
     }
 
+    console.log(values.selectedFile)
+
     if (isEditing && selectedPostId) {
       updatePostMutation.mutate({
         content: values.content,

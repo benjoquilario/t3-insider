@@ -1,58 +1,100 @@
 "use client"
 
-import React from "react"
+import React, { useState, useCallback, useMemo, useRef } from "react"
 import Image from "next/image"
 import { Button } from "../ui/button"
 import { cn } from "@/lib/utils"
 import { AiFillCamera } from "react-icons/ai"
 import { RiCloseFill } from "react-icons/ri"
+import { UploadButton, useUploadThing } from "@/lib/uploadthing"
+import { useWatch } from "react-hook-form"
+import { useUploadProfile } from "@/hooks/useUploadProfile"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { useDropzone } from "@uploadthing/react"
+import { generateClientDropzoneAccept } from "uploadthing/client"
+import { updateProfilePicture } from "@/server/user"
+import { ImSpinner3 } from "react-icons/im"
+import { useUpdateDataMutation } from "@/hooks/useUpdateDataMutation"
+import { useSession } from "next-auth/react"
+import { useQueryUser } from "@/hooks/queries/useQueryUser"
 
-const ProfilePhoto = () => {
+interface ProfileValues {
+  image: File[]
+}
+
+type ProfilePhotoProps = {
+  photoUrl?: string
+  userId?: string
+}
+
+const ProfilePhoto = (props: ProfilePhotoProps) => {
+  const { photoUrl, userId } = props
+  const { updateProfilePhoto } = useUpdateDataMutation({
+    userId,
+  })
+  const { startUpload, permittedFileInfo, isUploading } = useUploadThing(
+    "profilePicture",
+    {
+      onClientUploadComplete: (res) => {
+        alert("uploaded successfully!")
+        updateProfilePhoto.mutate({ url: res[0].url })
+      },
+    }
+  )
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    startUpload(acceptedFiles)
+  }, [])
+
+  const fileTypes = permittedFileInfo?.config
+    ? Object.keys(permittedFileInfo?.config)
+    : []
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: fileTypes ? generateClientDropzoneAccept(fileTypes) : undefined,
+  })
+
   return (
     <React.Fragment>
-      {/* {draftImageFile ? (
-        <Backdrop> */}
-      <div className="z-20 m-4 h-auto w-full max-w-screen-md rounded-md bg-white shadow-md md:w-2/4">
-        <div className="flex items-center justify-between p-2">
-          <h3 className="p-2 text-base text-black md:text-lg">
-            Update profile picture
-          </h3>
-
-          <Button
-            className="rounded-full bg-[#edf1f5] p-2 text-zinc-700 transition duration-75 ease-in hover:bg-[#e5e8eb]"
-            aria-label="close modal"
-            // onClick={() => handleOnReset()}
-          >
-            <RiCloseFill aria-hidden="true" size={25} />
-          </Button>
-        </div>
-      </div>
-      {/* </Backdrop>
-      ) : null} */}
       <div className="relative -mt-20 flex-shrink-0">
-        <form>
-          <div className="h-[114px] w-[114px] rounded-full">
-            <Image
-              className="relative rounded-full border-4 border-zinc-800 bg-gray-900"
-              src={"/default-image.png"}
-              alt=""
-              objectFit="cover"
-              layout="fill"
-            />
-          </div>
-
-          <Button
-            type="button"
-            // onClick={openImage}
+        <div className="h-[114px] w-[114px] rounded-full">
+          <Image
+            className="relative rounded-full border-4"
+            src={photoUrl ?? "/default-image.png"}
+            alt=""
+            style={{ objectFit: "cover" }}
+            fill
+          />
+        </div>
+        <div {...getRootProps()}>
+          <div
             className={cn(
               "absolute bottom-3 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-white text-primary shadow-md",
-              "hover:bg-zinc-50 hover:text-secondary active:scale-110",
-              "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-zinc-200 active:text-secondary"
+              "hover:text-primary/90 active:scale-110",
+              "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-secondary active:text-secondary",
+              "cursor-pointer"
             )}
           >
-            <AiFillCamera size={20} />
-          </Button>
-        </form>
+            <input
+              {...getInputProps()}
+              disabled={updateProfilePhoto.isPending}
+            />
+            {isUploading ? (
+              <ImSpinner3 size={20} className="animate-spin" />
+            ) : (
+              <AiFillCamera size={20} />
+            )}
+          </div>
+        </div>
       </div>
     </React.Fragment>
   )

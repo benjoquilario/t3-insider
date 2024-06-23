@@ -2,7 +2,9 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import QueryProvider from "@/components/query-provider"
+import AuthProvider from "@/components/auth-provider"
 import { Toaster } from "@/components/ui/toaster"
+import HolyLoader from "holy-loader"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -19,7 +21,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <QueryProvider>{children}</QueryProvider>
+        <HolyLoader
+          color="#6d28d9"
+          height="4px"
+          speed={250}
+          easing="linear"
+          showSpinner
+        />
+        <AuthProvider>
+          <QueryProvider>{children}</QueryProvider>
+        </AuthProvider>
         <Toaster />
       </body>
     </html>
