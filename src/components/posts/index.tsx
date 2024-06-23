@@ -1,44 +1,52 @@
-import PostItem from "./post-item"
-import dynamic from "next/dynamic"
-import React from "react"
-import type { Post as PostType, User } from "@/types/types"
-import usePostStore from "@/store/post"
-import { InView } from "react-intersection-observer"
-import { ToastContainer } from "react-toastify"
-import Delete from "@/components/delete"
-import PostSkeleton from "../skeleton/post-skeleton"
-import { useInfinitePostsQuery } from "@/lib/hooks/useQuery"
+"use client"
 
-const CreateForm = dynamic(() => import("@/components/form/post"), {
-  ssr: false,
-})
+import React from "react"
+import PostItem from "./post-item"
+import { useInfiniteQuery } from "@tanstack/react-query"
+import { QUERY_KEYS } from "@/lib/queriesKey"
+import PostSkeleton from "@/components/skeleton/post-skeleton"
+import { InView } from "react-intersection-observer"
+import { motion, AnimatePresence } from "framer-motion"
+import type { User } from "@prisma/client"
 
 const Posts = () => {
-  const postOpen = usePostStore((store) => store.postOpen)
-
   const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
+    data: posts,
+    isPending,
     fetchNextPage,
-    isError,
-  } = useInfinitePostsQuery()
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
+    queryFn: ({ pageParam }) =>
+      fetch(`/api/posts?limit=${3}&cursor=${pageParam}`).then((res) =>
+        res.json()
+      ),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextSkip,
+    refetchOnWindowFocus: false,
+  })
+
+  console.log(posts)
 
   return (
-    <React.Fragment>
-      {isError && <div>Error</div>}
-      <Delete />
-      {postOpen && <CreateForm />}
-      <ul className="space-y-3">
-        {isLoading
+    <ul className="space-y-3">
+      <AnimatePresence>
+        {isPending
           ? Array.from(Array(2), (_, i) => <PostSkeleton key={i} />)
-          : data?.pages.map((page) =>
-              page.posts.map((post) => (
-                <PostItem post={post as PostType<User>} key={post.id} />
+          : posts?.pages.map((page) =>
+              page?.posts.map((post: IPost<User>) => (
+                <motion.li
+                  key={post.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="relative z-10 flex flex-col gap-1 overflow-hidden rounded-md shadow"
+                >
+                  <PostItem key={post.id} post={post} />
+                </motion.li>
               ))
             )}
-
         <InView
           fallbackInView
           onChange={async (InView) => {
@@ -54,9 +62,8 @@ const Posts = () => {
             </li>
           )}
         </InView>
-      </ul>
-      <ToastContainer />
-    </React.Fragment>
+      </AnimatePresence>
+    </ul>
   )
 }
 

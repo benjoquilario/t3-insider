@@ -1,303 +1,304 @@
-import Button from "@/components/shared/button"
+"use client"
+
+import React, { useState, useCallback } from "react"
+import Link from "next/link"
+import { cn } from "@/lib/utils"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import { BiDotsHorizontalRounded } from "react-icons/bi"
 import { AiFillLike, AiOutlineLike } from "react-icons/ai"
-import { ImSpinner8 } from "react-icons/im"
 import { BiComment } from "react-icons/bi"
 import { IoMdShareAlt } from "react-icons/io"
-import { useSession } from "next-auth/react"
-import Link from "next/link"
-import classNames from "classnames"
-import { motion } from "framer-motion"
-import Image from "@/components/shared/image"
+import Comments from "../comments"
 import {
-  variants,
-  getImageHeightRatio,
-  getImageWidthRatio,
-} from "@/lib/utils/index"
-import type { Post as PostType, User } from "@/types/types"
-import Comments from "@/components/comments/"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import usePostStore from "@/store/post"
-import ModalPost from "@/components/modal/modal-post"
-import { trpc } from "@/lib/utils/trpc"
-import useClickOutside from "@/lib/hooks/useClickOutside"
-import { useRouter } from "next/router"
-import dayjs from "@/lib/utils/time"
-import React, { useCallback, useRef, useState } from "react"
+import type { User } from "@prisma/client"
+import { useUpdateDeleteMutation } from "@/hooks/useUpdateDeletePost"
+import Image from "next/image"
+import { useLikePostMutation } from "@/hooks/useLikePost"
+import { getImageHeightRatio, getImageWidthRatio } from "@/lib/utils"
+import { VscCommentDiscussion } from "react-icons/vsc"
+import { BiSolidLike } from "react-icons/bi"
+import dayjs from "@/lib/time"
+import { useSession } from "next-auth/react"
 
-type PostItemProps = {
-  post: PostType<User>
+export type PostItemProps = {
+  post: IPost<User>
+  userId?: string
 }
 
-const PostItem: React.FC<PostItemProps> = ({ post }) => {
-  const utils = trpc.useContext()
-  const router = useRouter()
-  const ref = useRef<HTMLDivElement | null>(null)
+const PostItem = (props: PostItemProps) => {
+  const { post, userId } = props
   const { data: session } = useSession()
   const [isCommentOpen, setIsCommentOpen] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isLiked, setIsLiked] = useState(post.isLike)
-  const setPostOpen = usePostStore((store) => store.setPostOpen)
-  const setCurrentPostId = usePostStore((store) => store.setCurrentPostId)
-  const setIsEditing = usePostStore((store) => store.setIsEditing)
+  const setIsPostOpen = usePostStore((store) => store.setIsPostOpen)
+  const setSelectedPostId = usePostStore((store) => store.setSelectedPostId)
   const setSelectedPost = usePostStore((store) => store.setSelectedPost)
-  const setIsModalDeletePostOpen = usePostStore(
-    (store) => store.setIsModalDeletePostOpen
-  )
+  const setIsEditing = usePostStore((store) => store.setIsEditing)
 
-  const { mutate: mutateLike, isLoading: isLikeLoading } =
-    trpc.like.likePost.useMutation({
-      onError: (e) => console.log(e.message),
-      onSuccess: async () => {
-        await utils.post.getPosts.invalidate()
-      },
-    })
+  const { deletePostMutation } = useUpdateDeleteMutation(userId)
+  const { likePostMutation, unlikePostMutation } = useLikePostMutation({
+    postId: post.id,
+    userId: userId,
+  })
 
   const handleUpdatePost = () => {
-    setPostOpen(true)
-    setCurrentPostId(post.id)
+    setIsPostOpen(true)
+    setSelectedPostId(post.id)
     setSelectedPost({
       id: post.id,
-      message: post.message,
+      content: post.content,
       selectedFile: post.selectedFile,
     })
     setIsEditing(true)
-    setIsModalOpen(false)
   }
 
-  const handleLikePost = () => {
-    mutateLike({ postId: post.id, isLiked: !isLiked })
-    setIsLiked(!isLiked)
-  }
-
-  const handleDeletePost = () => {
-    setIsModalOpen(false)
-    setIsModalDeletePostOpen(true)
-    setCurrentPostId(post.id)
-  }
-
-  const hideModalPost = useCallback(() => setIsModalOpen(false), [])
-
-  useClickOutside(ref, () => hideModalPost())
-
-  const handleOpenModal = () => {
-    setIsModalOpen(!isModalOpen)
+  const handleLikePost = (isLiked: boolean) => {
+    return !isLiked ? likePostMutation.mutate() : unlikePostMutation.mutate()
   }
 
   return (
-    <motion.li
-      initial="hidden"
-      variants={variants}
-      animate="visible"
-      exit="hidden"
-      className="relative z-10 flex flex-col gap-1 overflow-hidden rounded-md bg-white shadow "
-    >
+    <>
       <div className="flex gap-3 p-3">
         <Link
-          href={`/profile/${post.userId}`}
-          aria-label={post.user.name}
-          className={classNames(
-            "rounded-full ring-primary ring-offset-1 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary active:ring"
+          href={`/profile/${post.user.id}`}
+          className={cn(
+            "focus-visible:outline-offset-3 rounded-full ring-primary ring-offset-1 focus-visible:outline-primary focus-visible:ring-primary active:ring"
           )}
         >
-          <div className="relative h-11 w-11">
-            <Image
-              src={post.user.image || "/default-image.png"}
-              alt={post.user.name}
-              className="mx-0 rounded-full"
-              layout="fill"
-              objectFit="cover"
+          <Avatar>
+            <AvatarImage
+              src={post.user.image ?? "/default-image.png"}
+              alt={post.user.name ?? ""}
             />
-          </div>
+            <AvatarFallback>
+              <div className="h-full w-full animate-pulse"></div>
+            </AvatarFallback>
+          </Avatar>
         </Link>
         <div className="mr-auto flex flex-col self-center leading-none">
           <Link
-            href={`/profile/${post.userId}`}
-            className={classNames(
-              "block rounded-full text-base font-semibold capitalize text-zinc-900",
-              "ring-primary ring-offset-1 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary active:ring"
+            href={`/profile/${post.user.id}`}
+            className={cn(
+              "block font-medium capitalize text-foreground/90 underline-offset-1 hover:underline"
             )}
-            aria-label={post.user.name}
           >
-            {post.name}
+            {post.user.name}
           </Link>
-          <span className="text-xs text-zinc-700">
+          <span className="text-xs text-muted-foreground/70">
             {dayjs(post.createdAt).fromNow(true)}
           </span>
         </div>
-        {session?.user?.id === post.userId && (
-          <div ref={ref} className="self-end">
-            <div>
-              <Button
-                type="button"
-                onClick={handleOpenModal}
-                className={classNames(
-                  "rounded-full p-1 text-zinc-800 hover:bg-zinc-100 hover:text-zinc-900 active:scale-110 active:bg-zinc-300",
-                  "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
-                )}
-                aria-label="open modal post"
-              >
-                <BiDotsHorizontalRounded aria-hidden="true" size={26} />
-              </Button>
-            </div>
-            {isModalOpen && (
-              <ModalPost
-                handleEdit={handleUpdatePost}
-                handleDelete={handleDeletePost}
-              />
-            )}
+        {post.user.id === session?.user.id && (
+          <div className="self-end">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  type="button"
+                  className={cn(
+                    "rounded-full p-2 text-foreground/80 hover:bg-secondary/40 hover:text-foreground/90 active:scale-110 active:bg-secondary/30",
+                    "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
+                  )}
+                  aria-label="open modal post"
+                >
+                  <BiDotsHorizontalRounded aria-hidden="true" size={26} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <Button
+                    variant="ghost"
+                    className="w-full cursor-pointer"
+                    onClick={handleUpdatePost}
+                  >
+                    Edit
+                  </Button>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Button
+                    onClick={() =>
+                      deletePostMutation.mutate({
+                        postId: post.id,
+                      })
+                    }
+                    variant="ghost"
+                    className="w-full cursor-pointer"
+                  >
+                    Delete
+                  </Button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         )}
       </div>
       <div className="px-3 font-normal md:px-5">
-        <span className="break-words text-base">{post.message}</span>
-      </div>
-      {post.selectedFile.length !== 0 && (
-        <div
-          className={classNames(
-            "relative grid gap-1",
-            post.selectedFile.length > 1 && "!grid-cols-2"
-          )}
-        >
-          {post.selectedFile.map((image, index) => {
-            const widthRatio = getImageWidthRatio(
-              post.selectedFile.length,
-              index
-            )
-            const heightRatio = getImageHeightRatio(
-              post.selectedFile.length,
-              index
-            )
+        <span className="break-words text-base">{post.content}</span>
+        {post.selectedFile.length !== 0 && (
+          <div
+            className={cn(
+              "relative grid gap-1",
+              post.selectedFile.length > 1 && "!grid-cols-2"
+            )}
+          >
+            {post.selectedFile.map((image, index) => {
+              const widthRatio = getImageWidthRatio(
+                post.selectedFile.length,
+                index
+              )
+              const heightRatio = getImageHeightRatio(
+                post.selectedFile.length,
+                index
+              )
 
-            return (
-              <div
-                key={image.id}
-                className={classNames(
-                  "relative cursor-pointer overflow-hidden rounded",
-                  post.selectedFile.length === 3 && index === 0 && "col-span-2",
-                  post.selectedFile.length === 3 && index === 2 && "self-end"
-                )}
-              >
+              return (
                 <div
-                  className="relative h-full cursor-pointer active:opacity-80"
-                  tabIndex={0}
-                  role="button"
-                  aria-label={image.id}
-                  onClick={() => router.push(`/post/${post.id}`)}
+                  key={index + 1}
+                  className={cn(
+                    "relative cursor-pointer overflow-hidden rounded",
+                    post.selectedFile.length === 3 &&
+                      index === 0 &&
+                      "col-span-2",
+                    post.selectedFile.length === 3 && index === 2 && "self-end"
+                  )}
                 >
-                  <Image
-                    src={image.url}
-                    layout="responsive"
-                    height={heightRatio}
-                    width={widthRatio}
-                    objectFit="cover"
-                    alt={image.id}
-                    unoptimized
-                    quality={100}
-                    containerclassnames="opacity-100 h-full"
-                  />
+                  <div
+                    className="relative h-full cursor-pointer active:opacity-80"
+                    tabIndex={0}
+                    role="button"
+                  >
+                    <div className="h-60 w-full md:h-96">
+                      <Image
+                        src={image.url}
+                        style={{ objectFit: "cover" }}
+                        alt={image.url}
+                        fill
+                        unoptimized
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
+              )
+            })}
+          </div>
+        )}
+      </div>
+
       <div className="mt-2 flex items-center justify-between px-5">
-        <div className="flex items-center gap-1 text-sm text-black">
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary">
-            <AiFillLike aria-hidden size={13} className="text-white" />
+        <div className="flex items-center gap-1 text-sm text-foreground">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary">
+            <BiSolidLike
+              aria-hidden
+              size={14}
+              className="text-primary-foreground"
+            />
           </span>
-          {post._count.likes !== 0 && (
-            <React.Fragment>
-              {isLikeLoading ? (
-                <ImSpinner8 aria-hidden className="h-3 w-3 animate-spin" />
-              ) : (
-                <span className=" font-normal text-zinc-800">
-                  {post._count.likes}
-                </span>
-              )}
-            </React.Fragment>
-          )}
+
+          <span className="font-medium text-foreground/80">
+            {post._count.likePost}
+          </span>
         </div>
-        <div className="flex gap-1 text-sm font-semibold text-zinc-500">
+        <div className="flex gap-1 text-sm font-semibold text-muted-foreground/80">
           <span>{post._count.comment}</span>
-          <BiComment aria-hidden size={20} />
+          <VscCommentDiscussion aria-hidden size={20} />
         </div>
       </div>
-      <ul className="rou mx-1 mt-1 flex justify-between rounded-t-md border-t border-zinc-200 font-light">
+      <ul className="rou mx-1 mt-1 flex justify-between rounded-t-md border-t border-l-secondary/40 font-light">
         <li className="w-full flex-1 py-1">
           <Button
             type="button"
-            className={classNames(
-              "flex h-[35px] w-full items-center justify-center gap-1 rounded-md text-zinc-600	hover:bg-zinc-100 active:scale-110",
+            className={cn(
+              "text-muted-foreground-600 flex h-[35px] w-full items-center justify-center gap-1 rounded-md hover:bg-secondary active:scale-110",
               "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
             )}
+            variant="ghost"
             aria-label="Like Post"
-            onClick={handleLikePost}
+            onClick={() => handleLikePost(post.isLiked)}
           >
-            {isLiked ? (
-              <React.Fragment>
-                <motion.span>
-                  <AiFillLike
-                    aria-hidden="true"
-                    size={21}
-                    className="text-primary"
-                  />
-                </motion.span>
-                <span className={classNames("text-sm font-bold text-primary")}>
-                  Like
-                </span>
-              </React.Fragment>
+            {post.isLiked ? (
+              <span>
+                <AiFillLike
+                  aria-hidden="true"
+                  size={21}
+                  className="text-primary"
+                />
+              </span>
             ) : (
-              <React.Fragment>
+              <span>
                 <AiOutlineLike
                   aria-hidden="true"
-                  size={20}
-                  className="text-zinc-900"
+                  size={21}
+                  className="text-foreground"
                 />
-                <span
-                  className={classNames("text-sm font-semibold text-zinc-800")}
-                >
-                  Like
-                </span>
-              </React.Fragment>
+              </span>
             )}
+
+            <span
+              className={cn(
+                "text-sm",
+                post.isLiked
+                  ? "font-bold text-primary"
+                  : "font-medium text-foreground"
+              )}
+            >
+              Like
+            </span>
           </Button>
         </li>
 
         <li className="w-full flex-1 py-1">
           <Button
-            type="button"
+            // type="button"
             onClick={() => setIsCommentOpen(true)}
-            className={classNames(
-              "flex h-[35px] w-full items-center justify-center gap-1 text-zinc-600 hover:bg-zinc-100",
-              "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
+            variant="ghost"
+            className={cn(
+              "flex h-[35px] w-full items-center justify-center gap-1 text-foreground/60 hover:bg-secondary",
+              "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary",
+              isCommentOpen && "bg-secondary"
             )}
             aria-label="Leave a Comment"
           >
-            <BiComment aria-hidden="true" size={20} className="text-zinc-900" />
-            <span className="text-sm font-semibold text-zinc-800">Comment</span>
+            <VscCommentDiscussion
+              aria-hidden="true"
+              size={20}
+              className="text-foreground/90"
+            />
+            <span className="text-foreground-80 text-sm font-semibold">
+              Comment
+            </span>
           </Button>
         </li>
         <li className="w-full flex-1 py-1">
           <Button
+            variant="ghost"
             type="button"
             aria-label="Share a post"
-            className={classNames(
-              "flex h-[35px] w-full items-center justify-center gap-1 rounded-md text-zinc-600 hover:bg-zinc-100 ",
+            className={cn(
+              "flex h-[35px] w-full items-center justify-center gap-1 rounded-md text-foreground/60 hover:bg-secondary",
               "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
             )}
           >
             <IoMdShareAlt
               aria-hidden="true"
               size={20}
-              className="text-zinc-900"
+              className="text-foreground/90"
             />
-            <span className="text-sm font-semibold text-zinc-800">Share</span>
+            <span className="text-sm font-semibold text-foreground/80">
+              Share
+            </span>
           </Button>
         </li>
       </ul>
       {isCommentOpen && <Comments postId={post.id} />}
-    </motion.li>
+    </>
   )
 }
 

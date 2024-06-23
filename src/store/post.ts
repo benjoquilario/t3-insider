@@ -1,64 +1,63 @@
 import { create } from "zustand"
-import type { SelectedFileType } from "@/types/types"
 
-interface SelectedPost {
+interface ISelectPost {
   id: string
-  message: string
-  selectedFile: SelectedFileType[]
+  content: string
+  selectedFile: ISelectedFile[]
 }
 
-interface InitialState {
-  postOpen: boolean
-  currentPostId: string
-  isEditing: boolean
-  isModalDeletePostOpen: boolean
-  deleteImages: string[]
-  isRemove: boolean
-  selectedPost: SelectedPost
-  setSelectedPost: (post: SelectedPost) => void
+interface InitialPost {
+  isPostOpen: boolean
+  setIsPostOpen: (isPostOpen: boolean) => void
+  selectedPostId: string
+  setSelectedPostId: (currentPostId: string) => void
+  selectedPost: {
+    id: string
+    content: string
+    selectedFile: ISelectedFile[]
+  }
   clearSelectedPost: () => void
-  setIsRemove: (action: boolean) => void
-  setDeleteImages: (id: string) => void
-  clearDeletedImages: () => void
-  setIsModalDeletePostOpen: (action: boolean) => void
-  setIsEditing: (action: boolean) => void
-  setPostOpen: (action: boolean) => void
-  setCurrentPostId: (id: string) => void
+  setSelectedPost: (selectPost: ISelectPost) => void
+  isEditing: boolean
+  setIsEditing: (isEditing: boolean) => void
+  deletedFiles: string[]
+  setDeletedFiles: (id: string) => void
+  clearDeletedFiles: () => void
+  deletedKeys: string[]
+  setDeletedKeys: (key: string) => void
+  clearDeletedKeys: () => void
 }
 
-const usePostStore = create<InitialState>((set) => ({
-  postOpen: false,
-  currentPostId: "",
-  isEditing: false,
-  isModalDeletePostOpen: false,
-  deleteImages: [],
-  isRemove: false,
+const usePostStore = create<InitialPost>((set) => ({
+  isPostOpen: false,
+  setIsPostOpen: (isPostOpen) => set({ isPostOpen }),
+  selectedPostId: "",
+  setSelectedPostId: (selectedPostId) => set({ selectedPostId }),
   selectedPost: {
     id: "",
-    message: "",
+    content: "",
     selectedFile: [],
   },
-  setSelectedPost: (post: SelectedPost) => set({ selectedPost: post }),
+  deletedKeys: [],
+  setDeletedKeys: (key) =>
+    set((state) => ({ deletedKeys: [key, ...state.deletedKeys] })),
+  clearDeletedKeys: () => set({ deletedKeys: [] }),
+  deletedFiles: [],
+  setDeletedFiles: (id) =>
+    set((state) => ({ deletedFiles: [id, ...state.deletedFiles] })),
+  clearDeletedFiles: () => set({ deletedFiles: [] }),
+  setSelectedPost: (selectedPost) => set({ selectedPost }),
   clearSelectedPost: () =>
     set({
       selectedPost: {
         id: "",
-        message: "",
+        content: "",
         selectedFile: [],
       },
     }),
-  setIsRemove: (action: boolean) => set({ isRemove: action }),
-  setDeleteImages: (id) => {
-    set((state) => ({
-      deleteImages: [id, ...state.deleteImages],
-    }))
-  },
-  clearDeletedImages: () => set({ deleteImages: [] }),
-  setIsModalDeletePostOpen: (action: boolean) =>
-    set({ isModalDeletePostOpen: action }),
-  setIsEditing: (action: boolean) => set({ isEditing: action }),
-  setCurrentPostId: (id: string) => set({ currentPostId: id }),
-  setPostOpen: (action: boolean) => set({ postOpen: action }),
+
+  isEditing: false,
+  setIsEditing: (isEditing) => set({ isEditing }),
 }))
 
 export default usePostStore

@@ -1,29 +1,37 @@
 import { create } from "zustand"
 
-interface InitialState {
+interface ISelectComment {
+  comment: string
   commentId: string
-  replyId: string
-  replyComment: string
-  commentMessage: string
-  isCommentModalOpen: boolean
-  setIsCommentModalOpen: (arg: boolean) => void
-  setCommentMessage: (message: string) => void
-  setReplyComment: (reply: string) => void
-  setReplyId: (id: string) => void
-  setCommentId: (id: string) => void
 }
 
-const useCommentStore = create<InitialState>((set) => ({
+interface IInitialComment {
+  selectedComment: {
+    commentId: string
+    comment: string
+  }
+  commentId: string
+  setCommentId: (commentId: string) => void
+  clearSelectedComment: () => void
+  setSelectedComment: (selectedComment: ISelectComment) => void
+}
+
+const useCommentStore = create<IInitialComment>((set) => ({
+  selectedComment: {
+    commentId: "",
+    comment: "",
+  },
   commentId: "",
-  replyId: "",
-  replyComment: "",
-  commentMessage: "",
-  isCommentModalOpen: false,
-  setIsCommentModalOpen: (arg: boolean) => set({ isCommentModalOpen: arg }),
-  setCommentMessage: (message: string) => set({ commentMessage: message }),
-  setReplyComment: (reply: string) => set({ replyComment: reply }),
-  setReplyId: (id: string) => set({ replyId: id }),
-  setCommentId: (id: string) => set({ commentId: id }),
+  setCommentId: (commentId) => set({ commentId }),
+  clearSelectedComment: () =>
+    set({
+      selectedComment: {
+        commentId: "",
+        comment: "",
+      },
+      commentId: "",
+    }),
+  setSelectedComment: (selectedComment) => set({ selectedComment }),
 }))
 
 export default useCommentStore
