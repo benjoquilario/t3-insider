@@ -9,39 +9,12 @@ import ProfilePhoto from "@/components/profile/profile-photo"
 import CoverPhoto from "@/components/profile/cover-photo"
 import { useSession } from "next-auth/react"
 import { useQueryUser } from "@/hooks/queries/useQueryUser"
-import PostSkeleton from "@/components/skeleton/post-skeleton"
-import { InView } from "react-intersection-observer"
-import { motion, AnimatePresence } from "framer-motion"
-import { QUERY_KEYS } from "@/lib/queriesKey"
-import { useInfiniteQuery } from "@tanstack/react-query"
-import PostItem from "@/components/posts/post-item"
-import type { User } from "@prisma/client"
 import ProfileSkeleton from "@/components/skeleton/profile-skeleton"
-import CreateButton from "@/components/posts/create-buttons"
+import TabsProfile from "@/components/profile/tabs"
 
 const Profile = ({ params }: { params: { userId: string } }) => {
   const userId = params.userId
-  const { data: session } = useSession()
-  const { data: currentUser, isPending: isUserLoading } = useQueryUser(
-    session?.user.id
-  )
-
-  const {
-    data: posts,
-    isPending,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
-    queryKey: [QUERY_KEYS.GET_INFINITE_POSTS, userId],
-    queryFn: ({ pageParam }) =>
-      fetch(`/api/posts/${userId}?limit=${3}&cursor=${pageParam}`).then((res) =>
-        res.json()
-      ),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextSkip,
-    refetchOnWindowFocus: false,
-  })
+  const { data: currentUser, isPending: isUserLoading } = useQueryUser()
 
   return (
     <Layout>
@@ -52,16 +25,13 @@ const Profile = ({ params }: { params: { userId: string } }) => {
             <ProfileSkeleton />
           ) : (
             <div className="mb-2 mt-0">
-              <CoverPhoto
-                photoUrl={currentUser?.cover!}
-                userId={session?.user.id}
-              />
+              <CoverPhoto userId={userId} photoUrl={currentUser?.cover!} />
               <div className="space-y-4">
                 <div className="flex flex-col justify-center bg-white shadow md:flex-row md:justify-between">
                   <div className="flex flex-col items-center justify-center gap-3 px-5 pb-2 pt-2 md:flex-row md:pb-5">
                     <ProfilePhoto
+                      userId={userId}
                       photoUrl={currentUser?.image!}
-                      userId={session?.user.id}
                     />
                     <div className="text-center sm:text-left">
                       <div>
@@ -113,41 +83,7 @@ const Profile = ({ params }: { params: { userId: string } }) => {
               </div>
             </div>
           )}
-          {userId === session?.user.id && <CreateButton />}
-          <ul className="space-y-3">
-            <AnimatePresence>
-              {isPending
-                ? Array.from(Array(2), (_, i) => <PostSkeleton key={i} />)
-                : posts?.pages.map((page) =>
-                    page?.posts.map((post: IPost<User>) => (
-                      <motion.li
-                        key={post.id}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="relative z-10 flex flex-col gap-1 overflow-hidden rounded-md shadow"
-                      >
-                        <PostItem key={post.id} post={post} userId={userId} />
-                      </motion.li>
-                    ))
-                  )}
-              <InView
-                fallbackInView
-                onChange={async (InView) => {
-                  if (InView && hasNextPage && !isFetchingNextPage) {
-                    await fetchNextPage()
-                  }
-                }}
-              >
-                {({ ref }) => (
-                  <li ref={ref} className="mt-4 w-full">
-                    {isFetchingNextPage &&
-                      Array.from(Array(2), (_, i) => <PostSkeleton key={i} />)}
-                  </li>
-                )}
-              </InView>
-            </AnimatePresence>
-          </ul>
+          <TabsProfile userId={userId} />
         </div>
       </Section>
     </Layout>

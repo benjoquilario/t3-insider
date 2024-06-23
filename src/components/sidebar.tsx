@@ -10,8 +10,7 @@ import { useQueryUser } from "@/hooks/queries/useQueryUser"
 import { useSession } from "next-auth/react"
 
 const SideBar = () => {
-  const { data: session } = useSession()
-  const { data: currentUser, isPending } = useQueryUser(session?.user.id)
+  const { data: currentUser, isPending } = useQueryUser()
 
   return (
     <div className="sticky top-0">

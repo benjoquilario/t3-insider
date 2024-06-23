@@ -1,15 +1,19 @@
 "use client"
 
-import React from "react"
+import React, { useState } from "react"
 import { IoMdArrowDropdown } from "react-icons/io"
-import { BiBookmark } from "react-icons/bi"
-import { BsBell } from "react-icons/bs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import UserItem from "./user-item"
 import { cn } from "@/lib/utils"
 
 const Users = () => {
+  const [isOpen, setIsOpen] = useState(false)
+
+  const toggleDropDown = () => {
+    setIsOpen(!isOpen)
+  }
+
   return (
     <div className="sticky top-0 pt-3">
       <div className="relative flex items-center justify-end gap-2">
@@ -20,14 +24,14 @@ const Users = () => {
             ) : ( */}
             <Button
               variant="secondary"
-              // onClick={toggleDropDown}
+              onClick={toggleDropDown}
               className="w-18 flex h-14 items-center justify-center rounded-full hover:opacity-90 active:scale-95"
               aria-label="dropdown profile"
             >
               <div
                 className={cn(
-                  "transition-transform duration-200"
-                  // isOpen && "rotate-180"
+                  "transition-transform duration-200",
+                  isOpen && "rotate-180"
                 )}
               >
                 <IoMdArrowDropdown aria-hidden="true" size={20} />
@@ -46,21 +50,19 @@ const Users = () => {
         </div>
       </div>
       <div className="mt-8">
-        <aside className="dark:bg-primary-dark-200 rounded-md bg-white shadow">
-          <h2 className="font-poppins px-5 py-3 text-sm font-semibold">
-            Trends this week
-          </h2>
+        <aside className="rounded-md shadow">
+          <h2 className="px-5 py-3 text-sm font-semibold">Trends this week</h2>
           <a className="block" href="/tag/trpc">
-            <div className="dark:hover:bg-primary-dark-300 cursor-pointer px-5 py-3 hover:bg-blue-50">
+            <div className="cursor-pointer px-5 py-3 hover:bg-secondary">
               <p className="text-md mb-2 font-bold">#trpc</p>
-              <p className="dark:text-primary-dark-600 text-xs font-medium text-zinc-400">
+              <p className="text-xs font-medium text-muted-foreground/80">
                 1 posts
               </p>
             </div>
           </a>
         </aside>
         <aside className="mt-2">
-          <div className="flex w-full flex-col justify-center rounded-xl border-t border-zinc-200 py-3">
+          <div className="flex w-full flex-col justify-center rounded-xl border border-t py-3">
             <p className="text-md text-center font-bold text-zinc-800">
               Who to follow
             </p>
@@ -84,6 +86,7 @@ const Users = () => {
                   </Button>
                 </li>
               )} */}
+              {}
               <UserItem />
               <UserItem />
               <UserItem />

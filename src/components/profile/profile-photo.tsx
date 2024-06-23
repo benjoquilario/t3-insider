@@ -32,14 +32,13 @@ interface ProfileValues {
 
 type ProfilePhotoProps = {
   photoUrl?: string
-  userId?: string
+  userId: string
 }
 
 const ProfilePhoto = (props: ProfilePhotoProps) => {
   const { photoUrl, userId } = props
-  const { updateProfilePhoto } = useUpdateDataMutation({
-    userId,
-  })
+  const { data: session } = useSession()
+  const { updateProfilePhoto } = useUpdateDataMutation()
   const { startUpload, permittedFileInfo, isUploading } = useUploadThing(
     "profilePicture",
     {
@@ -75,26 +74,28 @@ const ProfilePhoto = (props: ProfilePhotoProps) => {
             fill
           />
         </div>
-        <div {...getRootProps()}>
-          <div
-            className={cn(
-              "absolute bottom-3 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-white text-primary shadow-md",
-              "hover:text-primary/90 active:scale-110",
-              "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-secondary active:text-secondary",
-              "cursor-pointer"
-            )}
-          >
-            <input
-              {...getInputProps()}
-              disabled={updateProfilePhoto.isPending}
-            />
-            {isUploading ? (
-              <ImSpinner3 size={20} className="animate-spin" />
-            ) : (
-              <AiFillCamera size={20} />
-            )}
+        {userId === session?.user.id && (
+          <div {...getRootProps()}>
+            <div
+              className={cn(
+                "absolute bottom-3 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-white text-primary shadow-md",
+                "hover:text-primary/90 active:scale-110",
+                "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-secondary active:text-secondary",
+                "cursor-pointer"
+              )}
+            >
+              <input
+                {...getInputProps()}
+                disabled={updateProfilePhoto.isPending}
+              />
+              {isUploading ? (
+                <ImSpinner3 size={20} className="animate-spin" />
+              ) : (
+                <AiFillCamera size={20} />
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </React.Fragment>
   )

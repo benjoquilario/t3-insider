@@ -27,20 +27,23 @@ import { getImageHeightRatio, getImageWidthRatio } from "@/lib/utils"
 import { VscCommentDiscussion } from "react-icons/vsc"
 import { BiSolidLike } from "react-icons/bi"
 import dayjs from "@/lib/time"
+import { useSession } from "next-auth/react"
 
 export type PostItemProps = {
   post: IPost<User>
   userId?: string
 }
 
-const PostItem: React.FC<PostItemProps> = ({ post, userId }) => {
+const PostItem = (props: PostItemProps) => {
+  const { post, userId } = props
+  const { data: session } = useSession()
   const [isCommentOpen, setIsCommentOpen] = useState(false)
   const setIsPostOpen = usePostStore((store) => store.setIsPostOpen)
   const setSelectedPostId = usePostStore((store) => store.setSelectedPostId)
   const setSelectedPost = usePostStore((store) => store.setSelectedPost)
   const setIsEditing = usePostStore((store) => store.setIsEditing)
 
-  const { deletePostMutation } = useUpdateDeleteMutation()
+  const { deletePostMutation } = useUpdateDeleteMutation(userId)
   const { likePostMutation, unlikePostMutation } = useLikePostMutation({
     postId: post.id,
     userId: userId,
@@ -65,13 +68,16 @@ const PostItem: React.FC<PostItemProps> = ({ post, userId }) => {
     <>
       <div className="flex gap-3 p-3">
         <Link
-          href={`/profile`}
+          href={`/profile/${post.user.id}`}
           className={cn(
             "focus-visible:outline-offset-3 rounded-full ring-primary ring-offset-1 focus-visible:outline-primary focus-visible:ring-primary active:ring"
           )}
         >
           <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+            <AvatarImage
+              src={post.user.image ?? "/default-image.png"}
+              alt={post.user.name ?? ""}
+            />
             <AvatarFallback>
               <div className="h-full w-full animate-pulse"></div>
             </AvatarFallback>
@@ -79,7 +85,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, userId }) => {
         </Link>
         <div className="mr-auto flex flex-col self-center leading-none">
           <Link
-            href={`/profile`}
+            href={`/profile/${post.user.id}`}
             className={cn(
               "block font-medium capitalize text-foreground/90 underline-offset-1 hover:underline"
             )}
@@ -90,48 +96,49 @@ const PostItem: React.FC<PostItemProps> = ({ post, userId }) => {
             {dayjs(post.createdAt).fromNow(true)}
           </span>
         </div>
-
-        <div className="self-end">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                type="button"
-                className={cn(
-                  "rounded-full p-2 text-foreground/80 hover:bg-secondary/40 hover:text-foreground/90 active:scale-110 active:bg-secondary/30",
-                  "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
-                )}
-                aria-label="open modal post"
-              >
-                <BiDotsHorizontalRounded aria-hidden="true" size={26} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem asChild>
+        {post.user.id === session?.user.id && (
+          <div className="self-end">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="w-full cursor-pointer"
-                  onClick={handleUpdatePost}
+                  type="button"
+                  className={cn(
+                    "rounded-full p-2 text-foreground/80 hover:bg-secondary/40 hover:text-foreground/90 active:scale-110 active:bg-secondary/30",
+                    "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
+                  )}
+                  aria-label="open modal post"
                 >
-                  Edit
+                  <BiDotsHorizontalRounded aria-hidden="true" size={26} />
                 </Button>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Button
-                  onClick={() =>
-                    deletePostMutation.mutate({
-                      postId: post.id,
-                    })
-                  }
-                  variant="ghost"
-                  className="w-full cursor-pointer"
-                >
-                  Delete
-                </Button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <Button
+                    variant="ghost"
+                    className="w-full cursor-pointer"
+                    onClick={handleUpdatePost}
+                  >
+                    Edit
+                  </Button>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Button
+                    onClick={() =>
+                      deletePostMutation.mutate({
+                        postId: post.id,
+                      })
+                    }
+                    variant="ghost"
+                    className="w-full cursor-pointer"
+                  >
+                    Delete
+                  </Button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )}
       </div>
       <div className="px-3 font-normal md:px-5">
         <span className="break-words text-base">{post.content}</span>

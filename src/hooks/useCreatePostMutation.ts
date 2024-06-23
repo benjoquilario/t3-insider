@@ -10,7 +10,10 @@ import { createPost } from "@/server/post"
 import { useToast } from "@/components/ui/use-toast"
 import type { User } from "@prisma/client"
 
-export function useCreatePostMutation(handleOnCallback: () => void) {
+export function useCreatePostMutation(
+  handleOnCallback: () => void,
+  userId?: string
+) {
   const queryClient = useQueryClient()
   const queryKey = [QUERY_KEYS.GET_INFINITE_POSTS]
   const { toast } = useToast()
@@ -44,6 +47,34 @@ export function useCreatePostMutation(handleOnCallback: () => void) {
           return newPosts
         }
       )
+
+      if (userId) {
+        queryClient.setQueryData<InfiniteData<IPage<IPost<User>[]>>>(
+          [QUERY_KEYS.GET_INFINITE_POSTS, userId],
+          (oldData) => {
+            if (!oldData) return
+
+            const newPosts = {
+              ...oldData,
+              pages: oldData.pages.map((page, index) => {
+                if (index === 0) {
+                  return {
+                    ...page,
+                    posts: [
+                      newPost?.data,
+                      ...(page.posts ? page.posts : new Array()),
+                    ],
+                  }
+                }
+
+                return page
+              }),
+            }
+
+            return newPosts
+          }
+        )
+      }
 
       toast({
         title: "Successfully Posted",

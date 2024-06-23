@@ -7,7 +7,7 @@ import { QUERY_KEYS } from "@/lib/queriesKey"
 import PostSkeleton from "@/components/skeleton/post-skeleton"
 import { InView } from "react-intersection-observer"
 import { motion, AnimatePresence } from "framer-motion"
-import { User } from "@prisma/client"
+import type { User } from "@prisma/client"
 
 const Posts = () => {
   const {
@@ -26,6 +26,8 @@ const Posts = () => {
     getNextPageParam: (lastPage) => lastPage.nextSkip,
     refetchOnWindowFocus: false,
   })
+
+  console.log(posts)
 
   return (
     <ul className="space-y-3">

@@ -10,7 +10,10 @@ import { updatePost, deletePost } from "@/server/post"
 import { useToast } from "@/components/ui/use-toast"
 import type { User } from "@prisma/client"
 
-export function useUpdateDeleteMutation(handleOnCallback?: () => void) {
+export function useUpdateDeleteMutation(
+  userId?: string,
+  handleOnCallback?: () => void
+) {
   const queryClient = useQueryClient()
   const queryKey = [QUERY_KEYS.GET_INFINITE_POSTS]
   const { toast } = useToast()
@@ -51,6 +54,40 @@ export function useUpdateDeleteMutation(handleOnCallback?: () => void) {
           return updatedPosts
         }
       )
+
+      if (userId) {
+        queryClient.setQueryData<InfiniteData<IPage<IPost<User>[]>>>(
+          [QUERY_KEYS.GET_INFINITE_POSTS, userId],
+          (oldData) => {
+            if (!oldData) return
+
+            const updatedPosts = {
+              ...oldData,
+              pages: oldData.pages.map((page) => {
+                const index = page.posts?.findIndex(
+                  (oldPost) => oldPost.id === updatedPost.postId
+                )
+
+                const newPosts = [...page.posts]
+
+                newPosts[index] = {
+                  ...page.posts[index],
+                  updatedAt: new Date(),
+                  id: updatedPost.postId,
+                  content: updatedPost.content,
+                }
+
+                return {
+                  ...page,
+                  posts: newPosts,
+                }
+              }),
+            }
+
+            return updatedPosts
+          }
+        )
+      }
     },
     onSuccess: () => {
       toast({
@@ -92,6 +129,31 @@ export function useUpdateDeleteMutation(handleOnCallback?: () => void) {
           return newPosts
         }
       )
+
+      if (userId) {
+        queryClient.setQueryData<InfiniteData<IPage<IPost<User>[]>>>(
+          [QUERY_KEYS.GET_INFINITE_POSTS, userId],
+          (oldData) => {
+            if (!oldData) return
+
+            const newPosts = {
+              ...oldData,
+              pages: oldData.pages.map((page, i) => {
+                const deletedPosts = page.posts.filter(
+                  (post) => post.id !== deletedPost.postId
+                )
+
+                return {
+                  ...page,
+                  posts: deletedPosts,
+                }
+              }),
+            }
+
+            return newPosts
+          }
+        )
+      }
 
       return { previousComment }
     },

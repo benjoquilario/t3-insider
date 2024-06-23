@@ -28,7 +28,12 @@ import { useUpdateDeleteMutation } from "@/hooks/useUpdateDeletePost"
 import { useCreatePostMutation } from "@/hooks/useCreatePostMutation"
 import { Cross2Icon } from "@radix-ui/react-icons"
 
-const CreatePostForm = () => {
+type CreatePostFormProps = {
+  userId?: string
+}
+
+const CreatePostForm = (props: CreatePostFormProps) => {
+  const { userId } = props
   const { getRootProps, getInputProps, form, startUpload, isUploading } =
     usePostUpload()
 
@@ -58,9 +63,11 @@ const CreatePostForm = () => {
     setIsPostOpen(false)
   }, [])
 
-  const { updatePostMutation, deletePostMutation } =
-    useUpdateDeleteMutation(handleOnReset)
-  const { createPostMutation } = useCreatePostMutation(handleOnReset)
+  const { updatePostMutation, deletePostMutation } = useUpdateDeleteMutation(
+    userId,
+    handleOnReset
+  )
+  const { createPostMutation } = useCreatePostMutation(handleOnReset, userId)
   const selectedPost = usePostStore((store) => store.selectedPost)
   const clearSelectedPost = usePostStore((store) => store.clearSelectedPost)
 
@@ -85,8 +92,6 @@ const CreatePostForm = () => {
     if (values.selectedFile.length) {
       uploadImages = await startUpload(values.selectedFile)
     }
-
-    console.log(values.selectedFile)
 
     if (isEditing && selectedPostId) {
       updatePostMutation.mutate({
