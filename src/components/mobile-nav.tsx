@@ -1,51 +1,31 @@
 "use client"
 
 import React from "react"
-import { BsPerson, BsPeople } from "react-icons/bs"
-import { SlPeople } from "react-icons/sl"
-import { BiHomeCircle } from "react-icons/bi"
+import { LINKS } from "./nav"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
-import { MdDynamicFeed } from "react-icons/md"
-import { Button } from "./ui/button"
-import usePostStore from "@/store/post"
 import { useSession } from "next-auth/react"
+import { Button } from "./ui/button"
+import { BsPerson } from "react-icons/bs"
+import { SignOut } from "./sign-out"
+import { IoCreateOutline } from "react-icons/io5"
+import usePostStore from "@/store/post"
 
-export const LINKS = [
-  {
-    link: "/",
-    icon: MdDynamicFeed,
-    size: 29,
-    linkName: "Feed",
-  },
-  {
-    link: "/followers",
-    icon: SlPeople,
-    size: 29,
-    linkName: "Followers",
-  },
-  {
-    link: "/following",
-    icon: BsPeople,
-    size: 29,
-    linkName: "Following",
-  },
-]
-const Nav = () => {
+const MobileNav = () => {
   const { data: session } = useSession()
-  const setIsPostOpen = usePostStore((store) => store.setIsPostOpen)
+  const setIsPostOpen = usePostStore(store => store.setIsPostOpen)
 
   return (
-    <div className="mt-0">
-      <nav className="w-full">
-        <ul className="flex flex-col items-start space-y-2">
+    <div className="fixed bottom-0 z-50 flex w-full bg-background md:hidden">
+      <nav className="w-full" aria-label="mobile nav">
+        <ul className="flex items-start">
           {LINKS.map((link) => (
             <li key={link.linkName} className="flex flex-1 items-start">
               <Link
                 aria-label={link.linkName}
                 href="/"
                 className={cn(
-                  "flex w-full items-center space-x-3 rounded-md px-5 py-3 focus:outline-none",
+                  "flex w-full items-center justify-center rounded-md p-2 focus:outline-none",
                   "focus-visible:outline-offset-2 focus-visible:outline-primary",
                   "transition duration-75 hover:bg-primary/40"
                 )}
@@ -55,9 +35,6 @@ const Nav = () => {
                   size={link.size}
                   className="text-primary"
                 />
-                <span className="text-left text-base font-medium capitalize tracking-tight">
-                  {link.linkName}
-                </span>
               </Link>
             </li>
           ))}
@@ -66,18 +43,18 @@ const Nav = () => {
               aria-label="my profile"
               href={`/profile/${session?.user.id}`}
               className={cn(
-                "flex w-full items-center space-x-3 rounded-md px-5 py-3 focus:outline-none",
+                "flex w-full items-center justify-center rounded-md p-2 focus:outline-none",
                 "focus-visible:outline-offset-2 focus-visible:outline-primary",
                 "transition duration-75 hover:bg-primary/40"
               )}
             >
               <BsPerson size={29} className="text-primary" />
-              <span className="text-left text-base font-medium capitalize tracking-tight">
-                My Profile
-              </span>
             </Link>
           </li>
-          <li className="mt-3 w-full flex-1">
+          <li className="flex flex-1 items-start">
+            <SignOut />
+          </li>
+          {/* <li className="mt-3 w-full flex-1">
             <div className="flex w-full items-center">
               <Button
                 onClick={() => setIsPostOpen(true)}
@@ -87,11 +64,15 @@ const Nav = () => {
                 Create Post
               </Button>
             </div>
-          </li>
+          </li> */}
         </ul>
       </nav>
+
+      <button onClick={() => setIsPostOpen(true)} className="absolute bottom-16 right-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white">
+        <IoCreateOutline size={20} className="h-7 w-7" />
+      </button>
     </div>
   )
 }
 
-export default Nav
+export default MobileNav
