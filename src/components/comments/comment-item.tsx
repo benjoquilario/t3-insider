@@ -44,6 +44,7 @@ import * as z from "zod"
 import { cn } from "@/lib/utils"
 import useCommentStore from "@/store/comment"
 import { useLikeCommentMutation } from "@/hooks/useLikeComment"
+import { useSession } from "next-auth/react"
 
 type CommentItemProps = {
   comment: IComment<User>
@@ -58,7 +59,7 @@ const editSchema = z.object({
 
 const CommentItem = (props: CommentItemProps) => {
   const { comment, postId } = props
-
+  const { data: session } = useSession()
   const [isAlertOpen, setIsAlertOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
@@ -148,10 +149,12 @@ const CommentItem = (props: CommentItemProps) => {
             >
               <Avatar>
                 <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
+                  src={comment.user.image ?? "/default-image.png"}
+                  alt={`@${comment.user.name}`}
                 />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarFallback>
+                  <div className="h-full w-full animate-pulse bg-primary/10"></div>
+                </AvatarFallback>
               </Avatar>
               <div className="pointer-events-none absolute inset-0 rounded-full"></div>
             </Link>
@@ -264,26 +267,10 @@ const CommentItem = (props: CommentItemProps) => {
                         </div>
                       </div>
                     </div>
-
-                    <div className="absolute -bottom-2 -right-2">
-                      <div className="relative flex items-center gap-1 rounded-full bg-background px-1 shadow">
-                        {comment.isLiked || comment._count.commentLike > 0 ? (
-                          <>
-                            <div className="flex h-4 w-4 items-center justify-center rounded-full bg-primary">
-                              <AiFillLike size={12} className="text-white" />
-                            </div>
-
-                            <span className="text-sm font-medium text-foreground/70">
-                              {comment._count.commentLike}
-                            </span>
-                          </>
-                        ) : null}
-                      </div>
-                    </div>
                   </div>
                 </div>
               )}
-              <div className="ml-1 mt-2 flex gap-2 text-xs font-semibold text-muted-foreground/70">
+              <div className="ml-1 mt-1 flex items-center gap-2 text-xs font-semibold text-muted-foreground/70">
                 <span className="text-xs text-foreground/70">
                   {dayjs(comment.createdAt).fromNow(true)}
                 </span>
@@ -304,6 +291,19 @@ const CommentItem = (props: CommentItemProps) => {
                 >
                   Reply
                 </button>
+                <div className="relative flex items-center gap-1 rounded-full bg-background px-1 shadow">
+                  {comment.isLiked || comment._count.commentLike > 0 ? (
+                    <>
+                      <div className="flex h-4 w-4 items-center justify-center rounded-full bg-primary">
+                        <AiFillLike size={12} className="text-white" />
+                      </div>
+
+                      <span className="text-sm font-medium text-foreground/70">
+                        {comment._count.commentLike}
+                      </span>
+                    </>
+                  ) : null}
+                </div>
               </div>
 
               <div className="ml-3 mt-2">
@@ -331,47 +331,47 @@ const CommentItem = (props: CommentItemProps) => {
               />
             </div>
           )} */}
-          {/* {session?.user?.id === comment.userId && ( */}
-          <div className="absolute right-5 top-3 self-end">
-            <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  // type="button"
-                  // onClick={handleModalOpen}
-                  onClick={() => setIsOpen((isOpen) => !isOpen)}
-                  className="rounded-full p-1 px-2 text-foreground/80 transition hover:bg-secondary/90"
-                  aria-label="show post modal"
-                >
-                  <BiDotsHorizontalRounded aria-hidden="true" size={22} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem asChild>
-                  <Button
-                    onClick={handleSelectComment}
-                    variant="ghost"
-                    className="w-full cursor-pointer"
-                  >
-                    Edit
-                  </Button>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
+          {session?.user?.id === comment.userId && (
+            <div className="absolute right-5 top-3 self-end">
+              <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+                <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    onClick={() => {
-                      setIsAlertOpen((isAlertOpen) => !isAlertOpen)
-                      setIsOpen(false)
-                    }}
-                    className="w-full cursor-pointer"
+                    // type="button"
+                    // onClick={handleModalOpen}
+                    onClick={() => setIsOpen((isOpen) => !isOpen)}
+                    className="rounded-full p-1 px-2 text-foreground/80 transition hover:bg-secondary/90"
+                    aria-label="show post modal"
                   >
-                    Delete
+                    <BiDotsHorizontalRounded aria-hidden="true" size={22} />
                   </Button>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          {/* )} */}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem asChild>
+                    <Button
+                      onClick={handleSelectComment}
+                      variant="ghost"
+                      className="w-full cursor-pointer"
+                    >
+                      Edit
+                    </Button>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setIsAlertOpen((isAlertOpen) => !isAlertOpen)
+                        setIsOpen(false)
+                      }}
+                      className="w-full cursor-pointer"
+                    >
+                      Delete
+                    </Button>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
         </div>
       </div>
       <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>

@@ -49,6 +49,8 @@ const CommentForm = (props: CommentFormProps) => {
       postId,
       commentText: data.comment,
     })
+
+    form.reset()
   }
 
   useEffect(() => {
