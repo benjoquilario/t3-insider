@@ -6,9 +6,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import UserItem from "./user-item"
 import { cn } from "@/lib/utils"
+import { useQueryUser } from "@/hooks/queries/useQueryUser"
 
 const Users = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const { data: currentUser, isPending } = useQueryUser()
 
   const toggleDropDown = () => {
     setIsOpen(!isOpen)
@@ -22,28 +24,40 @@ const Users = () => {
             {/* {isLoading ? (
               <div className="h-12 w-12 animate-pulse rounded-full border border-zinc-200 bg-zinc-100" />
             ) : ( */}
-            <Button
-              variant="secondary"
-              onClick={toggleDropDown}
-              className="w-18 flex h-14 items-center justify-center rounded-full hover:opacity-90 active:scale-95"
-              aria-label="dropdown profile"
-            >
-              <div
-                className={cn(
-                  "transition-transform duration-200",
-                  isOpen && "rotate-180"
-                )}
-              >
-                <IoMdArrowDropdown aria-hidden="true" size={20} />
+
+            {isPending ? (
+              <div className="flex h-14 w-20 items-center justify-center rounded-full bg-secondary px-1">
+                <div className="h-5 w-5 bg-secondary"></div>
+                <div className="h-10 w-10 animate-pulse rounded-full bg-primary/10"></div>
               </div>
-              <Avatar>
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-            </Button>
+            ) : (
+              <Button
+                variant="secondary"
+                onClick={toggleDropDown}
+                className="w-18 flex h-14 items-center justify-center rounded-full hover:opacity-90 active:scale-95"
+                aria-label="dropdown profile"
+              >
+                <div
+                  className={cn(
+                    "transition-transform duration-200",
+                    isOpen && "rotate-180"
+                  )}
+                >
+                  <IoMdArrowDropdown aria-hidden="true" size={20} />
+                </div>
+
+                <Avatar>
+                  <AvatarImage
+                    src={currentUser?.image ?? "/default-image.png"}
+                    alt={`@${currentUser?.name}` ?? ""}
+                  />
+                  <AvatarFallback>
+                    <div className="h-full w-full animate-pulse rounded-full bg-primary/10"></div>
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            )}
+
             {/* )}
             {isOpen && <Dropdown />} */}
           </div>

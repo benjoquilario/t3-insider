@@ -22,23 +22,22 @@ export function SignOut() {
       <AlertDialogTrigger asChild>
         <button
           className={cn(
-            "flex items-center space-x-3 rounded-md px-5 py-3 focus:outline-none",
+            "flex w-full items-center justify-center rounded-md px-2 py-2 focus:outline-none md:w-auto md:justify-start md:space-x-3 md:px-5 md:py-3",
             "focus-visible:outline-offset-2 focus-visible:outline-primary",
             "transition duration-75 hover:bg-primary/40"
           )}
         >
           <RiLogoutCircleRLine size={29} className="text-primary" />
-          <span className="text-left text-base font-medium capitalize tracking-tight">
+          <span className="hidden text-left text-base font-medium capitalize tracking-tight md:block">
             Logout
           </span>
         </button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            Do you really wish to logout?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
