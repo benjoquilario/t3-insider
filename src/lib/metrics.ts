@@ -49,3 +49,21 @@ export async function getCurrentUser() {
 
   return currentUser
 }
+
+export async function getUserById({ userId }: { userId: string }) {
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      cover: true,
+      email: true,
+      image: true,
+      name: true,
+      createdAt: true,
+    },
+  })
+
+  if (!user) return null
+
+  return user
+}
