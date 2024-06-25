@@ -67,6 +67,8 @@ export async function updateComment({
     },
     data: {
       comment,
+      isEdited: true,
+      updatedAt: new Date(),
     },
   })
 
@@ -96,6 +98,18 @@ export const deleteComment = async ({ commentId }: { commentId: string }) => {
     await db.comment.delete({
       where: {
         id: comment.id,
+      },
+      include: {
+        replyComment: {
+          where: {
+            commentId: comment.id,
+          },
+        },
+        commentLike: {
+          where: {
+            commentId: comment.id,
+          },
+        },
       },
     })
   }

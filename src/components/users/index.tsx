@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import UserItem from "./user-item"
 import { cn } from "@/lib/utils"
 import { useQueryUser } from "@/hooks/queries/useQueryUser"
+import { useInfiniteQuery } from "@tanstack/react-query"
+import { User } from "@prisma/client"
 
 const Users = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -15,6 +17,25 @@ const Users = () => {
   const toggleDropDown = () => {
     setIsOpen(!isOpen)
   }
+
+  const [pageNumber, setPageNumber] = useState(1)
+
+  const {
+    data: users,
+    isPending: isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["users", pageNumber],
+    queryFn: ({ pageParam }) =>
+      fetch(`/api/users?limit=${3}&cursor=${pageParam}`).then((res) =>
+        res.json()
+      ),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextSkip,
+    refetchOnWindowFocus: false,
+  })
 
   return (
     <div className="sticky top-0 pt-3">
@@ -100,14 +121,9 @@ const Users = () => {
                   </Button>
                 </li>
               )} */}
-              {}
-              <UserItem />
-              <UserItem />
-              <UserItem />
-              <UserItem />
-              <UserItem />
-              <UserItem />
-              <UserItem />
+              {users?.pages.map((page) =>
+                page?.users.map((user: User) => <UserItem user={user} />)
+              )}
             </ul>
           </div>
         </aside>

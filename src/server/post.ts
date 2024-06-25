@@ -149,6 +149,11 @@ export const deletePost = async ({ postId }: { postId: string }) => {
             postId,
           },
         },
+        likePost: {
+          where: {
+            postId,
+          },
+        },
       },
     })
   }

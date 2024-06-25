@@ -47,6 +47,7 @@ export function useUpdateDeleteMutation({ postId }: { postId: string }) {
                 ...page.comments[index],
                 updatedAt: new Date(),
                 comment: updatedComment.comment,
+                isEdited: true,
               }
 
               return {

@@ -45,42 +45,38 @@ import { cn } from "@/lib/utils"
 import useCommentStore from "@/store/comment"
 import { useLikeCommentMutation } from "@/hooks/useLikeComment"
 import { useSession } from "next-auth/react"
-import Replies from "@/components/reply"
+import useReplyCommentStore from "@/store/reply"
+import { useUpdateDeleteRepliesMutation } from "@/hooks/useUpdateDeleteReplies"
 
-type CommentItemProps = {
-  comment: IComment<User>
-  postId: string
+type ReplyItemProps = {
+  reply: IReplyComment<User>
+  commentId: string
 }
 
 const editSchema = z.object({
-  comment: z
+  content: z
     .string()
     .min(1, { message: "Comment must be at least 1 character" }),
 })
 
-const CommentItem = (props: CommentItemProps) => {
-  const { comment, postId } = props
+const ReplyItem = (props: ReplyItemProps) => {
+  const { reply, commentId } = props
   const { data: session } = useSession()
   const [isAlertOpen, setIsAlertOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
-  const [isRepliesOpen, setIsRepliesOpen] = useState(false)
 
-  const { deleteCommentMutation, updateCommentMutation } =
-    useUpdateDeleteMutation({ postId })
+  const { deleteReplyMutation, updateReplyMutation } =
+    useUpdateDeleteRepliesMutation({ commentId })
 
-  const { likeCommentMutation, unlikeCommentMutation } = useLikeCommentMutation(
-    { postId, commentId: comment.id }
+  const setSelectedReply = useReplyCommentStore(
+    (store) => store.setSelectedReply
   )
-
-  const setSelectedComment = useCommentStore(
-    (store) => store.setSelectedComment
-  )
-  const selectedComment = useCommentStore((store) => store.selectedComment)
-  const commentId = useCommentStore((store) => store.commentId)
-  const setCommentId = useCommentStore((store) => store.setCommentId)
-  const clearSelectedComment = useCommentStore(
-    (store) => store.clearSelectedComment
+  const selectedReply = useReplyCommentStore((store) => store.selectedReply)
+  const replyId = useReplyCommentStore((store) => store.replyId)
+  const setReplyId = useReplyCommentStore((store) => store.setReplyId)
+  const clearSelectedReply = useReplyCommentStore(
+    (store) => store.clearSelectedReply
   )
   const buttonRef = useRef<HTMLButtonElement | null>(null)
 
@@ -89,32 +85,40 @@ const CommentItem = (props: CommentItemProps) => {
   })
 
   const handleSelectComment = async function () {
-    setSelectedComment({
-      comment: comment.comment,
-      commentId: comment.id,
+    setSelectedReply({
+      content: reply.content,
+      replyId: reply.id,
     })
-    setCommentId(comment.id)
+    setReplyId(reply.id)
 
     setIsEditing(true)
-
-    form.setFocus("comment")
+    form.setFocus("content")
   }
 
+  useEffect(() => {
+    form.setFocus("content")
+  }, [form.setFocus])
+
   const handleReset = async function () {
-    clearSelectedComment()
+    clearSelectedReply()
     setIsEditing(false)
   }
 
   useEffect(() => {
-    if (commentId && selectedComment) {
-      form.setValue("comment", selectedComment.comment)
+    if (replyId && selectedReply) {
+      form.setValue("content", selectedReply.content)
     }
-  }, [commentId, form.setValue, selectedComment])
+  }, [replyId, form.setValue, selectedReply])
 
   const handleOnSubmit = async function (data: z.infer<typeof editSchema>) {
-    updateCommentMutation.mutate({
-      commentId: comment.id,
-      comment: data.comment,
+    // updateCommentMutation.mutate({
+    //   commentId: comment.id,
+    //   comment: data.comment,
+    // })
+
+    updateReplyMutation.mutate({
+      replyId: reply.id,
+      content: data.content,
     })
 
     handleReset()
@@ -130,29 +134,31 @@ const CommentItem = (props: CommentItemProps) => {
     }
   }
 
-  const handleLikeComment = (isLiked: boolean) => {
-    return !isLiked
-      ? likeCommentMutation.mutate()
-      : unlikeCommentMutation.mutate()
-  }
+  // const handleLikeComment = (isLiked: boolean) => {
+  //   return !isLiked
+  //     ? likeCommentMutation.mutate()
+  //     : unlikeCommentMutation.mutate()
+  // }
 
   return (
     <>
       <div className="relative flex pl-4 pt-1">
         <div className="relative mr-2 mt-1 block rounded-full">
-          {isRepliesOpen || comment._count.replyComment > 0 ? (
-            <div className="absolute left-[18px] top-[30px] h-[calc(100%_-_61px)] w-[2px] bg-input"></div>
-          ) : null}
+          {/* {isReplyOpen || comment._count.reply > 0 ? (
+            <div className="absolute left-[18px] top-[30px] h-[calc(100%_-_61px)] w-[2px] bg-gray-300"></div>
+          ) : null} */}
+          <div className="absolute left-[-45px] top-[15px] h-[2px] w-[45px] bg-input"></div>
           <span className="inline">
             <Link
               href={`/profile/`}
               className="relative inline-block w-full shrink basis-[auto] items-stretch"
               // aria-label={comment.user?.name}
             >
-              <Avatar>
+              <Avatar className="h-8 w-8">
                 <AvatarImage
-                  src={comment.user.image ?? "/default-image.png"}
-                  alt={`@${comment.user.name}`}
+                  src={reply.user.image ?? "/default-image.png"}
+                  alt={`@${reply.user.name}`}
+                  className="h-8 w-8"
                 />
                 <AvatarFallback>
                   <div className="h-full w-full animate-pulse bg-primary/10"></div>
@@ -163,26 +169,12 @@ const CommentItem = (props: CommentItemProps) => {
           </span>
         </div>
 
-        <div className="mr-14 grow basis-0 pr-2 md:mr-10 md:pr-4">
+        <div className="mr-10 grow basis-0 overflow-hidden pr-2 md:pr-4">
           <div>
             <div
               className="max-w-[calc(100%_-_26px] inline-block w-full break-words"
               style={{ wordBreak: "break-word" }}
             >
-              <span>
-                <span className="inline">
-                  <Link className="inline" href={`/profile/${comment.userId}`}>
-                    <span className="inline-flex">
-                      <span
-                        className="max-w-full text-sm font-medium capitalize text-foreground underline-offset-1 hover:underline"
-                        style={{ wordBreak: "break-word" }}
-                      >
-                        {comment.user?.name}
-                      </span>
-                    </span>
-                  </Link>
-                </span>
-              </span>
               {isEditing ? (
                 <div className="grow overflow-hidden">
                   <div>
@@ -197,7 +189,7 @@ const CommentItem = (props: CommentItemProps) => {
                               <div className="relative p-1">
                                 <FormField
                                   control={form.control}
-                                  name="comment"
+                                  name="content"
                                   render={({ field }) => (
                                     <FormItem>
                                       <FormLabel className="sr-only">
@@ -221,8 +213,8 @@ const CommentItem = (props: CommentItemProps) => {
                                   )}
                                 />
                               </div>
-                              {commentId && (
-                                <div className="flex gap-1 text-xs text-primary">
+                              {replyId && (
+                                <div className="flex gap-1 text-xs text-muted-foreground/80">
                                   <span>Press Esc to</span>
                                   <button
                                     onClick={() => handleReset()}
@@ -246,92 +238,92 @@ const CommentItem = (props: CommentItemProps) => {
                   </div>
                 </div>
               ) : (
-                <div className="relative inline-flex w-full align-middle">
-                  <div className="base-[auto] w-full min-w-0 shrink grow">
-                    <div
-                      className="relative m-1 inline-block max-w-full whitespace-normal break-words rounded bg-secondary text-foreground"
-                      style={{ wordBreak: "break-word" }}
-                    >
-                      <div className="py-2 pl-4 pr-7">
-                        <div className="block pb-[4px] pt-[4px]">
+                <>
+                  <span>
+                    <span className="inline">
+                      <Link
+                        className="inline"
+                        href={`/profile/${reply.userId}`}
+                      >
+                        <span className="inline-flex">
                           <span
-                            className="break-words"
+                            className="max-w-full text-sm font-medium capitalize text-foreground underline-offset-1 hover:underline"
                             style={{ wordBreak: "break-word" }}
                           >
-                            <div
-                              className="text-sm"
+                            {reply.user?.name}
+                          </span>
+                        </span>
+                      </Link>
+                    </span>
+                  </span>
+
+                  <div className="relative inline-flex w-full align-middle">
+                    <div className="base-[auto] w-full min-w-0 shrink grow">
+                      <div
+                        className="relative m-1 inline-block max-w-full whitespace-normal break-words rounded bg-secondary text-foreground"
+                        style={{ wordBreak: "break-word" }}
+                      >
+                        <div className="py-2 pl-4 pr-7">
+                          <div className="block pb-[4px] pt-[4px]">
+                            <span
+                              className="break-words"
                               style={{ wordBreak: "break-word" }}
                             >
-                              <div dir="auto" className="text-start font-sans">
-                                {comment.comment}
+                              <div
+                                className="text-sm"
+                                style={{ wordBreak: "break-word" }}
+                              >
+                                <div
+                                  dir="auto"
+                                  className="text-start font-sans"
+                                >
+                                  {reply.content}
+                                </div>
                               </div>
-                            </div>
-                          </span>
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                </>
               )}
+
               <div className="ml-1 mt-1 flex items-center gap-2 text-xs font-semibold text-muted-foreground/70">
                 <span className="text-xs text-foreground/70">
-                  {dayjs(comment.createdAt).fromNow(true)}
+                  {dayjs(reply.createdAt).fromNow(true)}
                 </span>
                 <button
                   type="button"
-                  onClick={() => handleLikeComment(comment.isLiked)}
+                  // onClick={() => handleLikeComment(reply.isLiked)}
                   className={cn(
                     "underline-offset-1 hover:underline",
-                    comment.isLiked && "font-bold text-primary"
+                    reply.isLiked && "font-bold text-primary"
                   )}
                 >
                   Like
                 </button>
-                <button
-                  // type="button"
-                  onClick={() => setIsRepliesOpen(true)}
-                  className="underline-offset-1 hover:underline"
-                >
-                  Reply
-                </button>
-                {comment.isEdited ? (
+                {reply.isEdited ? (
                   <span className="text-xs font-light text-muted-foreground/60">
                     Edited
                   </span>
                 ) : null}
+
                 <div className="relative flex items-center gap-1 rounded-full bg-background px-1 shadow">
-                  {comment.isLiked || comment._count.commentLike > 0 ? (
+                  {reply.isLiked || reply._count.likeReplyComment > 0 ? (
                     <>
                       <div className="flex h-4 w-4 items-center justify-center rounded-full bg-primary">
                         <AiFillLike size={12} className="text-white" />
                       </div>
 
                       <span className="text-sm font-medium text-foreground/70">
-                        {comment._count.commentLike}
+                        {reply._count.likeReplyComment}
                       </span>
                     </>
                   ) : null}
                 </div>
               </div>
-              {comment._count.replyComment !== 0 &&
-                (!isRepliesOpen ? (
-                  <div className="ml-3 mt-2">
-                    <div className="absolute bottom-[12px] left-[34px] h-[21px] w-[38px] rounded-l border-b-2 border-l-2 border-l-input border-t-input md:w-[27px]"></div>
-                    <Button
-                      variant="ghost"
-                      onClick={() => setIsRepliesOpen(true)}
-                      aria-label="show replies"
-                      className="flex items-center gap-1 text-sm font-semibold underline-offset-1 hover:underline"
-                    >
-                      <span>
-                        <BsArrow90DegDown className="-rotate-90" />
-                      </span>
-                      <span>{comment._count.replyComment} replies</span>
-                    </Button>
-                  </div>
-                ) : null)}
             </div>
-            {isRepliesOpen && <Replies commentId={comment.id} />}
           </div>
         </div>
         <div className="absolute right-0 top-0 h-0 w-1/2">
@@ -343,7 +335,7 @@ const CommentItem = (props: CommentItemProps) => {
               />
             </div>
           )} */}
-          {session?.user?.id === comment.userId && (
+          {session?.user?.id === reply.userId && (
             <div className="absolute right-5 top-3 self-end">
               <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
                 <DropdownMenuTrigger asChild>
@@ -402,9 +394,9 @@ const CommentItem = (props: CommentItemProps) => {
               <Button
                 className="cursor-pointer"
                 size="sm"
-                disabled={deleteCommentMutation.isPending}
+                disabled={deleteReplyMutation.isPending}
                 onClick={() =>
-                  deleteCommentMutation.mutateAsync({ commentId: comment.id })
+                  deleteReplyMutation.mutateAsync({ replyId: reply.id })
                 }
               >
                 Delete
@@ -417,4 +409,4 @@ const CommentItem = (props: CommentItemProps) => {
   )
 }
 
-export default CommentItem
+export default ReplyItem

@@ -1,8 +1,8 @@
 "use client"
 
 import React from "react"
-import CommentItem from "./comment-item"
-import CommentForm from "./comment-form"
+import ReplyItem from "./reply-item"
+import ReplyCommentForm from "./reply-form"
 import { QUERY_KEYS } from "@/lib/queriesKey"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { motion } from "framer-motion"
@@ -11,11 +11,11 @@ import { ImSpinner8 } from "react-icons/im"
 import { Button } from "@/components/ui/button"
 
 type CreateCommentProps = {
-  postId: string
+  commentId: string
 }
 
-const CreateComment = (props: CreateCommentProps) => {
-  const { postId } = props
+const CreateReplyComment = (props: CreateCommentProps) => {
+  const { commentId } = props
 
   const {
     data: comments,
@@ -24,9 +24,9 @@ const CreateComment = (props: CreateCommentProps) => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: [QUERY_KEYS.GET_INFINITE_COMMENTS, postId],
+    queryKey: [QUERY_KEYS.GET_INFINITE_REPLY_COMMENTS, commentId],
     queryFn: ({ pageParam }) =>
-      fetch(`/api/comments/${postId}?limit=${3}&cursor=${pageParam}`).then(
+      fetch(`/api/replies/${commentId}?limit=${3}&cursor=${pageParam}`).then(
         (res) => res.json()
       ),
     initialPageParam: 0,
@@ -35,21 +35,21 @@ const CreateComment = (props: CreateCommentProps) => {
   })
 
   return isPending ? (
-    <div className="flex animate-spin items-center justify-center py-4">
-      <ImSpinner8 className="h-6 w-6" />
+    <div className="flex animate-spin items-center justify-center py-2">
+      <ImSpinner8 className="h-4 w-4" />
     </div>
   ) : (
-    <div className="pb-4" id="comment">
+    <div>
       <ul>
         {comments?.pages.map((page) =>
-          page?.comments.map((comment: IComment<User>) => (
+          page?.replies.map((reply: IReplyComment<User>) => (
             <motion.li
-              key={comment.id}
+              key={reply.id}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <CommentItem comment={comment} postId={postId} />
+              <ReplyItem reply={reply} commentId={commentId} />
             </motion.li>
           ))
         )}
@@ -71,11 +71,11 @@ const CreateComment = (props: CreateCommentProps) => {
           </li>
         )}
       </ul>
-      <div className="px-3 pt-4 md:px-5">
-        <CommentForm postId={postId} commentId="" />
+      <div className="px-3 pt-1 md:px-5">
+        <ReplyCommentForm commentId={commentId} replyId="" />
       </div>
     </div>
   )
 }
 
-export default CreateComment
+export default CreateReplyComment

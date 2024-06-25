@@ -3,7 +3,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { updateProfilePicture, updateCoverPicture } from "@/server/user"
 import { useMemo } from "react"
-import type { User } from "@prisma/client"
 import { useSession } from "next-auth/react"
 
 export function useUpdateDataMutation(userId: string) {

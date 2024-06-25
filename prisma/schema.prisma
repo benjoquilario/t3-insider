@@ -21,6 +21,13 @@ model User {
   emailVerified   DateTime?
   image           String?
   cover           String?
+  phoneNumber     Int?
+  bio             String?
+  website         String?
+  address         String?
+  gender          Gender?
+  relationshipStatus RelationshipStatus?
+  birthDate       DateTime?
   hashedPassword  String?
   password        String?
   createdAt       DateTime @default(now())
@@ -143,14 +150,15 @@ model CommentLike {
 model ReplyComment {
   id              String          @id @default(cuid())
   createdAt       DateTime   @default(now())
+  content         String
+  isEdited        Boolean?
+
   commentId       String
   comment         Comment    @relation(fields: [commentId], references: [id], onDelete: Cascade)
   likeReplyComment  LikeReplyComment[]
 
   userId          String
   user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, commentId])
 }
 
 
@@ -164,4 +172,16 @@ model LikeReplyComment {
   user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, replyId])
+}
+
+enum Gender {
+  FEMALE
+  MALE
+}
+
+enum RelationshipStatus {
+  SINGLE
+  IN_A_RELATIONSHIP
+  ENGAGED
+  MARRIED
 }

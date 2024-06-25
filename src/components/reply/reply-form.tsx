@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useRef, useEffect } from "react"
-import Image from "next/image"
 import { cn } from "@/lib/utils"
 import TextareaAutoSize from "react-textarea-autosize"
 import { IoMdSend } from "react-icons/io"
@@ -16,41 +15,49 @@ import {
 } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { useCreateCommentMutation } from "@/hooks/useCreateComment"
-import Link from "next/link"
+import { useCreateReplyCommentMutation } from "@/hooks/useReplyMutation"
 import { useQueryUser } from "@/hooks/queries/useQueryUser"
+import Link from "next/link"
 
-const commentSchema = z.object({
-  comment: z
+const replySchema = z.object({
+  content: z
     .string()
     .min(1, { message: "Comment must be at least 1 character" }),
 })
 
-type CommentFormProps = {
+type ReplyCommentFormProps = {
   commentId: string
-  postId: string
+  replyId: string
 }
 
-const CommentForm = (props: CommentFormProps) => {
+const ReplyCommentForm = (props: ReplyCommentFormProps) => {
+  const { replyId, commentId } = props
   const { data: currentUser, isPending } = useQueryUser()
-  const { commentId, postId } = props
-  const form = useForm<z.infer<typeof commentSchema>>({
+
+  const form = useForm<z.infer<typeof replySchema>>({
     defaultValues: {
-      comment: "",
+      content: "",
     },
   })
 
   const buttonRef = useRef<HTMLButtonElement | null>(null)
-  const { createCommentMutation } = useCreateCommentMutation({ postId })
+  const { createReplyCommentMutation } = useCreateReplyCommentMutation({
+    commentId,
+  })
 
   useEffect(() => {
-    form.setFocus("comment")
+    form.setFocus("content")
   }, [form.setFocus])
 
-  async function handleOnSubmit(data: z.infer<typeof commentSchema>) {
-    await createCommentMutation.mutateAsync({
-      postId,
-      commentText: data.comment,
+  async function handleOnSubmit(data: z.infer<typeof replySchema>) {
+    // await createCommentMutation.mutateAsync({
+    //   postId,
+    //   commentText: data.comment,
+    // })
+
+    createReplyCommentMutation.mutate({
+      commentId,
+      content: data.content,
     })
 
     form.reset()
@@ -72,17 +79,20 @@ const CommentForm = (props: CommentFormProps) => {
 
   return (
     <div className="flex flex-row items-center space-x-2">
-      <div className="-mt-2">
-        <div className="relative">
+      <div className="mt-[-0.25rem]">
+        <div className="relative mt-2">
+          <div className="absolute bottom-[12px] left-[-50px] top-0 h-[21px] w-[66px] rounded-l border-b-2 border-l-2 border-l-input border-t-input"></div>
+
           <Link
-            href={`/profile/`}
+            href={`/profile/${currentUser?.id}`}
             className="relative inline-block w-full shrink basis-[auto] items-stretch"
             // aria-label={comment.user?.name}
           >
-            <Avatar>
+            <Avatar className="h-8 w-8">
               <AvatarImage
                 src={currentUser?.image ?? "/default-image.png"}
                 alt={`@${currentUser?.name}`}
+                className="h-8 w-8"
               />
               <AvatarFallback>
                 <div className="h-full w-full animate-pulse bg-primary/10"></div>
@@ -105,14 +115,14 @@ const CommentForm = (props: CommentFormProps) => {
                     <div className="relative p-1">
                       <FormField
                         control={form.control}
-                        name="comment"
+                        name="content"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="sr-only">Comment</FormLabel>
                             <FormControl>
                               <TextareaAutoSize
                                 {...field}
-                                placeholder="Write a comment..."
+                                placeholder="Write a reply..."
                                 className={cn(
                                   "relative w-full rounded-lg bg-secondary py-2 pl-3 pr-9 text-sm text-foreground/90 shadow ring-secondary/80 transition",
                                   "hover:ring-secondary-70 hover:text-foreground",
@@ -146,4 +156,4 @@ const CommentForm = (props: CommentFormProps) => {
   )
 }
 
-export default CommentForm
+export default ReplyCommentForm
