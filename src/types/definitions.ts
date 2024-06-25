@@ -38,6 +38,21 @@ interface IComment<T> {
   isLiked: boolean
   _count: {
     commentLike: number
+    replyComment: number
+  }
+}
+
+interface IReplyComment<T> {
+  id: string
+  isEdited: boolean
+  content: string
+  user: T
+  userId: string
+  createdAt: Date
+  updatedAt: Date
+  isLiked: boolean
+  _count: {
+    likeReplyComment: number
   }
 }
 
@@ -59,6 +74,12 @@ interface ICommentPage<T> {
   nextSkip: number
 }
 
+interface IReplyPage<T> {
+  replies: T
+  hasNextPage: boolean
+  nextSkip: number
+}
+
 interface ICreatePost {
   content: string
   selectedFile: ISelectedFile[] | null
@@ -75,4 +96,11 @@ interface ICreateComment {
 
 interface IUpdateComment extends ICreateComment {
   commentId: string
+}
+
+interface IUser {
+  id: string
+  cover: string
+  email: string
+  image: string
 }

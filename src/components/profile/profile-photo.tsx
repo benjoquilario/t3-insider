@@ -2,29 +2,15 @@
 
 import React, { useState, useCallback, useMemo, useRef } from "react"
 import Image from "next/image"
-import { Button } from "../ui/button"
 import { cn } from "@/lib/utils"
 import { AiFillCamera } from "react-icons/ai"
-import { RiCloseFill } from "react-icons/ri"
 import { UploadButton, useUploadThing } from "@/lib/uploadthing"
-import { useWatch } from "react-hook-form"
-import { useUploadProfile } from "@/hooks/useUploadProfile"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
 import { useDropzone } from "@uploadthing/react"
 import { generateClientDropzoneAccept } from "uploadthing/client"
-import { updateProfilePicture } from "@/server/user"
 import { ImSpinner3 } from "react-icons/im"
 import { useUpdateDataMutation } from "@/hooks/useUpdateDataMutation"
 import { useSession } from "next-auth/react"
-import { useQueryUser } from "@/hooks/queries/useQueryUser"
+import { buttonVariants } from "@/components/ui/button"
 
 interface ProfileValues {
   image: File[]
@@ -38,7 +24,7 @@ type ProfilePhotoProps = {
 const ProfilePhoto = (props: ProfilePhotoProps) => {
   const { photoUrl, userId } = props
   const { data: session } = useSession()
-  const { updateProfilePhoto } = useUpdateDataMutation()
+  const { updateProfilePhoto } = useUpdateDataMutation(userId)
   const { startUpload, permittedFileInfo, isUploading } = useUploadThing(
     "profilePicture",
     {
@@ -67,7 +53,7 @@ const ProfilePhoto = (props: ProfilePhotoProps) => {
       <div className="relative -mt-20 flex-shrink-0">
         <div className="h-[114px] w-[114px] rounded-full">
           <Image
-            className="relative rounded-full border-4"
+            className="relative rounded-full border-2 border-input"
             src={photoUrl ?? "/default-image.png"}
             alt=""
             style={{ objectFit: "cover" }}
@@ -78,10 +64,11 @@ const ProfilePhoto = (props: ProfilePhotoProps) => {
           <div {...getRootProps()}>
             <div
               className={cn(
-                "absolute bottom-3 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-white text-primary shadow-md",
-                "hover:text-primary/90 active:scale-110",
-                "focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-secondary active:text-secondary",
-                "cursor-pointer"
+                "absolute bottom-3 right-0 flex h-8 w-8 items-center justify-center border border-input text-foreground",
+                "cursor-pointer rounded-full",
+                "bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+                "items-center justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+                "active:scale-105"
               )}
             >
               <input
@@ -89,9 +76,9 @@ const ProfilePhoto = (props: ProfilePhotoProps) => {
                 disabled={updateProfilePhoto.isPending}
               />
               {isUploading ? (
-                <ImSpinner3 size={20} className="animate-spin" />
+                <ImSpinner3 size={20} className="h-4 w-4 animate-spin" />
               ) : (
-                <AiFillCamera size={20} />
+                <AiFillCamera size={20} className="h-4 w-4" />
               )}
             </div>
           </div>

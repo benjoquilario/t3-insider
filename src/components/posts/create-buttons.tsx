@@ -44,18 +44,13 @@ const CreateButton = (props: CreateButtonProps) => {
         <Button
           onClick={() => setIsPostOpen(true)}
           variant="secondary"
-          className={cn(
-            "mr-1 flex h-11 w-full items-center justify-start rounded-full",
-            "ring-secondary-50 p-3 text-muted-foreground/80 focus:outline-none",
-            "hover:bg-secondary-20 hover:text-foreground-50 hover:ring-secondary/60 active:bg-secondary/30",
-            "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary active:text-foreground/60",
-            "disabled:bg-primary/10"
-          )}
           disabled={isPending}
           aria-label="create a post"
+          className="w-full justify-start rounded-full"
+          size="lg"
         >
           <span className="ml-2 text-xs md:text-sm">
-            What&apos;s on your mind,
+            What&apos;s on your mind, {currentUser?.name?.split(" ")[0]}
           </span>
         </Button>
       </div>

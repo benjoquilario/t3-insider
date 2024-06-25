@@ -104,8 +104,7 @@ const PostItem = (props: PostItemProps) => {
                   variant="ghost"
                   type="button"
                   className={cn(
-                    "rounded-full p-2 text-foreground/80 hover:bg-secondary/40 hover:text-foreground/90 active:scale-110 active:bg-secondary/30",
-                    "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-primary"
+                    "rounded-full p-2 text-foreground/80 hover:text-foreground/90 active:scale-110"
                   )}
                   aria-label="open modal post"
                 >

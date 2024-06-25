@@ -6,13 +6,36 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import UserItem from "./user-item"
 import { cn } from "@/lib/utils"
+import { useQueryUser } from "@/hooks/queries/useQueryUser"
+import { useInfiniteQuery } from "@tanstack/react-query"
+import { User } from "@prisma/client"
 
 const Users = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const { data: currentUser, isPending } = useQueryUser()
 
   const toggleDropDown = () => {
     setIsOpen(!isOpen)
   }
+
+  const [pageNumber, setPageNumber] = useState(1)
+
+  const {
+    data: users,
+    isPending: isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["users", pageNumber],
+    queryFn: ({ pageParam }) =>
+      fetch(`/api/users?limit=${3}&cursor=${pageParam}`).then((res) =>
+        res.json()
+      ),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextSkip,
+    refetchOnWindowFocus: false,
+  })
 
   return (
     <div className="sticky top-0 pt-3">
@@ -22,28 +45,40 @@ const Users = () => {
             {/* {isLoading ? (
               <div className="h-12 w-12 animate-pulse rounded-full border border-zinc-200 bg-zinc-100" />
             ) : ( */}
-            <Button
-              variant="secondary"
-              onClick={toggleDropDown}
-              className="w-18 flex h-14 items-center justify-center rounded-full hover:opacity-90 active:scale-95"
-              aria-label="dropdown profile"
-            >
-              <div
-                className={cn(
-                  "transition-transform duration-200",
-                  isOpen && "rotate-180"
-                )}
-              >
-                <IoMdArrowDropdown aria-hidden="true" size={20} />
+
+            {isPending ? (
+              <div className="flex h-14 w-20 items-center justify-center rounded-full bg-secondary px-1">
+                <div className="h-5 w-5 bg-secondary"></div>
+                <div className="h-10 w-10 animate-pulse rounded-full bg-primary/10"></div>
               </div>
-              <Avatar>
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-            </Button>
+            ) : (
+              <Button
+                variant="secondary"
+                onClick={toggleDropDown}
+                className="w-18 flex h-14 items-center justify-center rounded-full hover:opacity-90 active:scale-95"
+                aria-label="dropdown profile"
+              >
+                <div
+                  className={cn(
+                    "transition-transform duration-200",
+                    isOpen && "rotate-180"
+                  )}
+                >
+                  <IoMdArrowDropdown aria-hidden="true" size={20} />
+                </div>
+
+                <Avatar>
+                  <AvatarImage
+                    src={currentUser?.image ?? "/default-image.png"}
+                    alt={`@${currentUser?.name}` ?? ""}
+                  />
+                  <AvatarFallback>
+                    <div className="h-full w-full animate-pulse rounded-full bg-primary/10"></div>
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            )}
+
             {/* )}
             {isOpen && <Dropdown />} */}
           </div>
@@ -86,14 +121,9 @@ const Users = () => {
                   </Button>
                 </li>
               )} */}
-              {}
-              <UserItem />
-              <UserItem />
-              <UserItem />
-              <UserItem />
-              <UserItem />
-              <UserItem />
-              <UserItem />
+              {users?.pages.map((page) =>
+                page?.users.map((user: User) => <UserItem user={user} />)
+              )}
             </ul>
           </div>
         </aside>

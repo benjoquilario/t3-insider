@@ -4,18 +4,18 @@ import { type NextRequest, NextResponse } from "next/server"
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { postId: string } }
+  { params }: { params: { commentId: string } }
 ) {
-  const postId = params.postId
+  const commentId = params.commentId
 
   const searchParams = req.nextUrl.searchParams
   const limit = searchParams.get("limit")
   const skip = searchParams.get("cursor")
   const session = await auth()
 
-  const comments = await db.comment.findMany({
+  const comments = await db.replyComment.findMany({
     where: {
-      postId,
+      commentId,
     },
     include: {
       user: {
@@ -26,7 +26,7 @@ export async function GET(
           email: true,
         },
       },
-      commentLike: {
+      likeReplyComment: {
         select: {
           id: true,
         },
@@ -36,8 +36,7 @@ export async function GET(
       },
       _count: {
         select: {
-          commentLike: true,
-          replyComment: true,
+          likeReplyComment: true,
         },
       },
     },
@@ -51,24 +50,24 @@ export async function GET(
 
   if (comments.length === 0) {
     return NextResponse.json({
-      comments: [],
+      replies: [],
       hasNextPage: false,
       nextSkip: null,
     })
   }
 
   const transformedPosts = comments.map((post) => {
-    const { _count, commentLike, ...rest } = post
+    const { _count, likeReplyComment, ...rest } = post
     return {
       ...rest,
       _count,
-      commentLike,
-      isLiked: session ? commentLike.length > 0 : false,
+      likeReplyComment,
+      isLiked: session ? likeReplyComment.length > 0 : false,
     }
   })
 
   return NextResponse.json({
-    comments: transformedPosts,
+    replies: transformedPosts,
     hasNextPage: comments.length < (Number(limit) || 5) ? false : true,
     nextSkip:
       comments.length < (Number(limit) || 5)
