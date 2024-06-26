@@ -14,12 +14,10 @@ type UserItemProps = {
 const UserItem = (props: UserItemProps) => {
   const { user } = props
 
-  console.log(user)
-
   return (
     <li className="relative h-16 overflow-hidden rounded-md hover:bg-secondary">
       <Link
-        href={`/profile`}
+        href={`/profile/${user.id}`}
         className="outline-offset-2 transition duration-75 hover:bg-secondary focus:outline-none focus:ring focus:ring-offset-2 active:bg-[#5544c8]"
       >
         <div className="absolute inset-0 flex items-center overflow-hidden rounded-md border border-secondary">

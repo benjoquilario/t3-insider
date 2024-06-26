@@ -2,6 +2,7 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import PostsUser from "./posts-user"
+import About from "./about"
 
 type TabsProfileProps = {
   userId: string
@@ -26,7 +27,9 @@ const TabsProfile = (props: TabsProfileProps) => {
       <TabsContent value="post" className="mt-0">
         <PostsUser userId={userId} />
       </TabsContent>
-      <TabsContent value="about">About</TabsContent>
+      <TabsContent value="about">
+        <About />
+      </TabsContent>
       <TabsContent value="activity">Activity</TabsContent>
     </Tabs>
   )
