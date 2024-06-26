@@ -47,6 +47,7 @@ import { useLikeCommentMutation } from "@/hooks/useLikeComment"
 import { useSession } from "next-auth/react"
 import useReplyCommentStore from "@/store/reply"
 import { useUpdateDeleteRepliesMutation } from "@/hooks/useUpdateDeleteReplies"
+import { useLikeReplyCommentMutation } from "@/hooks/useLikeReply"
 
 type ReplyItemProps = {
   reply: IReplyComment<User>
@@ -68,6 +69,11 @@ const ReplyItem = (props: ReplyItemProps) => {
 
   const { deleteReplyMutation, updateReplyMutation } =
     useUpdateDeleteRepliesMutation({ commentId })
+
+  const { likeReplyCommentMutation, unlikeReplyCommentMutation } =
+    useLikeReplyCommentMutation({ commentId, replyId: reply.id })
+
+  console.log(reply, commentId)
 
   const setSelectedReply = useReplyCommentStore(
     (store) => store.setSelectedReply
@@ -134,11 +140,11 @@ const ReplyItem = (props: ReplyItemProps) => {
     }
   }
 
-  // const handleLikeComment = (isLiked: boolean) => {
-  //   return !isLiked
-  //     ? likeCommentMutation.mutate()
-  //     : unlikeCommentMutation.mutate()
-  // }
+  const handleLikeReply = (isLiked: boolean) => {
+    return !isLiked
+      ? likeReplyCommentMutation.mutate()
+      : unlikeReplyCommentMutation.mutate()
+  }
 
   return (
     <>
@@ -295,7 +301,7 @@ const ReplyItem = (props: ReplyItemProps) => {
                 </span>
                 <button
                   type="button"
-                  // onClick={() => handleLikeComment(reply.isLiked)}
+                  onClick={() => handleLikeReply(reply.isLiked)}
                   className={cn(
                     "underline-offset-1 hover:underline",
                     reply.isLiked && "font-bold text-primary"

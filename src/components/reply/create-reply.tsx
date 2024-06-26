@@ -35,7 +35,7 @@ const CreateReplyComment = (props: CreateCommentProps) => {
   })
 
   return isPending ? (
-    <div className="flex animate-spin items-center justify-center py-2">
+    <div className="flex w-full animate-spin items-center justify-center py-2">
       <ImSpinner8 className="h-4 w-4" />
     </div>
   ) : (
