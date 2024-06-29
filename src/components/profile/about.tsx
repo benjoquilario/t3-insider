@@ -5,55 +5,62 @@ import { CiAt, CiMail, CiCalendar, CiPhone, CiGlobe } from "react-icons/ci"
 import { IoMdPerson } from "react-icons/io"
 import { MdOutlineTransgender } from "react-icons/md"
 import { FaRegHeart, FaAddressBook } from "react-icons/fa"
+import { User } from "@prisma/client"
 
-const About = () => {
+type AboutProps = {
+  user?: User
+}
+
+const About = (props: AboutProps) => {
+  const { user } = props
+
   return (
     <div className="mt-4">
       <div className="flex flex-col gap-2">
         <AboutItem
           Icon={<CiAt />}
           itemName="username"
-          itemValue="benjoquilario"
+          itemValue={`${user?.name?.split(" ").join("").toLowerCase()}`}
         />
         <AboutItem
           Icon={<CiMail />}
           itemName="email"
-          itemValue="benjoquilario"
+          itemValue={user?.email ?? "not set"}
         />
         <AboutItem
           Icon={<IoMdPerson />}
           itemName="name"
-          itemValue="benjoquilario"
+          itemValue={user?.name ?? "not set"}
         />
         <AboutItem
           Icon={<CiCalendar />}
           itemName="birth date"
-          itemValue="benjoquilario"
+          itemValue={user?.birthDate ?? "not set"}
         />
         <AboutItem
           Icon={<MdOutlineTransgender />}
           itemName="gender"
-          itemValue="benjoquilario"
+          itemValue={user?.gender ?? "not set"}
         />
         <AboutItem
           Icon={<FaRegHeart />}
           itemName="relationship status"
-          itemValue="benjoquilario"
+          itemValue={user?.relationshipStatus ?? "not set"}
         />
         <AboutItem
           Icon={<CiPhone />}
           itemName="phone number"
-          itemValue="benjoquilario"
+          itemValue={`${user?.phoneNumber ?? "not set"}`}
         />
         <AboutItem
           Icon={<CiGlobe />}
           itemName="website"
-          itemValue="benjoquilario"
+          itemValue={user?.website ?? "not set"}
         />
         <AboutItem
           Icon={<FaAddressBook />}
           itemName="address"
-          itemValue="benjoquilario"
+          itemValue={user?.address ?? "not set"}
         />
       </div>
     </div>
@@ -63,7 +70,7 @@ const About = () => {
 type AboutItemProps = {
   Icon: any
   itemName: string
-  itemValue: string
+  itemValue: string | Date
 }
 
 const AboutItem = (props: AboutItemProps) => {
@@ -76,7 +83,7 @@ const AboutItem = (props: AboutItemProps) => {
         <p className="font-medium capitalize">{itemName}</p>
       </div>
       <p className="flex flex-1 items-center self-stretch rounded-r-3xl border border-border pl-4">
-        {itemValue}
+        {itemValue.toString()}
       </p>
     </div>
   )

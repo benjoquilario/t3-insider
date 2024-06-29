@@ -89,9 +89,17 @@ const Users = () => {
           <h2 className="px-5 py-3 text-sm font-semibold">Trends this week</h2>
           <a className="block" href="/tag/trpc">
             <div className="cursor-pointer px-5 py-3 hover:bg-secondary">
-              <p className="text-md mb-2 font-bold">#trpc</p>
+              <p className="mb-2 text-sm font-semibold">#nextjs</p>
               <p className="text-xs font-medium text-muted-foreground/80">
-                1 posts
+                10 posts
+              </p>
+            </div>
+          </a>
+          <a className="block" href="/tag/trpc">
+            <div className="cursor-pointer px-5 py-3 hover:bg-secondary">
+              <p className="mb-2 text-sm font-semibold">#postgrel</p>
+              <p className="text-xs font-medium text-muted-foreground/80">
+                4 posts
               </p>
             </div>
           </a>

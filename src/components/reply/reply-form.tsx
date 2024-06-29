@@ -28,10 +28,11 @@ const replySchema = z.object({
 type ReplyCommentFormProps = {
   commentId: string
   replyId: string
+  replyName: string
 }
 
 const ReplyCommentForm = (props: ReplyCommentFormProps) => {
-  const { replyId, commentId } = props
+  const { replyId, commentId, replyName } = props
   const { data: currentUser, isPending } = useQueryUser()
 
   const form = useForm<z.infer<typeof replySchema>>({
@@ -129,6 +130,7 @@ const ReplyCommentForm = (props: ReplyCommentFormProps) => {
                                   "focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:ring-foreground/60 active:text-foreground/70",
                                   "focus:outline-none focus:outline-offset-1 focus:outline-primary focus-visible:outline-offset-2 focus-visible:outline-primary"
                                 )}
+                                defaultValue={`@${replyName.split(" ").join("").toLowerCase()} `}
                                 onKeyDown={handleKeyPress}
                               />
                             </FormControl>

@@ -7,10 +7,11 @@ import CreateReplyComment from "./create-reply"
 
 type CommentsProps = {
   commentId: string
+  replyName: string
 }
 
 const Replies = (props: CommentsProps) => {
-  const { commentId } = props
+  const { commentId, replyName } = props
 
   return (
     <motion.div
@@ -20,7 +21,7 @@ const Replies = (props: CommentsProps) => {
       exit="hidden"
       className="relative rounded"
     >
-      <CreateReplyComment commentId={commentId} />
+      <CreateReplyComment replyName={replyName} commentId={commentId} />
     </motion.div>
   )
 }

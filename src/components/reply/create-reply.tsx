@@ -12,10 +12,11 @@ import { Button } from "@/components/ui/button"
 
 type CreateCommentProps = {
   commentId: string
+  replyName: string
 }
 
 const CreateReplyComment = (props: CreateCommentProps) => {
-  const { commentId } = props
+  const { commentId, replyName } = props
 
   const {
     data: comments,
@@ -72,7 +73,11 @@ const CreateReplyComment = (props: CreateCommentProps) => {
         )}
       </ul>
       <div className="px-3 pt-1 md:px-5">
-        <ReplyCommentForm commentId={commentId} replyId="" />
+        <ReplyCommentForm
+          replyName={replyName}
+          commentId={commentId}
+          replyId=""
+        />
       </div>
     </div>
   )

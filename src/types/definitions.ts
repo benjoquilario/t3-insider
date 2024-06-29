@@ -104,3 +104,24 @@ interface IUser {
   email: string
   image: string
 }
+
+interface IActivity<T> {
+  content: string
+  contentId: string
+  createdAt: string
+  id: string
+  sourceUser: T
+  sourceUserId: string
+  targetId: string
+  targetUser: T
+  type: IActivityType
+}
+
+enum IActivityType {
+  POST_LIKE = "POST_LIKE",
+  FOLLOW_USER = "FOLLOW_USER",
+  CREATE_COMMENT = "CREATE_COMMENT",
+  COMMENT_LIKE = "COMMENT_LIKE",
+  CREATE_REPLY = "CREATE_REPLY",
+  REPLY_LIKE = "REPLY_LIKE",
+}

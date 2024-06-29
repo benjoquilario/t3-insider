@@ -13,15 +13,17 @@ import type { User } from "@prisma/client"
 export function useLikePostMutation({
   postId,
   userId,
+  content,
 }: {
   postId: string
   userId?: string
+  content: string
 }) {
   const queryClient = useQueryClient()
   const queryKey = [QUERY_KEYS.GET_INFINITE_POSTS]
 
   const likePostMutation = useMutation({
-    mutationFn: () => likePost({ postId }),
+    mutationFn: () => likePost({ postId, content }),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey })
 

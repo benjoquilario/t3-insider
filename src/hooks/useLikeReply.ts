@@ -13,9 +13,11 @@ import { useMemo } from "react"
 export function useLikeReplyCommentMutation({
   replyId,
   commentId,
+  content,
 }: {
   commentId: string
   replyId: string
+  content: string
 }) {
   const queryClient = useQueryClient()
   const queryKey = useMemo(
@@ -25,7 +27,7 @@ export function useLikeReplyCommentMutation({
 
   const likeReplyCommentMutation = useMutation({
     mutationFn: async () => {
-      const response = await likeReplyComment({ replyId })
+      const response = await likeReplyComment({ replyId, content })
 
       if (!response?.ok) {
         if (response?.status === 409) return

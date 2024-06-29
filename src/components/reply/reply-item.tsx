@@ -71,7 +71,11 @@ const ReplyItem = (props: ReplyItemProps) => {
     useUpdateDeleteRepliesMutation({ commentId })
 
   const { likeReplyCommentMutation, unlikeReplyCommentMutation } =
-    useLikeReplyCommentMutation({ commentId, replyId: reply.id })
+    useLikeReplyCommentMutation({
+      commentId,
+      replyId: reply.id,
+      content: reply.content,
+    })
 
   console.log(reply, commentId)
 
