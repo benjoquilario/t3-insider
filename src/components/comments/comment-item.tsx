@@ -70,7 +70,7 @@ const CommentItem = (props: CommentItemProps) => {
     useUpdateDeleteMutation({ postId })
 
   const { likeCommentMutation, unlikeCommentMutation } = useLikeCommentMutation(
-    { postId, commentId: comment.id }
+    { postId, commentId: comment.id, content: comment.comment }
   )
 
   const setSelectedComment = useCommentStore(
@@ -331,7 +331,12 @@ const CommentItem = (props: CommentItemProps) => {
                   </div>
                 ) : null)}
             </div>
-            {isRepliesOpen && <Replies commentId={comment.id} />}
+            {isRepliesOpen && (
+              <Replies
+                replyName={comment.user.name as string}
+                commentId={comment.id}
+              />
+            )}
           </div>
         </div>
         <div className="absolute right-0 top-0 h-0 w-1/2">

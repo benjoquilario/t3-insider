@@ -47,6 +47,7 @@ const PostItem = (props: PostItemProps) => {
   const { likePostMutation, unlikePostMutation } = useLikePostMutation({
     postId: post.id,
     userId: userId,
+    content: post.content,
   })
 
   const handleUpdatePost = () => {

@@ -42,6 +42,8 @@ model User {
   likeReplyComment LikeReplyComment[]
   comments        Comment[]
   likePosts       LikePost[]
+  activities      Activity[]    @relation("activity")
+  notifications    Activity[]    @relation("notification")
 }
 
 model Account {
@@ -172,6 +174,28 @@ model LikeReplyComment {
   user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, replyId])
+}
+
+model Activity {
+  id            String          @id @default(cuid())
+  createdAt     DateTime        @default(now())
+  targetId      String
+  targetUser    User            @relation("notification", fields: [targetId], references: [id], onDelete: Cascade)
+  type          Activitytype
+
+  content       String
+  contentId     String
+  sourceUserId  String
+  sourceUser    User       @relation("activity",fields: [sourceUserId], references: [id], onDelete: Cascade)
+}
+
+enum Activitytype {
+  POST_LIKE
+  FOLLOW_USER
+  CREATE_COMMENT
+  COMMENT_LIKE
+  CREATE_REPLY
+  REPLY_LIKE
 }
 
 enum Gender {

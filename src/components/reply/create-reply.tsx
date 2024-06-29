@@ -12,10 +12,11 @@ import { Button } from "@/components/ui/button"
 
 type CreateCommentProps = {
   commentId: string
+  replyName: string
 }
 
 const CreateReplyComment = (props: CreateCommentProps) => {
-  const { commentId } = props
+  const { commentId, replyName } = props
 
   const {
     data: comments,
@@ -35,7 +36,7 @@ const CreateReplyComment = (props: CreateCommentProps) => {
   })
 
   return isPending ? (
-    <div className="flex animate-spin items-center justify-center py-2">
+    <div className="flex w-full animate-spin items-center justify-center py-2">
       <ImSpinner8 className="h-4 w-4" />
     </div>
   ) : (
@@ -72,7 +73,11 @@ const CreateReplyComment = (props: CreateCommentProps) => {
         )}
       </ul>
       <div className="px-3 pt-1 md:px-5">
-        <ReplyCommentForm commentId={commentId} replyId="" />
+        <ReplyCommentForm
+          replyName={replyName}
+          commentId={commentId}
+          replyId=""
+        />
       </div>
     </div>
   )

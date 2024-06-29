@@ -12,6 +12,7 @@ import TabsProfile from "@/components/profile/tabs"
 import { useQueryUserById } from "@/hooks/queries/useQueryUserById"
 import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
+import type { User } from "@prisma/client"
 
 const Profile = ({ params }: { params: { userId: string } }) => {
   const userId = params.userId
@@ -85,7 +86,8 @@ const Profile = ({ params }: { params: { userId: string } }) => {
               </div>
             </div>
           )}
-          <TabsProfile userId={userId} />
+
+          <TabsProfile user={user as User} userId={userId} />
         </div>
       </Section>
     </Layout>

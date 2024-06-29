@@ -5,30 +5,29 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query"
-import { useSession } from "next-auth/react"
 import { QUERY_KEYS } from "@/lib/queriesKey"
-import { likePost, unlikePost, likeComment, unlikeComment } from "@/server/like"
+import { likeReplyComment, unlikeReplyComment } from "@/server/like"
 import type { User } from "@prisma/client"
 import { useMemo } from "react"
 
-export function useLikeCommentMutation({
-  postId,
+export function useLikeReplyCommentMutation({
+  replyId,
   commentId,
   content,
 }: {
-  postId: string
   commentId: string
+  replyId: string
   content: string
 }) {
   const queryClient = useQueryClient()
   const queryKey = useMemo(
-    () => [QUERY_KEYS.GET_INFINITE_COMMENTS, postId],
-    [postId]
+    () => [QUERY_KEYS.GET_INFINITE_REPLY_COMMENTS, commentId],
+    [commentId]
   )
 
-  const likeCommentMutation = useMutation({
+  const likeReplyCommentMutation = useMutation({
     mutationFn: async () => {
-      const response = await likeComment({ commentId, content })
+      const response = await likeReplyComment({ replyId, content })
 
       if (!response?.ok) {
         if (response?.status === 409) return
@@ -41,29 +40,29 @@ export function useLikeCommentMutation({
 
       const previousComment = queryClient.getQueryData(queryKey)
 
-      queryClient.setQueryData<InfiniteData<ICommentPage<IComment<User>[]>>>(
+      queryClient.setQueryData<InfiniteData<IReplyPage<IReplyComment<User>[]>>>(
         queryKey,
         (oldData) => {
           if (!oldData) return
 
-          const newComments = {
+          const newReplies = {
             ...oldData,
             pages: oldData.pages.map((page) => {
               if (page) {
                 return {
                   ...page,
-                  comments: page.comments.map((comment) => {
-                    if (comment.id === commentId) {
+                  replies: page.replies.map((reply) => {
+                    if (reply.id === replyId) {
                       return {
-                        ...comment,
+                        ...reply,
                         _count: {
-                          ...comment._count,
-                          commentLike: comment._count.commentLike + 1,
+                          ...reply._count,
+                          likeReplyComment: reply._count.likeReplyComment + 1,
                         },
                         isLiked: true,
                       }
                     } else {
-                      return comment
+                      return reply
                     }
                   }),
                 }
@@ -73,7 +72,7 @@ export function useLikeCommentMutation({
             }),
           }
 
-          return newComments
+          return newReplies
         }
       )
 
@@ -84,9 +83,9 @@ export function useLikeCommentMutation({
     },
   })
 
-  const unlikeCommentMutation = useMutation({
+  const unlikeReplyCommentMutation = useMutation({
     mutationFn: async () => {
-      const response = await unlikeComment({ commentId })
+      const response = await unlikeReplyComment({ replyId })
 
       if (!response?.ok) {
         if (response?.status === 409) return
@@ -99,29 +98,29 @@ export function useLikeCommentMutation({
 
       const previousComment = queryClient.getQueryData(queryKey)
 
-      queryClient.setQueryData<InfiniteData<ICommentPage<IComment<User>[]>>>(
+      queryClient.setQueryData<InfiniteData<IReplyPage<IReplyComment<User>[]>>>(
         queryKey,
         (oldData) => {
           if (!oldData) return
 
-          const newComments = {
+          const newReplies = {
             ...oldData,
             pages: oldData.pages.map((page) => {
               if (page) {
                 return {
                   ...page,
-                  comments: page.comments.map((comment) => {
-                    if (comment.id === commentId) {
+                  replies: page.replies.map((reply) => {
+                    if (reply.id === replyId) {
                       return {
-                        ...comment,
+                        ...reply,
                         _count: {
-                          ...comment._count,
-                          commentLike: comment._count.commentLike - 1,
+                          ...reply._count,
+                          likeReplyComment: reply._count.likeReplyComment - 1,
                         },
                         isLiked: false,
                       }
                     } else {
-                      return comment
+                      return reply
                     }
                   }),
                 }
@@ -131,7 +130,7 @@ export function useLikeCommentMutation({
             }),
           }
 
-          return newComments
+          return newReplies
         }
       )
 
@@ -140,5 +139,5 @@ export function useLikeCommentMutation({
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   })
 
-  return { likeCommentMutation, unlikeCommentMutation }
+  return { likeReplyCommentMutation, unlikeReplyCommentMutation }
 }
