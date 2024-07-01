@@ -157,18 +157,18 @@ const ReplyItem = (props: ReplyItemProps) => {
           {/* {isReplyOpen || comment._count.reply > 0 ? (
             <div className="absolute left-[18px] top-[30px] h-[calc(100%_-_61px)] w-[2px] bg-gray-300"></div>
           ) : null} */}
-          <div className="absolute left-[-45px] top-[15px] h-[2px] w-[45px] bg-input"></div>
+          <div className="absolute left-[-38px] top-[15px] h-[2px] w-[45px] bg-input"></div>
           <span className="inline">
             <Link
               href={`/profile/`}
               className="relative inline-block w-full shrink basis-[auto] items-stretch"
               // aria-label={comment.user?.name}
             >
-              <Avatar className="h-8 w-8">
+              <Avatar className="h-6 w-6">
                 <AvatarImage
                   src={reply.user.image ?? "/default-image.png"}
                   alt={`@${reply.user.name}`}
-                  className="h-8 w-8"
+                  className="h-6 w-6"
                 />
                 <AvatarFallback>
                   <div className="h-full w-full animate-pulse bg-primary/10"></div>

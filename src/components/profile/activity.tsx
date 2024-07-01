@@ -57,17 +57,23 @@ const ActivityUser = (props: ActivityUserProps) => {
               </li>
             ))
           : activies?.pages.map((page) =>
-              page?.activities.map((activity: IActivity<User>) => (
-                <motion.li
-                  key={activity.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="rounded-3xl bg-secondary p-2 px-2"
-                >
-                  <Activity userId={userId} activity={activity} />
-                </motion.li>
-              ))
+              page?.activities.length !== 0 ? (
+                page?.activities.map((activity: IActivity<User>) => (
+                  <motion.li
+                    key={activity.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="rounded-3xl bg-secondary p-2 px-2"
+                  >
+                    <Activity userId={userId} activity={activity} />
+                  </motion.li>
+                ))
+              ) : (
+                <li className="mt-4 flex items-center justify-center text-center text-2xl font-medium">
+                  No activity!
+                </li>
+              )
             )}
         <InView
           fallbackInView
@@ -126,8 +132,8 @@ const Activity = (props: ActivityProps) => {
   if (activity.type === "POST_LIKE") {
     return (
       <ActivityCard activity={activity}>
-        <div className="flex items-center gap-1">
-          <p>
+        <div className="flex flex-col items-start gap-1">
+          <p className="text-sm md:text-base">
             <span className="font-semibold capitalize">
               {currentUser ? "You" : activity.sourceUser.name}{" "}
             </span>
@@ -137,7 +143,12 @@ const Activity = (props: ActivityProps) => {
             </span>
             post:
           </p>
-          <p>{activity.content}</p>
+          <p
+            style={{ overflowWrap: "anywhere" }}
+            className="text-muted=foreground/80 text-sm md:text-base"
+          >
+            {activity.content}
+          </p>
         </div>
       </ActivityCard>
     )
@@ -146,8 +157,8 @@ const Activity = (props: ActivityProps) => {
   if (activity.type === "COMMENT_LIKE") {
     return (
       <ActivityCard activity={activity}>
-        <div className="flex items-center gap-1">
-          <p>
+        <div className="flex flex-col items-start gap-1">
+          <p className="text-sm md:text-base">
             <span className="font-semibold capitalize">
               {currentUser ? "You" : activity.sourceUser.name}{" "}
             </span>
@@ -157,7 +168,12 @@ const Activity = (props: ActivityProps) => {
             </span>
             comment:
           </p>
-          <p>{activity.content}</p>
+          <p
+            style={{ overflowWrap: "anywhere" }}
+            className="text-muted=foreground/80 text-sm md:text-base"
+          >
+            {activity.content}
+          </p>
         </div>
       </ActivityCard>
     )
@@ -166,8 +182,8 @@ const Activity = (props: ActivityProps) => {
   if (activity.type === "REPLY_LIKE") {
     return (
       <ActivityCard activity={activity}>
-        <div className="flex items-center gap-1">
-          <p>
+        <div className="flex flex-col items-start gap-1">
+          <p className="text-sm md:text-base">
             <span className="font-semibold capitalize">
               {currentUser ? "You" : activity.sourceUser.name}{" "}
             </span>
@@ -177,7 +193,12 @@ const Activity = (props: ActivityProps) => {
             </span>
             reply
           </p>
-          <p>{activity.content}</p>
+          <p
+            style={{ overflowWrap: "anywhere" }}
+            className="text-muted=foreground/80 text-sm md:text-base"
+          >
+            {activity.content}
+          </p>
         </div>
       </ActivityCard>
     )
@@ -229,17 +250,19 @@ const ActivityCard = (props: ActivityCardProps) => {
   return (
     <div className="flex gap-2">
       <div className="relative">
-        <Avatar className="h-14 w-14">
-          <AvatarImage
-            className="h-14 w-14"
-            src={activity.targetUser.image ?? "/default-image.png"}
-            alt={activity.targetUser.name ?? ""}
-          />
-          <AvatarFallback>
-            <div className="h-full w-full animate-pulse"></div>
-          </AvatarFallback>
-        </Avatar>
-        <ActivityIcon type={activity.type} />
+        <div className="relative">
+          <Avatar className="h-12 w-12">
+            <AvatarImage
+              className="h-12 w-12"
+              src={activity.targetUser.image ?? "/default-image.png"}
+              alt={activity.targetUser.name ?? ""}
+            />
+            <AvatarFallback>
+              <div className="h-full w-full animate-pulse"></div>
+            </AvatarFallback>
+          </Avatar>
+          <ActivityIcon type={activity.type} />
+        </div>
       </div>
       <div>
         {children}

@@ -51,7 +51,7 @@ export async function GET(
 
   if (posts.length === 0) {
     return NextResponse.json({
-      comments: [],
+      posts: [],
       hasNextPage: false,
       nextSkip: null,
     })

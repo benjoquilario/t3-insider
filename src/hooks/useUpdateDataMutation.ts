@@ -1,11 +1,16 @@
 "use client"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { updateProfilePicture, updateCoverPicture } from "@/server/user"
+import {
+  updateProfilePicture,
+  updateCoverPicture,
+  updateUserInformation,
+} from "@/server/user"
 import { useMemo } from "react"
 import { useSession } from "next-auth/react"
+import { UserSchema } from "@/lib/validations/user"
 
-export function useUpdateDataMutation(userId: string) {
+export function useUpdateDataMutation(userId?: string) {
   const { data: session } = useSession()
   const sessionId = session?.user.id
 
@@ -28,5 +33,12 @@ export function useUpdateDataMutation(userId: string) {
     },
   })
 
-  return { updateProfilePhoto, updateCoverPhoto }
+  const updateUserData = useMutation({
+    mutationFn: (data: UserSchema) => updateUserInformation(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey })
+    },
+  })
+
+  return { updateProfilePhoto, updateCoverPhoto, updateUserData }
 }

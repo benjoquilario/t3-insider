@@ -149,10 +149,11 @@ const CommentItem = (props: CommentItemProps) => {
               className="relative inline-block w-full shrink basis-[auto] items-stretch"
               // aria-label={comment.user?.name}
             >
-              <Avatar>
+              <Avatar className="h-8 w-8">
                 <AvatarImage
                   src={comment.user.image ?? "/default-image.png"}
                   alt={`@${comment.user.name}`}
+                  className="h-8 w-8"
                 />
                 <AvatarFallback>
                   <div className="h-full w-full animate-pulse bg-primary/10"></div>
