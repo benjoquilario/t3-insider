@@ -38,7 +38,10 @@ const SideBar = () => {
               </div>
             </div>
           ) : (
-            <Link href="/" className="flex items-center gap-1">
+            <Link
+              href={`/profile/${currentUser?.id}`}
+              className="flex items-center gap-1"
+            >
               <div>
                 <Avatar>
                   <AvatarImage
@@ -53,7 +56,7 @@ const SideBar = () => {
               <div className="flex flex-col">
                 <h3 className="font-medium">{currentUser?.name}</h3>
                 <span className="text-xs text-muted-foreground/60">
-                  21 Followers
+                  {currentUser?._count.followers} Followers
                 </span>
               </div>
             </Link>

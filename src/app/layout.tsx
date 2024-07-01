@@ -1,12 +1,13 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
 import "./globals.css"
 import QueryProvider from "@/components/query-provider"
 import AuthProvider from "@/components/auth-provider"
 import { Toaster } from "@/components/ui/toaster"
 import HolyLoader from "holy-loader"
+import { GeistSans } from "geist/font/sans"
+import { cn } from "@/lib/utils"
 
-const inter = Inter({ subsets: ["latin"] })
+const fontSans = GeistSans
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,8 +20,13 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" suppressHydrationWarning className={fontSans.variable}>
+      <body
+        className={cn(
+          "font-geist-sans bg-background antialiased",
+          fontSans.variable
+        )}
+      >
         <HolyLoader
           color="#6d28d9"
           height="4px"

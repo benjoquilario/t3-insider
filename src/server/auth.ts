@@ -89,6 +89,7 @@ export async function register(values: IRegister) {
       password: hashedPassword,
       name: `${firstName} ${lastName}`,
       image: `/avatar-${randomNumber}.png`,
+      username: `${firstName.toLowerCase()}${lastName.toLowerCase()}`,
     },
   })
 

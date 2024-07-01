@@ -35,6 +35,9 @@ const PostsUser = (props: PostsUserProps) => {
     getNextPageParam: (lastPage) => lastPage.nextSkip,
     refetchOnWindowFocus: false,
   })
+
+  console.log(posts)
+
   return (
     <>
       {userId === session?.user.id && <CreateButton userId={userId} />}
@@ -43,17 +46,29 @@ const PostsUser = (props: PostsUserProps) => {
           {isPending
             ? Array.from(Array(2), (_, i) => <PostSkeleton key={i} />)
             : posts?.pages.map((page) =>
-                page?.posts.map((post: IPost<User>) => (
+                page?.posts.length !== 0 ? (
+                  page?.posts.map((post: IPost<User>) => (
+                    <motion.li
+                      key={post.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="relative z-10 flex flex-col gap-1 overflow-hidden rounded-md shadow"
+                    >
+                      <PostItem key={post.id} post={post} userId={userId} />
+                    </motion.li>
+                  ))
+                ) : (
                   <motion.li
-                    key={post.id}
+
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="relative z-10 flex flex-col gap-1 overflow-hidden rounded-md shadow"
+                    className="mt-4 flex items-center justify-center text-center text-2xl font-medium"
                   >
-                    <PostItem key={post.id} post={post} userId={userId} />
+                    All Caught up!
                   </motion.li>
-                ))
+                )
               )}
           <InView
             fallbackInView

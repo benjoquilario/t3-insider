@@ -11,13 +11,27 @@ import ProfileSkeleton from "@/components/skeleton/profile-skeleton"
 import TabsProfile from "@/components/profile/tabs"
 import { useQueryUserById } from "@/hooks/queries/useQueryUserById"
 import { useSession } from "next-auth/react"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import type { User } from "@prisma/client"
+import Link from "next/link"
+import { useFolloMutation } from "@/hooks/useFollowMutation"
 
 const Profile = ({ params }: { params: { userId: string } }) => {
   const userId = params.userId
   const { data: session } = useSession()
   const { data: user, isPending } = useQueryUserById(userId)
+
+  const isFollowing = user?.isFollowing
+
+  const { followMutation, unFollowMutation } = useFolloMutation({
+    userIdToFollow: userId,
+  })
+
+  const handleFollowUser = () => {
+    isFollowing ? unFollowMutation.mutate() : followMutation.mutate()
+  }
+
+  console.log(session?.user.id === userId)
 
   return (
     <Layout>
@@ -41,9 +55,26 @@ const Profile = ({ params }: { params: { userId: string } }) => {
                         <p className="text-sm text-muted-foreground">
                           {user?.email}
                         </p>
-                        <span className="text-sm text-muted-foreground/90">
-                          12 Followers
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <Link
+                            href="/follower"
+                            className="text-sm text-muted-foreground/90"
+                          >
+                            <span className="mr-1 font-semibold">
+                              {user?.followerCount}
+                            </span>
+                            Followers
+                          </Link>
+                          <Link
+                            href="/following"
+                            className="text-sm text-muted-foreground/90"
+                          >
+                            <span className="mr-1 font-semibold">
+                              {user?.followingCount}
+                            </span>
+                            Following
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -51,33 +82,19 @@ const Profile = ({ params }: { params: { userId: string } }) => {
                   <div className="flex items-start justify-center p-3">
                     {userId !== session?.user.id ? (
                       <Button
-                        // onClick={handleFollowUser}
-                        variant="default"
+                        onClick={handleFollowUser}
+                        variant={isFollowing ? "default" : "secondary"}
                         className="flex items-center gap-1 rounded-full"
                       >
-                        {/* {!isFollowLoading ? (
-                        user?.followedByMe ? ( */}
-                        <React.Fragment>
-                          <div className="flex-shrink-0">
-                            <AiFillCheckCircle aria-hidden="true" size={15} />
-                          </div>
-                          <span>Following</span>
-                        </React.Fragment>
-                        {/* ) : (
-                          <React.Fragment>
-                            <div className="flex-shrink-0">
-                              <BsFillPersonPlusFill
-                                aria-hidden="true"
-                                size={15}
-                              />
-                            </div>
-                            <span>Follow</span>
-                          </React.Fragment>
-                        )
-                      ) */}
+                        {isFollowing ? "Following" : "Follow"}
                       </Button>
                     ) : (
-                      <Button variant="outline">Edit Profile</Button>
+                      <Link
+                        href="/edit-profile"
+                        className={cn(buttonVariants({ variant: "outline" }))}
+                      >
+                        Edit Profile
+                      </Link>
                     )}
 
                     {/* )} */}
@@ -86,6 +103,13 @@ const Profile = ({ params }: { params: { userId: string } }) => {
               </div>
             </div>
           )}
+          {user?.bio ? (
+            <div className="my-2 flex w-full items-center justify-center rounded-sm p-3 text-center shadow">
+              <p className="max-w-80 text-sm italic text-muted-foreground">
+                {user.bio}
+              </p>
+            </div>
+          ) : null}
 
           <TabsProfile user={user as User} userId={userId} />
         </div>

@@ -10,6 +10,7 @@ import { MdDynamicFeed } from "react-icons/md"
 import { Button } from "./ui/button"
 import usePostStore from "@/store/post"
 import { useSession } from "next-auth/react"
+import { useQueryUser } from "@/hooks/queries/useQueryUser"
 
 export const LINKS = [
   {
@@ -32,8 +33,8 @@ export const LINKS = [
   },
 ]
 const Nav = () => {
-  const { data: session } = useSession()
   const setIsPostOpen = usePostStore((store) => store.setIsPostOpen)
+  const { data: currentUser } = useQueryUser()
 
   return (
     <div className="mt-0">
@@ -64,7 +65,7 @@ const Nav = () => {
           <li className="flex flex-1 items-start">
             <Link
               aria-label="my profile"
-              href={`/profile/${session?.user.id}`}
+              href={`/profile/${currentUser?.id}`}
               className={cn(
                 "flex w-full items-center space-x-3 rounded-md px-5 py-3 focus:outline-none",
                 "focus-visible:outline-offset-2 focus-visible:outline-primary",

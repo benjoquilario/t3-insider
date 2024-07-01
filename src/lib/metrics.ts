@@ -35,13 +35,12 @@ export async function getCurrentUser() {
 
   const currentUser = await db.user.findUnique({
     where: { id: session.user.id },
-    select: {
-      id: true,
-      cover: true,
-      email: true,
-      image: true,
-      name: true,
-      createdAt: true,
+    include: {
+      _count: {
+        select: {
+          followers: true,
+        },
+      },
     },
   })
 
@@ -51,11 +50,41 @@ export async function getCurrentUser() {
 }
 
 export async function getUserById({ userId }: { userId: string }) {
+  const session = await auth()
+
+  if (!session) return
+  const sessionId = session.user.id
+
   const user = await db.user.findUnique({
     where: { id: userId },
+    include: {
+      followers: {
+        where: {
+          followerId: sessionId!,
+        },
+      },
+      _count: {
+        select: {
+          followers: true,
+          following: true,
+        },
+      },
+    },
   })
 
   if (!user) return null
 
-  return user
+  const followerCount = user._count.followers
+  const followingCount = user._count.following
+
+  const { followers, _count, ...rest } = user
+
+  return {
+    ...rest,
+    name: rest.name!,
+    username: rest.username!,
+    followerCount,
+    followingCount,
+    isFollowing: user.followers.length === 1,
+  }
 }

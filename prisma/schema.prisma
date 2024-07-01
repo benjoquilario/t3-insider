@@ -17,11 +17,12 @@ datasource db {
 model User {
   id              String @id @default(uuid())
   name            String?
+  username        String?
   email           String? @unique
   emailVerified   DateTime?
   image           String?
   cover           String?
-  phoneNumber     Int?
+  phoneNumber     String?
   bio             String?
   website         String?
   address         String?
@@ -43,7 +44,9 @@ model User {
   comments        Comment[]
   likePosts       LikePost[]
   activities      Activity[]    @relation("activity")
-  notifications    Activity[]    @relation("notification")
+  notifications    Activity[]   @relation("notification")
+  followers       Follow[]      @relation("following")
+  following       Follow[]      @relation("follower")
 }
 
 model Account {
@@ -189,6 +192,16 @@ model Activity {
   sourceUser    User       @relation("activity",fields: [sourceUserId], references: [id], onDelete: Cascade)
 }
 
+model Follow {
+  id            String          @id @default(cuid())
+  follower      User            @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  followerId    String
+  following     User            @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+  followingId   String
+
+  @@unique([followerId, followingId])
+}
+
 enum Activitytype {
   POST_LIKE
   FOLLOW_USER
@@ -197,6 +210,7 @@ enum Activitytype {
   CREATE_REPLY
   REPLY_LIKE
 }
+
 
 enum Gender {
   FEMALE
