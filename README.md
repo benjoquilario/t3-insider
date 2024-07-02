@@ -52,11 +52,6 @@ Share your thoughts in users posts
 
 <img src="public/comments.jpeg" alt="comments" />
 
-### Activity
-
-Track your activities
-<img src="public/activities.jpeg" alt="activities" />
-
 Try the App: [t3-insider](https://t3-insider.vercel.app/)
 
 ### Features
