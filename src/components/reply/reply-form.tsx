@@ -82,7 +82,7 @@ const ReplyCommentForm = (props: ReplyCommentFormProps) => {
     <div className="flex flex-row items-center space-x-2">
       <div className="mt-[-0.25rem]">
         <div className="relative mt-2">
-          <div className="absolute bottom-[12px] left-[-34px] top-0 h-[21px] w-[57px] rounded-l border-b-2 border-l-2 border-l-input border-t-input md:left-[-42x]"></div>
+          <div className="absolute bottom-[12px] left-[-34px] top-0 h-[21px] w-[57px] rounded-l border-b-2 border-l-2 border-l-input border-t-input md:left-[-42px]"></div>
 
           <Link
             href={`/profile/${currentUser?.id}`}
