@@ -30,7 +30,11 @@ import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { login } from "@/server/auth"
+import type { Metadata } from "next"
 
+export const metadata: Metadata = {
+  title: "Login - Insider",
+}
 const Login = () => {
   const form = useForm<ICredentials>({
     resolver: zodResolver(credentialsValidator),
