@@ -30,7 +30,6 @@ import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { login } from "@/server/auth"
-import type { Metadata } from "next"
 
 const Login = () => {
   const form = useForm<ICredentials>({
