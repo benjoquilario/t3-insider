@@ -32,9 +32,6 @@ import { useState, useTransition } from "react"
 import { login } from "@/server/auth"
 import type { Metadata } from "next"
 
-export const metadata: Metadata = {
-  title: "Login - Insider",
-}
 const Login = () => {
   const form = useForm<ICredentials>({
     resolver: zodResolver(credentialsValidator),
@@ -59,7 +56,7 @@ const Login = () => {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <>
       <Card className="mx-2 w-[450px]">
         <CardHeader>
           <CardTitle className="text-2xl">Sign In to Insider!</CardTitle>
@@ -154,7 +151,7 @@ const Login = () => {
           </div>
         </CardFooter>
       </Card>
-    </div>
+    </>
   )
 }
 

@@ -58,7 +58,7 @@ const Register = () => {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <>
       <Card className="mx-2 w-[450px]">
         <CardHeader>
           <CardTitle className="text-2xl">Create an account!</CardTitle>
@@ -213,7 +213,7 @@ const Register = () => {
           </div>
         </CardFooter>
       </Card>
-    </div>
+    </>
   )
 }
 
