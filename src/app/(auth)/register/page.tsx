@@ -28,6 +28,12 @@ import { useTransition, useState } from "react"
 import { register } from "@/server/auth"
 import { useRouter } from "next/navigation"
 
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Register - Insider",
+}
+
 const Register = () => {
   const [error, setError] = useState("")
   const [isPending, startTransition] = useTransition()

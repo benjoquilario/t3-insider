@@ -73,7 +73,7 @@ const EditProfile = () => {
   }
 
   return (
-    <div className="mx-auto mb-4 flex w-full max-w-3xl flex-col items-center justify-center px-4 md:px-0">
+    <>
       <h1 className="mt-4 self-start text-3xl font-bold">Edit Profile</h1>
       <Form {...form}>
         <form
@@ -246,7 +246,7 @@ const EditProfile = () => {
           </Button>
         </form>
       </Form>
-    </div>
+    </>
   )
 }
 

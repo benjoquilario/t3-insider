@@ -1,10 +1,7 @@
 "use client"
 
 import React from "react"
-import Layout from "@/components/layout"
-import Section from "@/components/section"
 import { cn } from "@/lib/utils"
-import { AiFillCheckCircle } from "react-icons/ai"
 import ProfilePhoto from "@/components/profile/profile-photo"
 import CoverPhoto from "@/components/profile/cover-photo"
 import ProfileSkeleton from "@/components/skeleton/profile-skeleton"
@@ -34,87 +31,83 @@ const Profile = ({ params }: { params: { userId: string } }) => {
   console.log(session?.user.id === userId)
 
   return (
-    <Layout>
-      <Section>
-        <div className="col-span-full lg:col-span-9 xl:col-span-6">
-          {/*  */}
-          {isPending ? (
-            <ProfileSkeleton />
-          ) : (
-            <div className="mb-2 mt-0">
-              <CoverPhoto userId={userId} photoUrl={user?.cover!} />
-              <div className="space-y-4">
-                <div className="flex flex-col justify-center shadow md:flex-row md:justify-between">
-                  <div className="flex flex-col items-center justify-center gap-3 px-5 pb-2 pt-2 md:flex-row md:pb-5">
-                    <ProfilePhoto userId={userId} photoUrl={user?.image!} />
-                    <div className="text-center sm:text-left">
-                      <div>
-                        <h1 className="text-lg font-semibold capitalize text-foreground">
-                          {user?.name}
-                        </h1>
-                        <p className="text-sm text-muted-foreground">
-                          {user?.email}
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <Link
-                            href="/follower"
-                            className="text-sm text-muted-foreground/90"
-                          >
-                            <span className="mr-1 font-semibold">
-                              {user?.followerCount}
-                            </span>
-                            Followers
-                          </Link>
-                          <Link
-                            href="/following"
-                            className="text-sm text-muted-foreground/90"
-                          >
-                            <span className="mr-1 font-semibold">
-                              {user?.followingCount}
-                            </span>
-                            Following
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start justify-center p-3">
-                    {userId !== session?.user.id ? (
-                      <Button
-                        onClick={handleFollowUser}
-                        variant={isFollowing ? "default" : "secondary"}
-                        className="flex items-center gap-1 rounded-full"
-                      >
-                        {isFollowing ? "Following" : "Follow"}
-                      </Button>
-                    ) : (
+    <div className="col-span-full lg:col-span-9 xl:col-span-6">
+      {/*  */}
+      {isPending ? (
+        <ProfileSkeleton />
+      ) : (
+        <div className="mb-2 mt-0">
+          <CoverPhoto userId={userId} photoUrl={user?.cover!} />
+          <div className="space-y-4">
+            <div className="flex flex-col justify-center shadow md:flex-row md:justify-between">
+              <div className="flex flex-col items-center justify-center gap-3 px-5 pb-2 pt-2 md:flex-row md:pb-5">
+                <ProfilePhoto userId={userId} photoUrl={user?.image!} />
+                <div className="text-center sm:text-left">
+                  <div>
+                    <h1 className="text-lg font-semibold capitalize text-foreground">
+                      {user?.name}
+                    </h1>
+                    <p className="text-sm text-muted-foreground">
+                      {user?.email}
+                    </p>
+                    <div className="flex items-center gap-2">
                       <Link
-                        href="/edit-profile"
-                        className={cn(buttonVariants({ variant: "outline" }))}
+                        href="/follower"
+                        className="text-sm text-muted-foreground/90"
                       >
-                        Edit Profile
+                        <span className="mr-1 font-semibold">
+                          {user?.followerCount}
+                        </span>
+                        Followers
                       </Link>
-                    )}
-
-                    {/* )} */}
+                      <Link
+                        href="/following"
+                        className="text-sm text-muted-foreground/90"
+                      >
+                        <span className="mr-1 font-semibold">
+                          {user?.followingCount}
+                        </span>
+                        Following
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
-          {user?.bio ? (
-            <div className="my-2 flex w-full items-center justify-center rounded-sm p-3 text-center shadow">
-              <p className="max-w-80 text-sm italic text-muted-foreground">
-                {user.bio}
-              </p>
-            </div>
-          ) : null}
 
-          <TabsProfile user={user as User} userId={userId} />
+              <div className="flex items-start justify-center p-3">
+                {userId !== session?.user.id ? (
+                  <Button
+                    onClick={handleFollowUser}
+                    variant={isFollowing ? "default" : "secondary"}
+                    className="flex items-center gap-1 rounded-full"
+                  >
+                    {isFollowing ? "Following" : "Follow"}
+                  </Button>
+                ) : (
+                  <Link
+                    href="/edit-profile"
+                    className={cn(buttonVariants({ variant: "outline" }))}
+                  >
+                    Edit Profile
+                  </Link>
+                )}
+
+                {/* )} */}
+              </div>
+            </div>
+          </div>
         </div>
-      </Section>
-    </Layout>
+      )}
+      {user?.bio ? (
+        <div className="my-2 flex w-full items-center justify-center rounded-sm p-3 text-center shadow">
+          <p className="max-w-80 text-sm italic text-muted-foreground">
+            {user.bio}
+          </p>
+        </div>
+      ) : null}
+
+      <TabsProfile user={user as User} userId={userId} />
+    </div>
   )
 }
 
