@@ -24,6 +24,7 @@ interface IPost<T> {
     likePost: number
     comment: number
   }
+  isFollowing: boolean
   likePost: LikePost<T>[]
 }
 

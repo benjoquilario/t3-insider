@@ -28,6 +28,7 @@ import { VscCommentDiscussion } from "react-icons/vsc"
 import { BiSolidLike } from "react-icons/bi"
 import dayjs from "@/lib/time"
 import { useSession } from "next-auth/react"
+import { useFolloMutation } from "@/hooks/useFollowMutation"
 
 export type PostItemProps = {
   post: IPost<User>
@@ -42,6 +43,7 @@ const PostItem = (props: PostItemProps) => {
   const setSelectedPostId = usePostStore((store) => store.setSelectedPostId)
   const setSelectedPost = usePostStore((store) => store.setSelectedPost)
   const setIsEditing = usePostStore((store) => store.setIsEditing)
+  const isFollowing = post.isFollowing
 
   const { deletePostMutation } = useUpdateDeleteMutation(userId)
   const { likePostMutation, unlikePostMutation } = useLikePostMutation({
@@ -65,6 +67,14 @@ const PostItem = (props: PostItemProps) => {
     return !isLiked ? likePostMutation.mutate() : unlikePostMutation.mutate()
   }
 
+  const { followMutation, unFollowMutation } = useFolloMutation({
+    userIdToFollow: post.user.id,
+  })
+
+  const handleFollowUser = () => {
+    isFollowing ? unFollowMutation.mutate() : followMutation.mutate()
+  }
+
   return (
     <>
       <div className="flex gap-3 p-3">
@@ -85,14 +95,31 @@ const PostItem = (props: PostItemProps) => {
           </Avatar>
         </Link>
         <div className="mr-auto flex flex-col self-center leading-none">
-          <Link
-            href={`/profile/${post.user.id}`}
-            className={cn(
-              "block font-medium capitalize text-foreground/90 underline-offset-1 hover:underline"
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/profile/${post.user.id}`}
+              className={cn(
+                "block font-medium capitalize text-foreground/90 underline-offset-1 hover:underline"
+              )}
+            >
+              {post.user.name}
+            </Link>
+            {post.user.id !== session?.user.id && (
+              <>
+                <div className="h-1 w-1 rounded-full bg-foreground/50"></div>
+                <button
+                  onClick={handleFollowUser}
+                  className={cn(
+                    "text-sm font-semibold underline-offset-1 hover:underline",
+                    isFollowing ? "text-foreground/60" : "text-primary"
+                  )}
+                >
+                  {isFollowing ? "Following" : "Follow"}
+                </button>
+              </>
             )}
-          >
-            {post.user.name}
-          </Link>
+          </div>
+
           <span className="text-xs text-muted-foreground/70">
             {dayjs(post.createdAt).fromNow(true)}
           </span>

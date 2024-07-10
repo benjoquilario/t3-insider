@@ -22,16 +22,20 @@ export function useFolloMutation({
   userIdToFollow: string
 }) {
   const queryClient = useQueryClient()
-  const queryKey = useMemo(() => ["user", userIdToFollow], [userIdToFollow])
+  const userKey = useMemo(() => ["user", userIdToFollow], [userIdToFollow])
+  const postsKey = [QUERY_KEYS.GET_INFINITE_POSTS]
 
   const followMutation = useMutation({
     mutationFn: () => follow({ userIdToFollow }),
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey })
+      await queryClient.cancelQueries({ queryKey: userKey })
+      await queryClient.cancelQueries({ queryKey: postsKey })
 
-      const previousTargetUser = queryClient.getQueryData(queryKey)
+      const previousTargetUser = queryClient.getQueryData(userKey)
 
-      queryClient.setQueryData<IUser>(queryKey, (oldData) => {
+      const previousTargetPost = queryClient.getQueryData(postsKey)
+
+      queryClient.setQueryData<IUser>(userKey, (oldData) => {
         if (!oldData) return
 
         return {
@@ -41,21 +45,55 @@ export function useFolloMutation({
         }
       })
 
-      return { previousTargetUser }
+      queryClient.setQueryData<InfiniteData<IPage<IPost<User>[]>>>(
+        postsKey,
+        (oldData) => {
+          if (!oldData) return
+
+          const newPosts = {
+            ...oldData,
+            pages: oldData.pages.map((page) => {
+              if (page) {
+                return {
+                  ...page,
+                  posts: page.posts.map((post) => {
+                    if (post.user.id === userIdToFollow) {
+                      return {
+                        ...post,
+                        isFollowing: true,
+                      }
+                    } else {
+                      return post
+                    }
+                  }),
+                }
+              }
+
+              return page
+            }),
+          }
+
+          return newPosts
+        }
+      )
+
+      return { previousTargetUser, previousTargetPost }
     },
     onError: (err, variables, context) => {
-      queryClient.setQueryData(queryKey, context?.previousTargetUser)
+      queryClient.setQueryData(userKey, context?.previousTargetUser)
+      queryClient.setQueryData(postsKey, context?.previousTargetPost)
     },
   })
 
   const unFollowMutation = useMutation({
     mutationFn: () => unFollow({ userIdToFollow }),
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey })
+      await queryClient.cancelQueries({ queryKey: userKey })
 
-      const previousTargetUser = queryClient.getQueryData(queryKey)
+      const previousTargetUser = queryClient.getQueryData(userKey)
+      const previousTargetPost = queryClient.getQueryData(postsKey)
 
-      queryClient.setQueryData<IUser>(queryKey, (oldData) => {
+      queryClient.setQueryData<IUser>(userKey, (oldData) => {
         if (!oldData) return
 
         return {
@@ -65,10 +103,43 @@ export function useFolloMutation({
         }
       })
 
-      return { previousTargetUser }
+      queryClient.setQueryData<InfiniteData<IPage<IPost<User>[]>>>(
+        postsKey,
+        (oldData) => {
+          if (!oldData) return
+
+          const newPosts = {
+            ...oldData,
+            pages: oldData.pages.map((page) => {
+              if (page) {
+                return {
+                  ...page,
+                  posts: page.posts.map((post) => {
+                    if (post.user.id === userIdToFollow) {
+                      return {
+                        ...post,
+                        isFollowing: false,
+                      }
+                    } else {
+                      return post
+                    }
+                  }),
+                }
+              }
+
+              return page
+            }),
+          }
+
+          return newPosts
+        }
+      )
+
+      return { previousTargetUser, previousTargetPost }
     },
     onError: (err, variables, context) => {
-      queryClient.setQueryData(queryKey, context?.previousTargetUser)
+      queryClient.setQueryData(userKey, context?.previousTargetUser)
+      queryClient.setQueryData(postsKey, context?.previousTargetPost)
     },
   })
 

@@ -13,12 +13,24 @@ export const follow = async function ({
 
   if (!session) return
 
-  await db.follow.create({
+  const follow = await db.follow.create({
     data: {
       followerId: userId!,
       followingId: userIdToFollow,
     },
   })
+
+  if (follow) {
+    await db.activity.create({
+      data: {
+        type: "FOLLOW_USER",
+        sourceUserId: userId!,
+        targetId: follow.followingId,
+        contentId: userIdToFollow,
+        content: "",
+      },
+    })
+  }
 
   return
 }

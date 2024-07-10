@@ -7,7 +7,6 @@ import {
 } from "@tanstack/react-query"
 import { QUERY_KEYS } from "@/lib/queriesKey"
 import { createComment } from "@/server/comment"
-import { useToast } from "@/components/ui/use-toast"
 import type { User } from "@prisma/client"
 import { useMemo } from "react"
 

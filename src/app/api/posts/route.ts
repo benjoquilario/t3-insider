@@ -18,6 +18,11 @@ export async function GET(req: NextRequest) {
           name: true,
           image: true,
           email: true,
+          followers: {
+            where: {
+              followerId: session?.user.id!,
+            },
+          },
         },
       },
       likePost: {
@@ -53,11 +58,13 @@ export async function GET(req: NextRequest) {
   }
 
   const transformedPosts = posts.map((post) => {
-    const { _count, likePost, ...rest } = post
+    const { _count, likePost, user, ...rest } = post
     return {
       ...rest,
       _count,
       likePost,
+      user,
+      isFollowing: user.followers.length === 1,
       isLiked: session ? likePost.length > 0 : false,
     }
   })

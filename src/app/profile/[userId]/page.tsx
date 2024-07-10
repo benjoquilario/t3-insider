@@ -28,8 +28,6 @@ const Profile = ({ params }: { params: { userId: string } }) => {
     isFollowing ? unFollowMutation.mutate() : followMutation.mutate()
   }
 
-  console.log(session?.user.id === userId)
-
   return (
     <div className="col-span-full lg:col-span-9 xl:col-span-6">
       {/*  */}

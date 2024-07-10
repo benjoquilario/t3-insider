@@ -2,7 +2,7 @@
 
 import React from "react"
 import PostItem from "./post-item"
-import { useInfiniteQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query"
 import { QUERY_KEYS } from "@/lib/queriesKey"
 import PostSkeleton from "@/components/skeleton/post-skeleton"
 import { InView } from "react-intersection-observer"
@@ -10,6 +10,8 @@ import { motion, AnimatePresence } from "framer-motion"
 import type { User } from "@prisma/client"
 
 const Posts = () => {
+  const queryClient = useQueryClient()
+
   const {
     data: posts,
     isPending,
@@ -18,16 +20,22 @@ const Posts = () => {
     isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
-    queryFn: ({ pageParam }) =>
-      fetch(`/api/posts?limit=${3}&cursor=${pageParam}`).then((res) =>
-        res.json()
-      ),
+    queryFn: async ({ pageParam }) => {
+      const response = await fetch(`/api/posts?limit=${3}&cursor=${pageParam}`)
+
+      const data = await response.json()
+
+      data.posts.map((post: any) => {
+        queryClient.setQueryData(["posts", post.id], post)
+      })
+
+      return data
+    },
+
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.nextSkip,
     refetchOnWindowFocus: false,
   })
-
-  console.log(posts)
 
   return (
     <ul className="space-y-3">
