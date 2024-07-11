@@ -54,7 +54,7 @@ const SideBar = () => {
                 </Avatar>
               </div>
               <div className="flex flex-col">
-                <h3 className="font-medium">{currentUser?.name}</h3>
+                <h3 className="font-medium capitalize">{currentUser?.name}</h3>
                 <span className="text-xs text-muted-foreground/60">
                   {currentUser?._count.followers} Followers
                 </span>

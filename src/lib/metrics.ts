@@ -88,3 +88,51 @@ export async function getUserById({ userId }: { userId: string }) {
     isFollowing: user.followers.length === 1,
   }
 }
+
+export async function getFollowersFromUserId({ userId }: { userId: string }) {
+  const followers = await db.follow.findMany({
+    where: {
+      followingId: userId,
+    },
+    select: {
+      follower: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          _count: {
+            select: {
+              followers: true,
+            },
+          },
+        },
+      },
+    },
+  })
+
+  return followers
+}
+
+export async function getFollowingFromUserId({ userId }: { userId: string }) {
+  const followers = await db.follow.findMany({
+    where: {
+      followerId: userId,
+    },
+    select: {
+      following: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          _count: {
+            select: {
+              following: true,
+            },
+          },
+        },
+      },
+    },
+  })
+
+  return followers
+}

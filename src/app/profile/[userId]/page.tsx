@@ -50,8 +50,8 @@ const Profile = ({ params }: { params: { userId: string } }) => {
                     </p>
                     <div className="flex items-center gap-2">
                       <Link
-                        href="/follower"
-                        className="text-sm text-muted-foreground/90"
+                        href={`/profile/${userId}/followers`}
+                        className="text-sm text-muted-foreground/90 underline-offset-1 hover:underline"
                       >
                         <span className="mr-1 font-semibold">
                           {user?.followerCount}
@@ -59,8 +59,8 @@ const Profile = ({ params }: { params: { userId: string } }) => {
                         Followers
                       </Link>
                       <Link
-                        href="/following"
-                        className="text-sm text-muted-foreground/90"
+                        href={`/profile/${userId}/following`}
+                        className="text-sm text-muted-foreground/90 underline-offset-1 hover:underline"
                       >
                         <span className="mr-1 font-semibold">
                           {user?.followingCount}

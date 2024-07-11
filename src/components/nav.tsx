@@ -9,8 +9,10 @@ import Link from "next/link"
 import { MdDynamicFeed } from "react-icons/md"
 import { Button } from "./ui/button"
 import usePostStore from "@/store/post"
-import { useSession } from "next-auth/react"
 import { useQueryUser } from "@/hooks/queries/useQueryUser"
+import { usePathname, useSelectedLayoutSegment } from "next/navigation"
+import { MdOutlinePersonSearch } from "react-icons/md"
+import { IoMdNotificationsOutline } from "react-icons/io"
 
 export const LINKS = [
   {
@@ -36,32 +38,62 @@ const Nav = () => {
   const setIsPostOpen = usePostStore((store) => store.setIsPostOpen)
   const { data: currentUser } = useQueryUser()
 
+  const segment = useSelectedLayoutSegment()
+  const pathname = usePathname()
+
+  const className = cn(
+    "flex w-full items-center space-x-3 rounded-md px-5 py-3 focus:outline-none",
+    "focus-visible:outline-offset-2 focus-visible:outline-primary",
+    "transition duration-75 hover:bg-primary/40"
+  )
+
+  console.log(segment)
+
   return (
     <div className="mt-0">
       <nav className="w-full">
         <ul className="flex flex-col items-start space-y-2">
-          {LINKS.map((link) => (
-            <li key={link.linkName} className="flex flex-1 items-start">
-              <Link
-                aria-label={link.linkName}
-                href="/"
-                className={cn(
-                  "flex w-full items-center space-x-3 rounded-md px-5 py-3 focus:outline-none",
-                  "focus-visible:outline-offset-2 focus-visible:outline-primary",
-                  "transition duration-75 hover:bg-primary/40"
-                )}
-              >
-                <link.icon
-                  aria-hidden="true"
-                  size={link.size}
-                  className="text-primary"
-                />
-                <span className="text-left text-base font-medium capitalize tracking-tight">
-                  {link.linkName}
-                </span>
-              </Link>
-            </li>
-          ))}
+          <li className="flex flex-1 items-start">
+            <Link aria-label="feed" href="/" className={className}>
+              <MdDynamicFeed
+                aria-hidden="true"
+                size={29}
+                className="text-primary"
+              />
+              <span className="text-left text-base font-medium capitalize tracking-tight">
+                Feed
+              </span>
+            </Link>
+          </li>
+          <li className="flex flex-1 items-start">
+            <Link
+              aria-label="feed"
+              href={`/discover`}
+              className={cn(className)}
+            >
+              <MdOutlinePersonSearch
+                aria-hidden="true"
+                size={29}
+                className="text-primary"
+              />
+              <span className="text-left text-base font-medium capitalize tracking-tight">
+                Discover
+              </span>
+            </Link>
+          </li>
+          <li className="flex flex-1 items-start">
+            <Link aria-label="feed" href={`/nofications`} className={className}>
+              <IoMdNotificationsOutline
+                aria-hidden="true"
+                size={29}
+                className="text-primary"
+              />
+              <span className="text-left text-base font-medium capitalize tracking-tight">
+                Notification
+              </span>
+            </Link>
+          </li>
+
           <li className="flex flex-1 items-start">
             <Link
               aria-label="my profile"

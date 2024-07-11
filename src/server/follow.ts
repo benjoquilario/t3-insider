@@ -13,6 +13,17 @@ export const follow = async function ({
 
   if (!session) return
 
+  const isFollowExist = await db.follow.findUnique({
+    where: {
+      followerId_followingId: {
+        followerId: userId!,
+        followingId: userIdToFollow,
+      },
+    },
+  })
+
+  if (isFollowExist) return
+
   const follow = await db.follow.create({
     data: {
       followerId: userId!,

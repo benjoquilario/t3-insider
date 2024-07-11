@@ -29,7 +29,7 @@ export async function generateMetadata({
   const imageUrl = profile.image
 
   return {
-    title,
+    title: `${title} - Insider`,
     openGraph: {
       title: `@${profile.username} - Insider`,
       type: "website",
