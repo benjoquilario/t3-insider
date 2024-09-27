@@ -15,7 +15,7 @@ const FollowerPage = async ({ params }: { params: { userId: string } }) => {
       <ul className="space-y-1">
         {followers.length === 0 ? (
           <>
-            <MdPersonAddDisabled className="h-12 w-12" />
+            <MdPersonAddDisabled className="size-12" />
             <span className="text-center">
               You don't have any followers ☹️. The trick is to follow someone
               and then wait for them to follow you back.
@@ -33,7 +33,7 @@ const FollowerPage = async ({ params }: { params: { userId: string } }) => {
               >
                 <div className="absolute inset-0 flex items-center overflow-hidden rounded-md border border-secondary/80">
                   <div className="ml-3">
-                    <div className="relative h-12 w-12 rounded-md">
+                    <div className="relative size-12 rounded-md">
                       <Image
                         className="rounded-full"
                         src={image || "/default-image.png"}

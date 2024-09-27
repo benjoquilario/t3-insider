@@ -41,7 +41,7 @@ const Profile = ({ userId, isCurrentUser = false }: ProfileProps) => {
           <CoverPhoto userId={userId} photoUrl={user?.cover!} />
           <div className="space-y-4">
             <div className="flex flex-col justify-center shadow md:flex-row md:justify-between">
-              <div className="flex flex-col items-center justify-center gap-3 px-5 pb-2 pt-2 md:flex-row md:pb-5">
+              <div className="flex flex-col items-center justify-center gap-3 px-5 py-2 md:flex-row md:pb-5">
                 <ProfilePhoto userId={userId} photoUrl={user?.image!} />
                 <div className="text-center sm:text-left">
                   <div>

@@ -23,7 +23,7 @@ const CreateButton = (props: CreateButtonProps) => {
       <div className="relative my-2 flex h-20 items-center justify-start gap-2 overflow-hidden rounded p-2 shadow">
         <div className="min-h-6 w-12 max-w-20">
           {isPending ? (
-            <div className="h-10 w-10 rounded-full bg-primary/10"></div>
+            <div className="size-10 rounded-full bg-primary/10"></div>
           ) : (
             <Link
               href={`/`}
@@ -35,7 +35,7 @@ const CreateButton = (props: CreateButtonProps) => {
                   alt="@shadcn"
                 />
                 <AvatarFallback>
-                  <div className="h-full w-full animate-pulse bg-primary/10"></div>
+                  <div className="size-full animate-pulse bg-primary/10"></div>
                 </AvatarFallback>
               </Avatar>
             </Link>

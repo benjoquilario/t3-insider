@@ -60,7 +60,6 @@ const PostsUser = (props: PostsUserProps) => {
                   ))
                 ) : (
                   <motion.li
-
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}

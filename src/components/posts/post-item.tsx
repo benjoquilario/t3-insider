@@ -87,7 +87,7 @@ const PostItem = (props: PostItemProps) => {
               alt={post.user.name ?? ""}
             />
             <AvatarFallback>
-              <div className="h-full w-full animate-pulse"></div>
+              <div className="size-full animate-pulse"></div>
             </AvatarFallback>
           </Avatar>
         </Link>
@@ -103,7 +103,7 @@ const PostItem = (props: PostItemProps) => {
             </Link>
             {post.user.id !== session?.user.id && (
               <>
-                <div className="h-1 w-1 rounded-full bg-foreground/50"></div>
+                <div className="size-1 rounded-full bg-foreground/50"></div>
                 <button
                   onClick={handleFollowUser}
                   className={cn(
@@ -218,7 +218,7 @@ const PostItem = (props: PostItemProps) => {
 
       <div className="mt-2 flex items-center justify-between px-5">
         <div className="flex items-center gap-1 text-sm text-foreground">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary">
+          <span className="flex size-6 items-center justify-center rounded-full bg-primary">
             <BiSolidLike
               aria-hidden
               size={14}

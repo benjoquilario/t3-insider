@@ -50,8 +50,8 @@ const ProfilePhoto = (props: ProfilePhotoProps) => {
 
   return (
     <React.Fragment>
-      <div className="relative -mt-20 flex-shrink-0">
-        <div className="h-[114px] w-[114px] rounded-full">
+      <div className="relative -mt-20 shrink-0">
+        <div className="size-[114px] rounded-full">
           <Image
             className="relative rounded-full border-2 border-input"
             src={photoUrl ?? "/default-image.png"}
@@ -64,7 +64,7 @@ const ProfilePhoto = (props: ProfilePhotoProps) => {
           <div {...getRootProps()}>
             <div
               className={cn(
-                "absolute bottom-3 right-0 flex h-8 w-8 items-center justify-center border border-input text-foreground",
+                "absolute bottom-3 right-0 flex size-8 items-center justify-center border border-input text-foreground",
                 "cursor-pointer rounded-full",
                 "bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
                 "items-center justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
@@ -76,9 +76,9 @@ const ProfilePhoto = (props: ProfilePhotoProps) => {
                 disabled={updateProfilePhoto.isPending}
               />
               {isUploading ? (
-                <ImSpinner3 size={20} className="h-4 w-4 animate-spin" />
+                <ImSpinner3 size={20} className="size-4 animate-spin" />
               ) : (
-                <AiFillCamera size={20} className="h-4 w-4" />
+                <AiFillCamera size={20} className="size-4" />
               )}
             </div>
           </div>

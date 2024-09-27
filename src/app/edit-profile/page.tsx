@@ -49,8 +49,6 @@ const EditProfile = () => {
     [currentUser]
   )
 
-  console.log(currentUser)
-
   const form = useForm<UserSchema>({
     resolver: zodResolver(userSchema),
     defaultValues: defaultValues,
@@ -62,7 +60,7 @@ const EditProfile = () => {
 
   useEffect(() => {
     form.reset(defaultValues)
-  }, [currentUser])
+  }, [currentUser, form])
 
   const handleOnSubmit = function (data: UserSchema) {
     updateUserData.mutate(data, {
@@ -218,7 +216,7 @@ const EditProfile = () => {
                           ) : (
                             <span>Pick a date</span>
                           )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          <CalendarIcon className="ml-auto size-4 opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>

@@ -76,7 +76,7 @@ const CommentForm = (props: CommentFormProps) => {
         <div className="relative">
           <Link
             href={`/profile/`}
-            className="relative inline-block w-full shrink basis-[auto] items-stretch"
+            className="relative inline-block w-full shrink basis-auto items-stretch"
             // aria-label={comment.user?.name}
           >
             <Avatar>
@@ -85,7 +85,7 @@ const CommentForm = (props: CommentFormProps) => {
                 alt={`@${currentUser?.name}`}
               />
               <AvatarFallback>
-                <div className="h-full w-full animate-pulse bg-primary/10"></div>
+                <div className="size-full animate-pulse bg-primary/10"></div>
               </AvatarFallback>
             </Avatar>
             <div className="pointer-events-none absolute inset-0 rounded-full"></div>
@@ -101,7 +101,7 @@ const CommentForm = (props: CommentFormProps) => {
             >
               <div className="relative w-full">
                 <div className="flex flex-wrap justify-end">
-                  <div className="shrink grow basis-[auto] overflow-hidden pb-2">
+                  <div className="shrink grow basis-auto overflow-hidden pb-2">
                     <div className="relative p-1">
                       <FormField
                         control={form.control}

@@ -31,7 +31,7 @@ const SideBar = () => {
         <div className="flex justify-start">
           {isPending ? (
             <div className="flex animate-pulse items-center gap-1">
-              <div className="h-10 w-10 rounded-full bg-primary/10"></div>
+              <div className="size-10 rounded-full bg-primary/10"></div>
               <div className="flex flex-col gap-1">
                 <div className="h-4 w-32 rounded bg-primary/10"></div>
                 <div className="h-4 w-14 rounded bg-primary/10"></div>
@@ -49,7 +49,7 @@ const SideBar = () => {
                     alt={currentUser?.name ?? ""}
                   />
                   <AvatarFallback>
-                    <div className="h-full w-full animate-pulse"></div>
+                    <div className="size-full animate-pulse"></div>
                   </AvatarFallback>
                 </Avatar>
               </div>

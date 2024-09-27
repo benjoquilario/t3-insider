@@ -139,7 +139,7 @@ const Login = () => {
         <CardFooter className="grid gap-1.5">
           <div className="mt-2 text-left text-sm">
             <span className="text-muted-foreground">
-              Don't have an account yet?
+              Don&apos;t have an account yet?
             </span>
             <Link
               href="/register"

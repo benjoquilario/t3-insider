@@ -48,8 +48,8 @@ const Users = () => {
 
             {isPending ? (
               <div className="flex h-14 w-20 items-center justify-center rounded-full bg-secondary px-1">
-                <div className="h-5 w-5 bg-secondary"></div>
-                <div className="h-10 w-10 animate-pulse rounded-full bg-primary/10"></div>
+                <div className="size-5 bg-secondary"></div>
+                <div className="size-10 animate-pulse rounded-full bg-primary/10"></div>
               </div>
             ) : (
               <Button
@@ -73,7 +73,7 @@ const Users = () => {
                     alt={`@${currentUser?.name ?? ""}`}
                   />
                   <AvatarFallback>
-                    <div className="h-full w-full animate-pulse rounded-full bg-primary/10"></div>
+                    <div className="size-full animate-pulse rounded-full bg-primary/10"></div>
                   </AvatarFallback>
                 </Avatar>
               </Button>
@@ -105,7 +105,7 @@ const Users = () => {
           </a>
         </aside>
         <aside className="mt-2">
-          <div className="flex w-full flex-col justify-center rounded-xl border border-t py-3">
+          <div className="flex w-full flex-col justify-center rounded-xl border py-3">
             <p className="text-md text-center font-bold text-zinc-800">
               Who to follow
             </p>

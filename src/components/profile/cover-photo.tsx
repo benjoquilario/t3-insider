@@ -50,7 +50,7 @@ const CoverPhoto = (props: CoverPhotoProps) => {
       className="relative h-56 w-full overflow-hidden bg-white shadow"
       // {...getRootCoverProps}
     >
-      <div className="h-full w-full">
+      <div className="size-full">
         <div className="relative h-56 w-full">
           <Image
             src={photoUrl ?? "/cover.svg"}
@@ -64,7 +64,7 @@ const CoverPhoto = (props: CoverPhotoProps) => {
           <div {...getRootProps()}>
             <div
               className={cn(
-                "absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center gap-1 rounded-full px-1 text-foreground md:w-32 md:rounded-md",
+                "absolute bottom-3 right-3 flex size-8 items-center justify-center gap-1 rounded-full px-1 text-foreground md:w-32 md:rounded-md",
                 "cursor-pointer",
                 "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
                 "items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
@@ -72,9 +72,9 @@ const CoverPhoto = (props: CoverPhotoProps) => {
             >
               <input {...getInputProps()} disabled={isUploading} />
               {isUploading ? (
-                <ImSpinner3 className="h-3 w-3 animate-spin" />
+                <ImSpinner3 className="size-3 animate-spin" />
               ) : (
-                <AiFillCamera className="h-3 w-3" />
+                <AiFillCamera className="size-3" />
               )}
               <span className="hidden text-xs md:block">Edit cover photo</span>
             </div>
