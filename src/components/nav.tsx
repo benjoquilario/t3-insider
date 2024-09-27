@@ -3,16 +3,15 @@
 import React from "react"
 import { BsPerson, BsPeople } from "react-icons/bs"
 import { SlPeople } from "react-icons/sl"
-import { BiHomeCircle } from "react-icons/bi"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { MdDynamicFeed } from "react-icons/md"
 import { Button } from "./ui/button"
 import usePostStore from "@/store/post"
-import { useQueryUser } from "@/hooks/queries/useQueryUser"
 import { usePathname, useSelectedLayoutSegment } from "next/navigation"
 import { MdOutlinePersonSearch } from "react-icons/md"
 import { IoMdNotificationsOutline } from "react-icons/io"
+import { type User } from "@prisma/client"
 
 export const LINKS = [
   {
@@ -34,9 +33,13 @@ export const LINKS = [
     linkName: "Following",
   },
 ]
-const Nav = () => {
+
+type NavProps = {
+  currentUser: User
+}
+
+const Nav: React.FC<NavProps> = ({ currentUser }: NavProps) => {
   const setIsPostOpen = usePostStore((store) => store.setIsPostOpen)
-  const { data: currentUser } = useQueryUser()
 
   const segment = useSelectedLayoutSegment()
   const pathname = usePathname()
@@ -46,8 +49,6 @@ const Nav = () => {
     "focus-visible:outline-offset-2 focus-visible:outline-primary",
     "transition duration-75 hover:bg-primary/40"
   )
-
-  console.log(segment)
 
   return (
     <div className="mt-0">

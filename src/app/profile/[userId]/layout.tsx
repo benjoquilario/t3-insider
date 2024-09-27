@@ -56,7 +56,7 @@ export async function generateMetadata({
   }
 }
 
-const ProfileLayout = (props: ProfileLayoutProps) => {
+const ProfileLayout = async (props: ProfileLayoutProps) => {
   const { children } = props
 
   return (

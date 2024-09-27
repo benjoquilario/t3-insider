@@ -1,21 +1,18 @@
 "use client"
 
-import React, { useState, useCallback } from "react"
+import React, { useState } from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { BiDotsHorizontalRounded } from "react-icons/bi"
 import { AiFillLike, AiOutlineLike } from "react-icons/ai"
-import { BiComment } from "react-icons/bi"
 import { IoMdShareAlt } from "react-icons/io"
 import Comments from "../comments"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import usePostStore from "@/store/post"
