@@ -141,6 +141,6 @@ Your ideas, translations, design changes, code cleaning, real heavy code changes
 
 - Twitter: [@iambenjo](https://twitter.com/iam_benjo)
 - Github: [@benjoquilario](https://github.com/benjoquilario)
-- Portfolio: [@benjoquilario](https://benjoquilario.me)
+- Portfolio: [@benjoquilario](https://benjoquilario.site)
 
 Please give this repository a ⭐️ if you liked this app. It seems like a little thing, but it helps a lot with the motivation.
