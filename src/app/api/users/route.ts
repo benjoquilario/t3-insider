@@ -14,6 +14,11 @@ export async function GET(req: NextRequest) {
       name: true,
       email: true,
       image: true,
+      _count: {
+        select: {
+          followers: true,
+        },
+      },
     },
     where: {
       NOT: {

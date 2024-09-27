@@ -7,7 +7,7 @@ import React from "react"
 import Nav from "./nav"
 import { SignOut } from "./sign-out"
 import { useQueryUser } from "@/hooks/queries/useQueryUser"
-import { useSession } from "next-auth/react"
+import { type User } from "@prisma/client"
 
 const SideBar = () => {
   const { data: currentUser, isPending } = useQueryUser()
@@ -63,7 +63,7 @@ const SideBar = () => {
           )}
         </div>
       </div>
-      <Nav />
+      <Nav currentUser={currentUser as User} />
       <div className="mt-28">
         <SignOut />
       </div>
