@@ -70,7 +70,7 @@ const Users = () => {
                 <Avatar>
                   <AvatarImage
                     src={currentUser?.image ?? "/default-image.png"}
-                    alt={`@${currentUser?.name}` ?? ""}
+                    alt={`@${currentUser?.name ?? ""}`}
                   />
                   <AvatarFallback>
                     <div className="h-full w-full animate-pulse rounded-full bg-primary/10"></div>

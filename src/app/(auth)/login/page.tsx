@@ -48,7 +48,7 @@ const Login = () => {
         }
 
         if (data.ok) {
-          router.push("/")
+          window.location.href = "/"
         }
       })
     })
