@@ -12,6 +12,7 @@ import { usePathname, useSelectedLayoutSegment } from "next/navigation"
 import { MdOutlinePersonSearch } from "react-icons/md"
 import { IoMdNotificationsOutline } from "react-icons/io"
 import { type User } from "@prisma/client"
+import { useSession } from "next-auth/react"
 
 export const LINKS = [
   {
@@ -40,6 +41,7 @@ type NavProps = {
 
 const Nav: React.FC<NavProps> = ({ currentUser }: NavProps) => {
   const setIsPostOpen = usePostStore((store) => store.setIsPostOpen)
+  const { data: session } = useSession()
 
   const segment = useSelectedLayoutSegment()
   const pathname = usePathname()
@@ -98,7 +100,7 @@ const Nav: React.FC<NavProps> = ({ currentUser }: NavProps) => {
           <li className="flex flex-1 items-start">
             <Link
               aria-label="my profile"
-              href={`/profile/${currentUser?.id}`}
+              href={`/profile/${currentUser?.id ?? session?.user.id ?? ""}`}
               className={cn(
                 "flex w-full items-center space-x-3 rounded-md px-5 py-3 focus:outline-none",
                 "focus-visible:outline-offset-2 focus-visible:outline-primary",

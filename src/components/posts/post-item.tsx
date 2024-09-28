@@ -160,6 +160,11 @@ const PostItem = (props: PostItemProps) => {
                     Delete
                   </Button>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Button variant="ghost" className="w-full cursor-pointer">
+                    Bookmark
+                  </Button>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

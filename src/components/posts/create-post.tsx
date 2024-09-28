@@ -61,6 +61,7 @@ const CreatePostForm = (props: CreatePostFormProps) => {
     clearDeletedFiles()
     clearSelectedPost()
     setIsPostOpen(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const { updatePostMutation, deletePostMutation } = useUpdateDeleteMutation(
@@ -78,13 +79,13 @@ const CreatePostForm = (props: CreatePostFormProps) => {
 
   useEffect(() => {
     form.setFocus("content")
-  }, [form.setFocus])
+  }, [form])
 
   useEffect(() => {
     if (selectedPostId && selectedPost) {
       form.setValue("content", selectedPost.content)
     }
-  }, [selectedPostId, form.setValue, selectedPost])
+  }, [selectedPostId, form, selectedPost])
 
   const handleOnSubmit = async function (values: IPostValues) {
     let uploadImages

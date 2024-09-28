@@ -5,6 +5,16 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export const capitalizeName = function (name: string) {
+  const arrName = name.split(" ")
+
+  for (let i = 0; i < arrName.length; i++) {
+    arrName[i] = arrName[i][0].toUpperCase() + arrName[i].substr(1)
+  }
+
+  return arrName.join(" ")
+}
+
 export const getImageWidthRatio = (imageNumber: number, imageIndex: number) => {
   if (imageNumber === 1) {
     return 600

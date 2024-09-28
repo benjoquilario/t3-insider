@@ -3,6 +3,7 @@ import Layout from "@/components/layout"
 import Section from "@/components/section"
 import type { Metadata } from "next"
 import { getUserById } from "@/lib/metrics"
+import { capitalizeName } from "@/lib/utils"
 
 interface ProfileLayoutProps {
   children: React.ReactNode
@@ -29,9 +30,9 @@ export async function generateMetadata({
   const imageUrl = profile.image
 
   return {
-    title: `${title} - Insider`,
+    title: `${capitalizeName(title)} - Insider`,
     openGraph: {
-      title: `@${profile.username} - Insider`,
+      title: `@${capitalizeName(profile.username)} - Insider`,
       type: "website",
       url: `${process.env.NEXT_PUBLIC_APP_URL}/profile/${userId}`,
       images: [
