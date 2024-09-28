@@ -9,7 +9,11 @@ import { InView } from "react-intersection-observer"
 import { motion, AnimatePresence } from "framer-motion"
 import type { User } from "@prisma/client"
 
-const Posts = () => {
+type PostsProps = {
+  currentUserId: string
+}
+
+const Posts: React.FC<PostsProps> = ({ currentUserId }) => {
   const queryClient = useQueryClient()
 
   const {
@@ -51,7 +55,11 @@ const Posts = () => {
                   exit={{ opacity: 0 }}
                   className="relative z-10 flex flex-col gap-1 overflow-hidden rounded-md shadow"
                 >
-                  <PostItem key={post.id} post={post} />
+                  <PostItem
+                    key={post.id}
+                    isUserPost={post.user.id === currentUserId}
+                    post={post}
+                  />
                 </motion.li>
               ))
             )}

@@ -19,7 +19,7 @@ export const ourFileRouter = {
     })
     .onUploadComplete((data) => console.log("file", data)),
   mediaPost: f({
-    image: { maxFileSize: "2MB", maxFileCount: 4 },
+    image: { maxFileSize: "8MB", maxFileCount: 4 },
     video: { maxFileSize: "256MB", maxFileCount: 1 },
   })
     .middleware(async ({ req }) => {

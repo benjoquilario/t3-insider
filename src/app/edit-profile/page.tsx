@@ -60,7 +60,7 @@ const EditProfile = () => {
 
   useEffect(() => {
     form.reset(defaultValues)
-  }, [currentUser, form])
+  }, [currentUser, form, defaultValues])
 
   const handleOnSubmit = function (data: UserSchema) {
     updateUserData.mutate(data, {

@@ -30,11 +30,12 @@ import { useFolloMutation } from "@/hooks/useFollowMutation"
 export type PostItemProps = {
   post: IPost<User>
   userId?: string
+  isUserPost: boolean
 }
 
 const PostItem = (props: PostItemProps) => {
-  const { post, userId } = props
-  const { data: session } = useSession()
+  const { post, userId, isUserPost = false } = props
+
   const [isCommentOpen, setIsCommentOpen] = useState(false)
   const setIsPostOpen = usePostStore((store) => store.setIsPostOpen)
   const setSelectedPostId = usePostStore((store) => store.setSelectedPostId)
@@ -101,7 +102,7 @@ const PostItem = (props: PostItemProps) => {
             >
               {post.user.name}
             </Link>
-            {post.user.id !== session?.user.id && (
+            {!isUserPost && (
               <>
                 <div className="size-1 rounded-full bg-foreground/50"></div>
                 <button
@@ -121,7 +122,7 @@ const PostItem = (props: PostItemProps) => {
             {dayjs(post.createdAt).fromNow(true)}
           </span>
         </div>
-        {post.user.id === session?.user.id && (
+        {isUserPost && (
           <div className="self-end">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
