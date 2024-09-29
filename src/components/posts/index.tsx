@@ -8,13 +8,12 @@ import PostSkeleton from "@/components/skeleton/post-skeleton"
 import { InView } from "react-intersection-observer"
 import { motion, AnimatePresence } from "framer-motion"
 import type { User } from "@prisma/client"
+import { useSession } from "next-auth/react"
 
-type PostsProps = {
-  currentUserId: string
-}
-
-const Posts: React.FC<PostsProps> = ({ currentUserId }) => {
+const Posts = () => {
   const queryClient = useQueryClient()
+
+  const { data: session } = useSession()
 
   const {
     data: posts,
@@ -57,7 +56,7 @@ const Posts: React.FC<PostsProps> = ({ currentUserId }) => {
                 >
                   <PostItem
                     key={post.id}
-                    isUserPost={post.user.id === currentUserId}
+                    isUserPost={post.user.id === session?.user.id}
                     post={post}
                   />
                 </motion.li>

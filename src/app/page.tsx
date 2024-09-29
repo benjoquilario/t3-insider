@@ -7,11 +7,7 @@ import Section from "@/components/section"
 import ThemeToggle from "@/components/theme-toggle"
 import Link from "next/link"
 
-export default async function Home() {
-  const session = await auth()
-
-  if (!session) redirect("/login")
-
+export default function Home() {
   return (
     <Layout>
       <Section>
@@ -25,7 +21,7 @@ export default async function Home() {
             </div>
           </div>
           <CreateButton />
-          <Posts currentUserId={session.user.id} />
+          <Posts />
         </div>
       </Section>
     </Layout>

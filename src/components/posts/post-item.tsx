@@ -24,7 +24,6 @@ import { getImageHeightRatio, getImageWidthRatio } from "@/lib/utils"
 import { VscCommentDiscussion } from "react-icons/vsc"
 import { BiSolidLike } from "react-icons/bi"
 import dayjs from "@/lib/time"
-import { useSession } from "next-auth/react"
 import { useFolloMutation } from "@/hooks/useFollowMutation"
 
 export type PostItemProps = {
