@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster"
 import HolyLoader from "holy-loader"
 import { GeistSans } from "geist/font/sans"
 import { cn } from "@/lib/utils"
+import { ThemeProvider } from "@/components/theme-provider"
 
 const fontSans = GeistSans
 
@@ -35,9 +36,16 @@ export default function RootLayout({
           easing="linear"
           showSpinner
         />
-        <AuthProvider>
-          <QueryProvider>{children}</QueryProvider>
-        </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <QueryProvider>{children}</QueryProvider>
+          </AuthProvider>
+        </ThemeProvider>
         <Toaster />
       </body>
     </html>

@@ -49,10 +49,10 @@ const ActivityUser = (props: ActivityUserProps) => {
         {isPending
           ? Array.from(Array(4), (_, i) => (
               <li className="flex w-full animate-pulse items-center gap-2 px-2">
-                <div className="size-14 rounded-full bg-secondary"></div>
+                <div className="size-14 rounded-full bg-primary/10"></div>
                 <div className="flex flex-col gap-2">
-                  <div className="h-6 w-56 rounded-md bg-secondary"></div>
-                  <div className="h-4 w-28 rounded-md bg-secondary"></div>
+                  <div className="h-6 w-56 rounded-md bg-primary/10"></div>
+                  <div className="h-4 w-28 rounded-md bg-primary/10"></div>
                 </div>
               </li>
             ))

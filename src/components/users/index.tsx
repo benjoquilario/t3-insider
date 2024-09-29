@@ -85,7 +85,7 @@ const Users = () => {
         </div>
       </div>
       <div className="mt-8">
-        <aside className="rounded-md shadow">
+        <aside className="overflow-hidden rounded-md border shadow">
           <h2 className="px-5 py-3 text-sm font-semibold">Trends this week</h2>
           <a className="block" href="/tag/trpc">
             <div className="cursor-pointer px-5 py-3 hover:bg-secondary">
@@ -106,7 +106,7 @@ const Users = () => {
         </aside>
         <aside className="mt-2">
           <div className="flex w-full flex-col justify-center rounded-xl border py-3">
-            <p className="text-md text-center font-bold text-zinc-800">
+            <p className="text-md text-center font-bold text-foreground/90">
               Who to follow
             </p>
 
@@ -130,7 +130,9 @@ const Users = () => {
                 </li>
               )} */}
               {users?.pages.map((page) =>
-                page?.users.map((user: User) => <UserItem user={user} />)
+                page?.users.map((user: User) => (
+                  <UserItem key={page.id} user={user} />
+                ))
               )}
             </ul>
           </div>

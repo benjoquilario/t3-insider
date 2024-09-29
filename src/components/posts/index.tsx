@@ -53,7 +53,7 @@ const Posts: React.FC<PostsProps> = ({ currentUserId }) => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="relative z-10 flex flex-col gap-1 overflow-hidden rounded-md shadow"
+                  className="relative z-10 flex flex-col gap-1 overflow-hidden rounded-md border shadow"
                 >
                   <PostItem
                     key={post.id}
