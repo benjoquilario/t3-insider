@@ -107,7 +107,11 @@ const Profile = ({ userId, isCurrentUser = false }: ProfileProps) => {
         </div>
       ) : null}
 
-      <TabsProfile user={user as User} userId={userId} />
+      <TabsProfile
+        isUserPost={isCurrentUser}
+        user={user as User}
+        userId={userId}
+      />
     </div>
   )
 }
