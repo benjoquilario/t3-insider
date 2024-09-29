@@ -1,6 +1,6 @@
 {
-  "name": "t3-insider",
-  "version": "0.1.0",
+  "name": "insider",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
