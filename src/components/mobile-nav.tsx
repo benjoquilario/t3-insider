@@ -13,7 +13,7 @@ import usePostStore from "@/store/post"
 
 const MobileNav = () => {
   const { data: session } = useSession()
-  const setIsPostOpen = usePostStore(store => store.setIsPostOpen)
+  const setIsPostOpen = usePostStore((store) => store.setIsPostOpen)
 
   return (
     <div className="fixed bottom-0 z-50 flex w-full bg-background md:hidden">
@@ -68,8 +68,11 @@ const MobileNav = () => {
         </ul>
       </nav>
 
-      <button onClick={() => setIsPostOpen(true)} className="absolute bottom-16 right-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white">
-        <IoCreateOutline size={20} className="h-7 w-7" />
+      <button
+        onClick={() => setIsPostOpen(true)}
+        className="absolute bottom-16 right-3 flex size-14 items-center justify-center rounded-full bg-primary text-white"
+      >
+        <IoCreateOutline size={20} className="size-7" />
       </button>
     </div>
   )

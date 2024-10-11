@@ -48,8 +48,8 @@ const Users = () => {
 
             {isPending ? (
               <div className="flex h-14 w-20 items-center justify-center rounded-full bg-secondary px-1">
-                <div className="h-5 w-5 bg-secondary"></div>
-                <div className="h-10 w-10 animate-pulse rounded-full bg-primary/10"></div>
+                <div className="size-5 bg-secondary"></div>
+                <div className="size-10 animate-pulse rounded-full bg-primary/10"></div>
               </div>
             ) : (
               <Button
@@ -70,10 +70,10 @@ const Users = () => {
                 <Avatar>
                   <AvatarImage
                     src={currentUser?.image ?? "/default-image.png"}
-                    alt={`@${currentUser?.name}` ?? ""}
+                    alt={`@${currentUser?.name ?? ""}`}
                   />
                   <AvatarFallback>
-                    <div className="h-full w-full animate-pulse rounded-full bg-primary/10"></div>
+                    <div className="size-full animate-pulse rounded-full bg-primary/10"></div>
                   </AvatarFallback>
                 </Avatar>
               </Button>
@@ -85,7 +85,7 @@ const Users = () => {
         </div>
       </div>
       <div className="mt-8">
-        <aside className="rounded-md shadow">
+        <aside className="overflow-hidden rounded-md border shadow">
           <h2 className="px-5 py-3 text-sm font-semibold">Trends this week</h2>
           <a className="block" href="/tag/trpc">
             <div className="cursor-pointer px-5 py-3 hover:bg-secondary">
@@ -105,8 +105,8 @@ const Users = () => {
           </a>
         </aside>
         <aside className="mt-2">
-          <div className="flex w-full flex-col justify-center rounded-xl border border-t py-3">
-            <p className="text-md text-center font-bold text-zinc-800">
+          <div className="flex w-full flex-col justify-center rounded-xl border py-3">
+            <p className="text-md text-center font-bold text-foreground/90">
               Who to follow
             </p>
 
@@ -130,7 +130,9 @@ const Users = () => {
                 </li>
               )} */}
               {users?.pages.map((page) =>
-                page?.users.map((user: User) => <UserItem user={user} />)
+                page?.users.map((user: User) => (
+                  <UserItem key={page.id} user={user} />
+                ))
               )}
             </ul>
           </div>

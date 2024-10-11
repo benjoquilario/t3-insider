@@ -44,7 +44,7 @@ const UserItem = (props: UserItemProps) => {
         <button
           aria-label="follow user"
           className={cn(
-            "ml-auto mr-3 flex h-8 w-8 items-center justify-center rounded-md"
+            "ml-auto mr-3 flex size-8 items-center justify-center rounded-md"
           )}
         >
           <BsFillPersonPlusFill aria-hidden="true" size={15} />

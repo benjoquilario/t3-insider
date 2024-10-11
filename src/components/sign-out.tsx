@@ -22,7 +22,7 @@ export function SignOut() {
       <AlertDialogTrigger asChild>
         <button
           className={cn(
-            "flex w-full items-center justify-center rounded-md px-2 py-2 focus:outline-none md:w-auto md:justify-start md:space-x-3 md:px-5 md:py-3",
+            "flex w-full items-center justify-center rounded-md p-2 focus:outline-none md:w-auto md:justify-start md:space-x-3 md:px-5 md:py-3",
             "focus-visible:outline-offset-2 focus-visible:outline-primary",
             "transition duration-75 hover:bg-primary/40"
           )}

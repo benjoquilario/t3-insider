@@ -49,10 +49,10 @@ const ActivityUser = (props: ActivityUserProps) => {
         {isPending
           ? Array.from(Array(4), (_, i) => (
               <li className="flex w-full animate-pulse items-center gap-2 px-2">
-                <div className="h-14 w-14 rounded-full bg-secondary"></div>
+                <div className="size-14 rounded-full bg-primary/10"></div>
                 <div className="flex flex-col gap-2">
-                  <div className="h-6 w-56 rounded-md bg-secondary"></div>
-                  <div className="h-4 w-28 rounded-md bg-secondary"></div>
+                  <div className="h-6 w-56 rounded-md bg-primary/10"></div>
+                  <div className="h-4 w-28 rounded-md bg-primary/10"></div>
                 </div>
               </li>
             ))
@@ -64,7 +64,7 @@ const ActivityUser = (props: ActivityUserProps) => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="rounded-3xl bg-secondary p-2 px-2"
+                    className="rounded-3xl bg-secondary p-2"
                   >
                     <Activity userId={userId} activity={activity} />
                   </motion.li>
@@ -88,7 +88,7 @@ const ActivityUser = (props: ActivityUserProps) => {
               {isFetchingNextPage &&
                 Array.from(Array(4), (_, i) => (
                   <li className="flex w-full animate-pulse items-center gap-2 px-2">
-                    <div className="h-14 w-14 rounded-full bg-secondary"></div>
+                    <div className="size-14 rounded-full bg-secondary"></div>
                     <div className="flex flex-col gap-2">
                       <div className="h-6 w-56 rounded-md bg-secondary"></div>
                       <div className="h-4 w-28 rounded-md bg-secondary"></div>
@@ -251,14 +251,14 @@ const ActivityCard = (props: ActivityCardProps) => {
     <div className="flex gap-2">
       <div className="relative">
         <div className="relative">
-          <Avatar className="h-12 w-12">
+          <Avatar className="size-12">
             <AvatarImage
-              className="h-12 w-12"
+              className="size-12"
               src={activity.targetUser.image ?? "/default-image.png"}
               alt={activity.targetUser.name ?? ""}
             />
             <AvatarFallback>
-              <div className="h-full w-full animate-pulse"></div>
+              <div className="size-full animate-pulse"></div>
             </AvatarFallback>
           </Avatar>
           <ActivityIcon type={activity.type} />

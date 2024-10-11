@@ -8,9 +8,12 @@ import PostSkeleton from "@/components/skeleton/post-skeleton"
 import { InView } from "react-intersection-observer"
 import { motion, AnimatePresence } from "framer-motion"
 import type { User } from "@prisma/client"
+import { useSession } from "next-auth/react"
 
 const Posts = () => {
   const queryClient = useQueryClient()
+
+  const { data: session } = useSession()
 
   const {
     data: posts,
@@ -49,9 +52,13 @@ const Posts = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="relative z-10 flex flex-col gap-1 overflow-hidden rounded-md shadow"
+                  className="relative z-10 flex flex-col gap-1 overflow-hidden rounded-md border shadow"
                 >
-                  <PostItem key={post.id} post={post} />
+                  <PostItem
+                    key={post.id}
+                    isUserPost={post.user.id === session?.user.id}
+                    post={post}
+                  />
                 </motion.li>
               ))
             )}

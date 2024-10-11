@@ -9,10 +9,11 @@ import type { User } from "@prisma/client"
 type TabsProfileProps = {
   userId: string
   user?: User
+  isUserPost: boolean
 }
 
 const TabsProfile = (props: TabsProfileProps) => {
-  const { userId, user } = props
+  const { userId, user, isUserPost } = props
 
   return (
     <Tabs defaultValue="post" className="flex w-full flex-col">
@@ -28,7 +29,7 @@ const TabsProfile = (props: TabsProfileProps) => {
         </TabsTrigger>
       </TabsList>
       <TabsContent value="post" className="mt-0">
-        <PostsUser userId={userId} />
+        <PostsUser isUserPost={isUserPost} userId={userId} />
       </TabsContent>
       <TabsContent value="about">
         <About user={user} />

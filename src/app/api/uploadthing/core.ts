@@ -19,7 +19,7 @@ export const ourFileRouter = {
     })
     .onUploadComplete((data) => console.log("file", data)),
   mediaPost: f({
-    image: { maxFileSize: "2MB", maxFileCount: 4 },
+    image: { maxFileSize: "8MB", maxFileCount: 4 },
     video: { maxFileSize: "256MB", maxFileCount: 1 },
   })
     .middleware(async ({ req }) => {
@@ -32,7 +32,7 @@ export const ourFileRouter = {
       return { userId: user.user.id }
     })
     .onUploadComplete((data) => console.log("file", data)),
-  coverPhoto: f({ image: { maxFileSize: "4MB" } })
+  coverPhoto: f({ image: { maxFileSize: "8MB", maxFileCount: 1 } })
     // Set permissions and file types for this FileRoute
     .middleware(async ({ req }) => {
       // This code runs on your server before upload

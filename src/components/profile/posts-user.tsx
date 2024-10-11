@@ -13,10 +13,11 @@ import PostItem from "@/components/posts/post-item"
 
 type PostsUserProps = {
   userId: string
+  isUserPost: boolean
 }
 
 const PostsUser = (props: PostsUserProps) => {
-  const { userId } = props
+  const { userId, isUserPost = false } = props
   const { data: session } = useSession()
 
   const {
@@ -55,12 +56,16 @@ const PostsUser = (props: PostsUserProps) => {
                       exit={{ opacity: 0 }}
                       className="relative z-10 flex flex-col gap-1 overflow-hidden rounded-md shadow"
                     >
-                      <PostItem key={post.id} post={post} userId={userId} />
+                      <PostItem
+                        isUserPost={isUserPost}
+                        key={post.id}
+                        post={post}
+                        userId={userId}
+                      />
                     </motion.li>
                   ))
                 ) : (
                   <motion.li
-
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}

@@ -80,23 +80,23 @@ const ReplyCommentForm = (props: ReplyCommentFormProps) => {
 
   return (
     <div className="flex flex-row items-center space-x-2">
-      <div className="mt-[-0.25rem]">
+      <div className="-mt-1">
         <div className="relative mt-2">
           <div className="absolute bottom-[12px] left-[-34px] top-0 h-[21px] w-[57px] rounded-l border-b-2 border-l-2 border-l-input border-t-input md:left-[-42px]"></div>
 
           <Link
             href={`/profile/${currentUser?.id}`}
-            className="relative inline-block w-full shrink basis-[auto] items-stretch"
+            className="relative inline-block w-full shrink basis-auto items-stretch"
             // aria-label={comment.user?.name}
           >
-            <Avatar className="h-8 w-8">
+            <Avatar className="size-8">
               <AvatarImage
                 src={currentUser?.image ?? "/default-image.png"}
                 alt={`@${currentUser?.name}`}
-                className="h-8 w-8"
+                className="size-8"
               />
               <AvatarFallback>
-                <div className="h-full w-full animate-pulse bg-primary/10"></div>
+                <div className="size-full animate-pulse bg-primary/10"></div>
               </AvatarFallback>
             </Avatar>
             <div className="pointer-events-none absolute inset-0 rounded-full"></div>
@@ -112,7 +112,7 @@ const ReplyCommentForm = (props: ReplyCommentFormProps) => {
             >
               <div className="relative w-full">
                 <div className="flex flex-wrap justify-end">
-                  <div className="shrink grow basis-[auto] overflow-hidden pb-2">
+                  <div className="shrink grow basis-auto overflow-hidden pb-2">
                     <div className="relative p-1">
                       <FormField
                         control={form.control}

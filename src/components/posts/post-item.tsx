@@ -24,17 +24,17 @@ import { getImageHeightRatio, getImageWidthRatio } from "@/lib/utils"
 import { VscCommentDiscussion } from "react-icons/vsc"
 import { BiSolidLike } from "react-icons/bi"
 import dayjs from "@/lib/time"
-import { useSession } from "next-auth/react"
 import { useFolloMutation } from "@/hooks/useFollowMutation"
 
 export type PostItemProps = {
   post: IPost<User>
   userId?: string
+  isUserPost: boolean
 }
 
 const PostItem = (props: PostItemProps) => {
-  const { post, userId } = props
-  const { data: session } = useSession()
+  const { post, userId, isUserPost = false } = props
+
   const [isCommentOpen, setIsCommentOpen] = useState(false)
   const setIsPostOpen = usePostStore((store) => store.setIsPostOpen)
   const setSelectedPostId = usePostStore((store) => store.setSelectedPostId)
@@ -87,7 +87,7 @@ const PostItem = (props: PostItemProps) => {
               alt={post.user.name ?? ""}
             />
             <AvatarFallback>
-              <div className="h-full w-full animate-pulse"></div>
+              <div className="size-full animate-pulse"></div>
             </AvatarFallback>
           </Avatar>
         </Link>
@@ -101,9 +101,9 @@ const PostItem = (props: PostItemProps) => {
             >
               {post.user.name}
             </Link>
-            {post.user.id !== session?.user.id && (
+            {!isUserPost && (
               <>
-                <div className="h-1 w-1 rounded-full bg-foreground/50"></div>
+                <div className="size-1 rounded-full bg-foreground/50"></div>
                 <button
                   onClick={handleFollowUser}
                   className={cn(
@@ -121,7 +121,7 @@ const PostItem = (props: PostItemProps) => {
             {dayjs(post.createdAt).fromNow(true)}
           </span>
         </div>
-        {post.user.id === session?.user.id && (
+        {isUserPost && (
           <div className="self-end">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -157,6 +157,11 @@ const PostItem = (props: PostItemProps) => {
                     className="w-full cursor-pointer"
                   >
                     Delete
+                  </Button>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Button variant="ghost" className="w-full cursor-pointer">
+                    Bookmark
                   </Button>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -218,7 +223,7 @@ const PostItem = (props: PostItemProps) => {
 
       <div className="mt-2 flex items-center justify-between px-5">
         <div className="flex items-center gap-1 text-sm text-foreground">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary">
+          <span className="flex size-6 items-center justify-center rounded-full bg-primary">
             <BiSolidLike
               aria-hidden
               size={14}

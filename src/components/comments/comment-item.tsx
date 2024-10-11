@@ -146,17 +146,17 @@ const CommentItem = (props: CommentItemProps) => {
           <span className="inline">
             <Link
               href={`/profile/`}
-              className="relative inline-block w-full shrink basis-[auto] items-stretch"
+              className="relative inline-block w-full shrink basis-auto items-stretch"
               // aria-label={comment.user?.name}
             >
-              <Avatar className="h-8 w-8">
+              <Avatar className="size-8">
                 <AvatarImage
                   src={comment.user.image ?? "/default-image.png"}
                   alt={`@${comment.user.name}`}
-                  className="h-8 w-8"
+                  className="size-8"
                 />
                 <AvatarFallback>
-                  <div className="h-full w-full animate-pulse bg-primary/10"></div>
+                  <div className="size-full animate-pulse bg-primary/10"></div>
                 </AvatarFallback>
               </Avatar>
               <div className="pointer-events-none absolute inset-0 rounded-full"></div>
@@ -194,7 +194,7 @@ const CommentItem = (props: CommentItemProps) => {
                       >
                         <div className="relative w-full">
                           <div className="flex flex-wrap justify-end">
-                            <div className="shrink grow basis-[auto] overflow-hidden pb-2">
+                            <div className="shrink grow basis-auto overflow-hidden pb-2">
                               <div className="relative p-1">
                                 <FormField
                                   control={form.control}
@@ -254,7 +254,7 @@ const CommentItem = (props: CommentItemProps) => {
                       style={{ wordBreak: "break-word" }}
                     >
                       <div className="py-2 pl-4 pr-7">
-                        <div className="block pb-[4px] pt-[4px]">
+                        <div className="block py-[4px]">
                           <span
                             className="break-words"
                             style={{ wordBreak: "break-word" }}
@@ -303,7 +303,7 @@ const CommentItem = (props: CommentItemProps) => {
                 <div className="relative flex items-center gap-1 rounded-full bg-background px-1 shadow">
                   {comment.isLiked || comment._count.commentLike > 0 ? (
                     <>
-                      <div className="flex h-4 w-4 items-center justify-center rounded-full bg-primary">
+                      <div className="flex size-4 items-center justify-center rounded-full bg-primary">
                         <AiFillLike size={12} className="text-white" />
                       </div>
 
