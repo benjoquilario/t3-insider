@@ -331,4 +331,4 @@ const PostItem = (props: PostItemProps) => {
   )
 }
 
-export default PostItem
+export default React.memo(PostItem)

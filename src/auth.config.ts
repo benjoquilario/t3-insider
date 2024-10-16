@@ -1,9 +1,11 @@
 import type { NextAuthConfig } from "next-auth"
+import { env } from "@/env.mjs"
 
 export const authConfig = {
   session: {
     strategy: "jwt",
   },
+  secret: env.AUTH_SECRET,
   callbacks: {
     jwt({ token, user }) {
       if (user) {

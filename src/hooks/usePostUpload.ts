@@ -1,10 +1,12 @@
 import { useCallback, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useDropzone } from "@uploadthing/react"
-import { generateClientDropzoneAccept } from "uploadthing/client"
 import { useUploadThing } from "@/lib/uploadthing"
+import { useToast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 
 export const usePostUpload = () => {
+  const [isError, setIsError] = useState(false)
   const form = useForm<IPostValues>({
     defaultValues: {
       content: "",
@@ -18,7 +20,11 @@ export const usePostUpload = () => {
     "mediaPost",
     {
       onClientUploadComplete: () => {
-        alert("uploaded successfully!")
+        console.log("Success")
+      },
+      onUploadError: (e) => {
+        setIsError(true)
+        toast.error(e.message)
       },
     }
   )
@@ -38,11 +44,14 @@ export const usePostUpload = () => {
         ...imageToVerify,
       ])
     },
-    [form.getValues, form.setValue]
+    [form]
   )
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    setImages(acceptedFiles)
-  }, [])
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      setImages(acceptedFiles)
+    },
+    [setImages]
+  )
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
@@ -57,5 +66,13 @@ export const usePostUpload = () => {
 
   const selectedImages = form.watch("selectedFile")
 
-  return { getRootProps, getInputProps, form, startUpload, isUploading }
+  return {
+    getRootProps,
+    getInputProps,
+    form,
+    startUpload,
+    isUploading,
+    isError,
+    setIsError,
+  }
 }

@@ -56,8 +56,6 @@ const EditProfile = () => {
 
   const { updateUserData } = useUpdateDataMutation()
 
-  console.log(defaultValues)
-
   useEffect(() => {
     form.reset(defaultValues)
   }, [currentUser, form, defaultValues])
@@ -65,7 +63,7 @@ const EditProfile = () => {
   const handleOnSubmit = function (data: UserSchema) {
     updateUserData.mutate(data, {
       onSuccess: () => {
-        router.push(`/profile/${currentUser?.id}`)
+        if (currentUser) router.push(`/profile/${currentUser.id}`)
       },
     })
   }

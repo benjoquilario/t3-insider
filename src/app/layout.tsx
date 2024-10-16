@@ -2,11 +2,11 @@ import type { Metadata } from "next"
 import "./globals.css"
 import QueryProvider from "@/components/query-provider"
 import AuthProvider from "@/components/auth-provider"
-import { Toaster } from "@/components/ui/toaster"
 import HolyLoader from "holy-loader"
 import { GeistSans } from "geist/font/sans"
 import { cn } from "@/lib/utils"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "sonner"
 
 const fontSans = GeistSans
 
@@ -46,7 +46,7 @@ export default function RootLayout({
             <QueryProvider>{children}</QueryProvider>
           </AuthProvider>
         </ThemeProvider>
-        <Toaster />
+        <Toaster richColors />
       </body>
     </html>
   )
