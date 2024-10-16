@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth"
 import db from "@/lib/db"
+import { pusherServer } from "@/lib/pusher"
 
 export const likePost = async ({
   postId,
