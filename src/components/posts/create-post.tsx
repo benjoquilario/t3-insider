@@ -34,8 +34,15 @@ type CreatePostFormProps = {
 
 const CreatePostForm = (props: CreatePostFormProps) => {
   const { userId } = props
-  const { getRootProps, getInputProps, form, startUpload, isUploading } =
-    usePostUpload()
+  const {
+    getRootProps,
+    getInputProps,
+    form,
+    startUpload,
+    isUploading,
+    isError,
+    setIsError,
+  } = usePostUpload()
 
   const [isPostOpen, setIsPostOpen] = usePostStore((store) => [
     store.isPostOpen,
@@ -61,6 +68,7 @@ const CreatePostForm = (props: CreatePostFormProps) => {
     clearDeletedFiles()
     clearSelectedPost()
     setIsPostOpen(false)
+    setIsError(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -93,6 +101,8 @@ const CreatePostForm = (props: CreatePostFormProps) => {
     if (values.selectedFile.length) {
       uploadImages = await startUpload(values.selectedFile)
     }
+
+    if (isError) return
 
     if (isEditing && selectedPostId) {
       updatePostMutation.mutate({
