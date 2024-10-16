@@ -46,6 +46,8 @@
     "next-auth": "^5.0.0-beta.19",
     "next-themes": "^0.3.0",
     "nextjs-toploader": "^1.6.12",
+    "pusher": "^5.2.0",
+    "pusher-js": "8.4.0-rc2",
     "react": "^18",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18",
